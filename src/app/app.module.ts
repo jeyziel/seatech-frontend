@@ -12,8 +12,12 @@ import { ResetPasswordComponent } from './modules/auth/reset-password/reset-pass
 import { FeatureGuard } from './core/permission/guards/feature.guard';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/shared/interceptors/auth.interceptor';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { ToastrModule } from 'ngx-toastr';
+
 
 @NgModule({
   declarations: [
@@ -30,8 +34,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     DashboardModule,
     SharedAppModule,
     BrowserAnimationsModule,
-    NgbModule
-
+    NgbModule,
+    ToastrModule.forRoot() 
   ],
   providers: [
     FeatureGuard,
