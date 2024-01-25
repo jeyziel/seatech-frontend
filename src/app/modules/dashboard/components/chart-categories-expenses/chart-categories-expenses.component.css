@@ -1,0 +1,10 @@
+.chart-wrapper {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    height: 250px;
+    min-height: 250px;
+    max-height: 250px;
+    border-radius: 10px;
+    background-attachment: fixed;
+  }

@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 import { ChartSurveysHarborComponent } from './components/chart-surveys-harbor/chart-surveys-harbor.component';
+import { ChartCategoriesExpensesComponent } from './components/chart-categories-expenses/chart-categories-expenses.component';
 
 @NgModule({
   imports: [
@@ -38,7 +39,7 @@ import { ChartSurveysHarborComponent } from './components/chart-surveys-harbor/c
     DashboardComponent, 
     RankingAtendimentosComponent,
      RankingCustomersComponent, 
-     RankingSurveysComponent, ChartSurveysHarborComponent, 
+     RankingSurveysComponent, ChartSurveysHarborComponent, ChartCategoriesExpensesComponent, 
   ]
 })
 export class DashboardModule {

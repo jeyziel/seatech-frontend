@@ -6121,6 +6121,15 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
   outline: 0;
 }
 
+::ng-deep ngb-modal-backdrop {
+  z-index: 999 !important;
+
+}
+::ng-deep ngb-modal-window{
+  z-index: 999 !important;
+
+}
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -6137,6 +6146,7 @@ a.close.disabled, a.disabled.mailbox-attachment-close {
 
 .modal-backdrop.show {
   opacity: 0.5;
+  z-index: 1050 !important
 }
 
 .modal-header {

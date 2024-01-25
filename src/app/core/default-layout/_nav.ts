@@ -4,9 +4,9 @@ export const navItems: any[] = [
     url: '/dashboard',
     iconComponent: { name: 'nav-icon fas fa-tachometer-alt' }
   },
-  {
-    name: 'Users',
-    url: '/users',
-    iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-  }
+  // {
+  //   name: 'Users',
+  //   url: '/users',
+  //   iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+  // }
 ];

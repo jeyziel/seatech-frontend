@@ -11,9 +11,9 @@ export class ChartCategoriesComponent {
 
   title = 'ng2-charts-demo';
 
-  public doughnutChartLabels: string[] = [ 'Download Sales', 'In-Store Sales', 'Mail-Order Sales' ];
+  public doughnutChartLabels: string[] = [ 'Vistórias', 'Investimentos' ];
   public doughnutChartDatasets: ChartConfiguration<'doughnut'>['data']['datasets'] = [
-      { data: [ 350, 450, 100 ], label: 'Series A' },
+      { data: [ 350, 450], label: 'Series A' },
     ];
 
   public doughnutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
