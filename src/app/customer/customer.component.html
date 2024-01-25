@@ -1,0 +1,168 @@
+<div class="header bg-gradient-green pb-8 pt-5">
+  <div class="container-fluid">
+  </div>
+</div>
+<!-- Page content -->
+<div class="container-fluid mt--7">
+  <!-- Table -->
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-7 text-left">
+              <h3 class="mb-0">Clientes</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addCustomers)">Adicionar</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Cnpj</th>
+                <th scope="col">Descrição</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let customer of customers">
+                <td>
+                  {{ customer?.name }}
+                </td>
+                <td>
+                  {{ customer?.cnpj }}
+                </td>
+                <td>
+                  {{ customer?.description }}
+                </td>
+
+                <td class="text-right">
+                  <div ngbDropdown placement="bottom-right">
+                    <a class="btn btn-sm btn-icon-only text-light" ngbDropdownToggle>
+                      <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <div ngbDropdownMenu class=" dropdown-menu-right dropdown-menu-arrow">
+                      <a [routerLink]="[customer?.id, 'vendedores']" class="dropdown-item">Ver Vendendores</a>
+                      <a class="dropdown-item" (click)="onEditCustomer(customer); open(editCustomers);">Editar</a>
+                      <a class="dropdown-item"
+                        (click)="open(modalConfirmation, removerCustomer, customer?.id)">Deletar</a>
+                    </div>
+                  </div>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAIS-->
+    <ng-template #addCustomers let-modal class="modal-dialog fade">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Cadastrar Cliente</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addCustomersForm">
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedCustomer && !successCustomer && addForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="input-cnpj" class="form-control-label">CNPJ/CPF(*)</label>
+            <input formControlName="cnpj" id="input-cnpj" class="form-control" type="text">
+            <div *ngIf="submittedCustomer && !successCustomer && addForm.cnpj.errors">
+              <small class="invalid-feedback" style="display: inline;">O CNPJ é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-description" class="form-control-label">Descrição:</label>
+            <textarea formControlName="description" class="form-control" rows="2"> </textarea>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+      </div>
+    </ng-template>
+
+    <ng-template #editCustomers let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Cliente</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editCustomersForm">
+
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedCustomer && !successCustomer && editForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="input-cnpj" class="form-control-label">CNPJ/CPF(*)</label>
+            <input formControlName="cnpj" id="input-cnpj" class="form-control" type="text">
+            <div *ngIf="submittedCustomer && !successCustomer && editForm.cnpj.errors">
+              <small class="invalid-feedback" style="display: inline;">O CNPJ é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-description" class="form-control-label">Descrição:</label>
+            <textarea formControlName="description" class="form-control" rows="2"> </textarea>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="update()" type="button" class="btn btn-outline-dark">SALVAR</button>
+      </div>
+    </ng-template>
+
+    <ng-template #modalConfirmation let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        Deseja Remover Esse Cliente?
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="modal.dismiss('Cross click')"
+          class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+          Cancelar
+        </button>
+        <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+          class="btn bg-gradient-danger float-right">
+          Confimar
+        </button>
+      </div>
+    </ng-template>
+
+  </div>
+</div>

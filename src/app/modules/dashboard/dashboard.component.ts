@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
 
     console.log("toastt")
 
-    this.toastr.success('Falha ao cadastrar Atividade ', 'ERRO');
+    // this.toastr.success('Falha ao cadastrar Atividade ', 'ERRO');
 
   }
 

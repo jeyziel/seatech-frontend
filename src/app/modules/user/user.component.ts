@@ -98,7 +98,7 @@ export class UserComponent implements OnInit {
     ]
   }
   setForm() {
-    debugger
+    // debugger
     this.userForm = new FormGroup({
       user_id: new FormControl(null),
       roleId: new FormControl(null, [Validators.required]),
@@ -244,6 +244,7 @@ export class UserComponent implements OnInit {
       }
     })
   }
+
   validForm() {
     this.errors = [];
     this.formError = {};

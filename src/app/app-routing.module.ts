@@ -6,6 +6,7 @@ import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { ResetPasswordComponent } from './modules/auth/reset-password/reset-password.component';
+import { CustomerComponent } from './customer/customer.component';
 
 const routes: Routes = [
   // {
@@ -21,7 +22,11 @@ const routes: Routes = [
       title: 'Home'
     },
     children: [
-      { path: 'users', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) },
+      { path: 'usuarios', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) },
+      {
+        path: 'clientes',
+        component: CustomerComponent,
+      },
       {
         path: 'widgets',
         loadChildren: () =>

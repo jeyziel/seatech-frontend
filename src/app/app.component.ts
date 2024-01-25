@@ -12,6 +12,6 @@ export class AppComponent {
   constructor(private toastr: ToastrService){}
 
   ngOnInit(){
-    this.toastr.success('Falha ao cadastrar Atividade ', 'ERRO');
+    // this.toastr.success('Falha ao cadastrar Atividade ', 'ERRO');
   }
 }
