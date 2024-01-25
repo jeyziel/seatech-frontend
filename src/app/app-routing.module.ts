@@ -37,7 +37,7 @@ const routes: Routes = [
         loadChildren: () =>
           import('./modules/common/tables/simple-table/simple-table.module').then((m) => m.DataTableModule)
       },
-      { path: 'gallery', loadChildren: () => import('./modules/common/gallery/gallery.module').then(m => m.GalleryModule) },
+      { path: 'vistorias', loadChildren: () => import('./modules/common/pages/surveys/surveys.module').then(m => m.SurveyModule) },
       { path: 'kanban-board', loadChildren: () => import('./modules/common/kanban-board/kanban-board.module').then(m => m.KanbanBoardModule) },
       { path: 'modals-alerts', loadChildren: () => import('./modules/common/ui-elements/modals-alerts/modals-alerts.module').then(m => m.ModalsAlertsModule) },
       { path: 'navs-tabs', loadChildren: () => import('./modules/common/ui-elements/navs-tabs/navs-tabs.module').then(m => m.NavsTabsModule) },

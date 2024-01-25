@@ -8,7 +8,7 @@
       class="brand-image img-circle elevation-3"
       style="opacity: 0.8"
     />
-    <span class="brand-text font-weight-light">AdminLTE 3</span>
+    <span class="brand-text font-weight-light">Seatech</span>
   </a>
 
   <!-- Sidebar -->
@@ -23,7 +23,7 @@
         />
       </div>
       <div class="info">
-        <a href="#" class="d-block">Alexander Pierce</a>
+        <a href="#" class="d-block">Jeyziel Gama</a>
       </div>
     </div>
 
@@ -69,37 +69,12 @@
           </li>
         </ng-container>
 
-        <li class="nav-item">
-          <a
-            [routerLink]="['/widgets']"
-            [routerLinkActive]="['active']"
-            class="nav-link"
-          >
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Widgets
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a
-            [routerLink]="['/gallery']"
-            [routerLinkActive]="['active']"
-            class="nav-link"
-          >
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Gallery
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-tree"></i>
             <p>
-              UI Elements
+              Atendimentos
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
@@ -111,7 +86,17 @@
                 class="nav-link"
               >
                 <i class="far fa-circle nav-icon"></i>
-                <p>Modals & Alerts</p>
+                <p>Gerenciar Atendimento</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                [routerLink]="['/vistorias']"
+                [routerLinkActive]="['active']"
+                class="nav-link"
+              >
+                <i class="far fa-circle nav-icon"></i>
+                <p>Vistórias</p>
               </a>
             </li>
             <li class="nav-item">
@@ -121,7 +106,7 @@
                 class="nav-link"
               >
                 <i class="far fa-circle nav-icon"></i>
-                <p>Navbar & Tabs</p>
+                <p>Tipos de Vistórias</p>
               </a>
             </li>
           </ul>
@@ -130,7 +115,7 @@
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-edit"></i>
             <p>
-              Forms
+              Receitas
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
@@ -171,7 +156,7 @@
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-table"></i>
             <p>
-              Tables
+              Despesas
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
@@ -183,169 +168,47 @@
                 class="nav-link"
               >
                 <i class="far fa-circle nav-icon"></i>
-                <p>Simple Tables</p>
+                <p>Contas a Pagar</p>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a
+                [routerLink]="['/simple-table']"
+                [routerLinkActive]="['active']"
+                class="nav-link"
+              >
+                <i class="far fa-circle nav-icon"></i>
+                <p>Categorias de Despesas</p>
               </a>
             </li>
           </ul>
         </li>
-        <li class="nav-header">EXAMPLES</li>
+        <li class="nav-header">Cadastros</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon far fa-envelope"></i>
             <p>
-              Mailbox
-              <i class="fas fa-angle-left right"></i>
+              Clientes
             </p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a
-                [routerLink]="['/inbox']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Inbox</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/compose']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Compose</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/read']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Read</p>
-              </a>
-            </li>
-          </ul>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-book"></i>
             <p>
-              Pages
+              Portos
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a
-                [routerLink]="['/invoice']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Invoice</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/profile']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Profile</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/ecommerce']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>E-commerce</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/projects']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Projects</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/projects-add']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Project Add</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/project-edit']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Project Edit</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/project-detail']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Project Detail</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/contacts']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Contacts</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/faq']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>FAQ</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/contact-us']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Contact us</p>
-              </a>
-            </li>
-          </ul>
+        
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon far fa-plus-square"></i>
             <p>
-              Extras
+              Contas Bancárias
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
@@ -401,57 +264,7 @@
                 </li>
               </ul>
             </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>
-                  Login & Register v2
-                  <i class="fas fa-angle-left right"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a
-                    [routerLink]="['/login-v2']"
-                    [routerLinkActive]="['active']"
-                    class="nav-link"
-                  >
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Login v2</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a
-                    [routerLink]="['/register-v2']"
-                    [routerLinkActive]="['active']"
-                    class="nav-link"
-                  >
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Register v2</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a
-                    [routerLink]="['/forgot-password-v2']"
-                    [routerLinkActive]="['active']"
-                    class="nav-link"
-                  >
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Forgot Password v2</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a
-                    [routerLink]="['/recover-password-v2']"
-                    [routerLinkActive]="['active']"
-                    class="nav-link"
-                  >
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Recover Password v2</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
+           
             <li class="nav-item">
               <a
                 [routerLink]="['/lock-screen']"
@@ -539,32 +352,10 @@
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-search"></i>
             <p>
-              Search
+              Usuários
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a
-                [routerLink]="['/simple-search']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Simple Search</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                [routerLink]="['/enhanced-search']"
-                [routerLinkActive]="['active']"
-                class="nav-link"
-              >
-                <i class="far fa-circle nav-icon"></i>
-                <p>Enhanced</p>
-              </a>
-            </li>
-          </ul>
         </li>
       </ul>
     </nav>
