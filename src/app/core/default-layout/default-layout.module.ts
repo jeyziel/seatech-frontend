@@ -10,6 +10,7 @@ import { MainHeaderModule } from './main-header/main-header.module';
 import { MainSidebarModule } from './main-sidebar/main-sidebar.module';
 import { MainFooterModule } from './main-footer/main-footer.module';
 import { ControlSidebarModule } from './control-sidebar/control-sidebar.module';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { ControlSidebarModule } from './control-sidebar/control-sidebar.module';
     MainHeaderModule,
     MainSidebarModule,
     ControlSidebarModule,
-    MainFooterModule
+    MainFooterModule,
+    NgbModalModule
   ],
   declarations: [
     DefaultLayoutComponent
