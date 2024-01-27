@@ -39,7 +39,7 @@
                   {{ survey?.name }}
                 </td>
                 <td>
-                  {{ survey?.default_value }}
+                  {{ survey?.default_value | currency: 'BRL' }}
                 </td>
                 <td>
                   {{ survey?.survey_category?.name ?? '-' }}

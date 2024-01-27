@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -24,7 +24,10 @@ import { SurveyCategoryComponent } from './survey-category/survey-category.compo
 import { IncomeCategoryComponent } from './income-category/income-category.component';
 import { AccountComponent } from './account/account.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
+import localePt from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
 
+registerLocaleData(localePt);
 
 @NgModule({
   declarations: [
@@ -49,9 +52,10 @@ import { ExpenseCategoryComponent } from './expense-category/expense-category.co
     SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
-    ToastrModule.forRoot() 
+    ToastrModule.forRoot()
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     FeatureGuard,
     // {
     //   provide: LocationStrategy,
