@@ -92,6 +92,10 @@ export class CustomerComponent implements OnInit {
       return;
   }
 
+  setCustomerSelected(customer: any) {
+    this.customerSelected = customer
+  }
+
   removerCustomer(id: Number) {
 
   }
