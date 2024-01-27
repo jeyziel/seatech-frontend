@@ -18,6 +18,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 import { CustomerComponent } from './customer/customer.component';
+import { HarborComponent } from './harbor/harbor.component';
+import { SurveyComponent } from './survey/survey.component';
+import { SurveyCategoryComponent } from './survey-category/survey-category.component';
+import { IncomeCategoryComponent } from './income-category/income-category.component';
+import { AccountComponent } from './account/account.component';
+import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 
 
 @NgModule({
@@ -26,7 +32,13 @@ import { CustomerComponent } from './customer/customer.component';
     LoginComponent,
     RegisterComponent,
     ResetPasswordComponent,
-    CustomerComponent
+    CustomerComponent,
+    HarborComponent,
+    SurveyComponent,
+    SurveyCategoryComponent,
+    IncomeCategoryComponent,
+    AccountComponent,
+    ExpenseCategoryComponent
   ],
   imports: [
     BrowserModule,

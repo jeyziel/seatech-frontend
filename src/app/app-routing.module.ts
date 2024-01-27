@@ -7,6 +7,12 @@ import { LoginComponent } from './modules/auth/login/login.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { ResetPasswordComponent } from './modules/auth/reset-password/reset-password.component';
 import { CustomerComponent } from './customer/customer.component';
+import { SurveyComponent } from './survey/survey.component';
+import { SurveyCategoryComponent } from './survey-category/survey-category.component';
+import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
+import { HarborComponent } from './harbor/harbor.component';
+import { IncomeCategoryComponent } from './income-category/income-category.component';
+import { AccountComponent } from './account/account.component';
 
 const routes: Routes = [
   // {
@@ -26,6 +32,30 @@ const routes: Routes = [
       {
         path: 'clientes',
         component: CustomerComponent,
+      },
+      {
+        path: 'vistorias',
+        component: SurveyComponent,
+      },
+      {
+        path: 'categoria-de-vistoria',
+        component: SurveyCategoryComponent,
+      },
+      {
+        path: 'categoria-de-despesa',
+        component: ExpenseCategoryComponent,
+      },
+      {
+        path: 'portos',
+        component: HarborComponent,
+      },
+      {
+        path: 'categoria-de-receita',
+        component: IncomeCategoryComponent,
+      },
+      {
+        path: 'contas-bancarias',
+        component: AccountComponent,
       },
       {
         path: 'widgets',
