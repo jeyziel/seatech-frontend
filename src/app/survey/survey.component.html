@@ -1,0 +1,184 @@
+<section class="content-header mb-1">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Vistoria</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-7 text-left">
+              <h3 class="mb-0">Listagem</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addSurveys)">Adicionar</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Valor Padrão</th>
+                <th scope="col">Categoria</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let survey of surveys">
+                <td>
+                  {{ survey?.name }}
+                </td>
+                <td>
+                  {{ survey?.default_value }}
+                </td>
+                <td>
+                  {{ survey?.survey_category?.name ?? '-' }}
+                </td>
+                <td class="text-right">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+
+                    <button type="button" (click)="onEditSurvey(survey); open(editSurveys);"
+                      class="btn btn-dark btn-sm" title="Editar">
+                      Editar &nbsp;
+                      <span>
+                        <i class="fas fa-pencil-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button"
+                      (click)="setSurveySelected(survey); open(modalConfirmation, removerSurvey, survey?.id)"
+                      class="btn btn-dark btn-sm" title="Deletar">
+                      Deletar &nbsp;
+                      <span>
+                        <i class="fas fa-trash-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #addSurveys let-modal class="modal-dialog fade">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Cadastrar Vistoria</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addSurveysForm">
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedSurvey && !successSurvey && addForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="input-default_value" class="form-control-label">Valor padrão</label>
+            <input formControlName="default_value" id="input-default_value" class="form-control" type="number" step=".01">
+            <div *ngIf="submittedSurvey && !successSurvey && addForm.default_value.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor padrão é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-category-create">Categoria(*)</label>
+            <select formControlName="survey_category_id" class="form-control" id="input-category-create">
+              <option *ngFor="let surveyCategory of surveyCategorys" [ngValue]="surveyCategory?.id">
+                {{ surveyCategory.name }}
+              </option>
+            </select>
+            <div *ngIf="submittedSurvey && !successSurvey && addForm.survey_category_id.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor padrão é obrigatório.</small>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+      </div>
+    </ng-template>
+
+    <ng-template #editSurveys let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Vistoria</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editSurveysForm">
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedSurvey && !successSurvey && editForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-default_value" class="form-control-label">Valor padrão</label>
+            <input formControlName="default_value" id="input-default_value" class="form-control" type="number" step=".01">
+            <div *ngIf="submittedSurvey && !successSurvey && editForm.default_value.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor padrão é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-category-update">Categoria(*)</label>
+            <select formControlName="survey_category_id" class="form-control" id="input-category-update">
+              <option *ngFor="let surveyCategory of surveyCategorys" [ngValue]="surveyCategory?.id">
+                {{ surveyCategory.name }}
+              </option>
+            </select>
+            <div *ngIf="submittedSurvey && !successSurvey && addForm.survey_category_id.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor padrão é obrigatório.</small>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="update()" type="button" class="btn btn-outline-dark">SALVAR</button>
+      </div>
+    </ng-template>
+
+    <ng-template #modalConfirmation let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Deseja Remover Essa Vistoria '{{ surveySelected?.name }}'?
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="modal.dismiss('Cross click')"
+          class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+          Cancelar
+        </button>
+        <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+          class="btn bg-gradient-danger float-right">
+          Confimar
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
