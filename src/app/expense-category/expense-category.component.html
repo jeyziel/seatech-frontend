@@ -1,0 +1,149 @@
+<section class="content-header mb-1">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Categorias de Despesas</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-7 text-left">
+              <h3 class="mb-0">Listagem</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addExpenseCategorys)">Adicionar</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Descrição</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let expenseCategory of expenseCategorys">
+                <td>
+                  {{ expenseCategory?.name }}
+                </td>
+                <td>
+                  {{ expenseCategory?.description }}
+                </td>
+                <td class="text-right">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+
+                    <button type="button" (click)="onEditExpenseCategory(expenseCategory); open(editExpenseCategorys);"
+                      class="btn btn-dark btn-sm" title="Editar">
+                      Editar &nbsp;
+                      <span>
+                        <i class="fas fa-pencil-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button"
+                      (click)="setExpenseCategorySelected(expenseCategory); open(modalConfirmation, removerExpenseCategory, expenseCategory?.id)"
+                      class="btn btn-dark btn-sm" title="Deletar">
+                      Deletar &nbsp;
+                      <span>
+                        <i class="fas fa-trash-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #addExpenseCategorys let-modal class="modal-dialog fade">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Cadastrar Categoria de Despesas</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addExpenseCategorysForm">
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedExpenseCategory && !successExpenseCategory && addForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-description" class="form-control-label">Descrição:</label>
+            <textarea formControlName="description" class="form-control" rows="2"> </textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+      </div>
+    </ng-template>
+
+    <ng-template #editExpenseCategorys let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Categoria de Despesas</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editExpenseCategorysForm">
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedExpenseCategory && !successExpenseCategory && editForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="input-description" class="form-control-label">Descrição:</label>
+            <textarea formControlName="description" class="form-control" rows="2"> </textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="update()" type="button" class="btn btn-outline-dark">SALVAR</button>
+      </div>
+    </ng-template>
+
+    <ng-template #modalConfirmation let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Deseja Remover Esse Categoria de Despesas '{{ expenseCategorySelected?.name }}'?
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="modal.dismiss('Cross click')"
+          class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+          Cancelar
+        </button>
+        <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+          class="btn bg-gradient-danger float-right">
+          Confimar
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
