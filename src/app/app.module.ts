@@ -36,7 +36,8 @@ import { TranslatePipe } from './pipes/translate.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SearchPipe } from './pipes/search.pipe';
 import { ServiceManagerComponent } from './service-manager/service-manager.component';
-
+import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
+import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 
 registerLocaleData(localePt);
 
@@ -56,17 +57,19 @@ registerLocaleData(localePt);
     ServiceComponent,
     TranslatePipe,
     SearchPipe,
-    ServiceManagerComponent
+    ServiceManagerComponent,
+    BillsToReceiveComponent,
+    DateRangePickerComponent
   ],
   imports: [
     CommonModule,
     HttpClientModule,
     AppRoutingModule,
     DefaultLayoutModule,
-        SharedAppModule,
+    SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
-    ToastrModule.forRoot() ,
+    ToastrModule.forRoot(),
     NgxPaginationModule,
   ],
   providers: [

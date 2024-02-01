@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-service-manager',
@@ -36,6 +37,7 @@ export class ServiceManagerComponent {
   constructor(
     private modalService: NgbModal,
     private location: Location,
+    private toast: ToastrService,
   ) { }
 
   ngOnInit(): void {
@@ -51,31 +53,18 @@ export class ServiceManagerComponent {
     this.addExpenses = new FormGroup({
       name: new FormControl(null, [Validators.required]),
       value: new FormControl(null, [Validators.required]),
-      type: new FormControl(null, [Validators.required]),
+      type: new FormControl('OPERATION', [Validators.required]),
       account_id: new FormControl(null, [Validators.required]),
       expense_category_id: new FormControl(null, [Validators.required]),
       status: new FormControl(null, [Validators.required]),
       due_at: new FormControl(null, [Validators.required]),
       launch_at: new FormControl(null, [Validators.required]),
+      isPayment: new FormControl(false, [Validators.nullValidator]),
       value_paid: new FormControl(null, [Validators.nullValidator]),
       paid_at: new FormControl(null, [Validators.nullValidator]),
       discount: new FormControl(null, [Validators.nullValidator]),
       fines: new FormControl(null, [Validators.nullValidator]),
-      isPayment: new FormControl(false, [Validators.nullValidator]),
     })
-
-    // "name": "Pagamento de Agua",
-    // "value": 50,
-    // "type": "OPERATION",
-    // "account_id": 1,
-    // "expense_category_id": 1,
-    // "status": "PAID",
-    // "due_at": "2023-12-25",
-    // "launch_at": "2023-12-20",
-    // "value_paid": 50,
-    // "paid_at": "2023-12-23",
-    // "discount": 2,
-    // "fines": 1
 
     this.getServiceManagers();
   }
@@ -110,6 +99,27 @@ export class ServiceManagerComponent {
   createExpense() {
     this.submitted = true
     this.success = false;
+
+    //Validação
+    if (this.addExpenses.controls['isPayment'].value) {
+      const invalid = [undefined, null, ''];
+      const fields = [
+        {name: 'value_paid', error_name: 'Valor pago'},
+        {name: 'paid_at', error_name: 'Data de Pagamento'},
+        {name: 'discount', error_name: 'Desconto'},
+        {name: 'fines', error_name: 'Multa'},
+      ];
+      let haveError: boolean = false;
+      for (const field of fields) {
+        if (invalid.includes(this.addExpenses.controls[field.name].value)) {
+          this.toast.error(`O(a) ${field.error_name} é obrigatório(a)!`, 'Formulário Inválido')
+          haveError = true;
+        }
+      }
+
+      if(haveError) return;
+    }
+
   }
 
   removerServiceSurvey(id: Number) {

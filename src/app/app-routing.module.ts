@@ -15,6 +15,7 @@ import { IncomeCategoryComponent } from './income-category/income-category.compo
 import { AccountComponent } from './account/account.component';
 import { ServiceComponent } from './service/service.component';
 import { ServiceManagerComponent } from './service-manager/service-manager.component';
+import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
 
 const routes: Routes = [
   {
@@ -58,6 +59,10 @@ const routes: Routes = [
       {
         path: 'portos',
         component: HarborComponent,
+      },
+      {
+        path: 'contas-a-receber',
+        component: BillsToReceiveComponent,
       },
       {
         path: 'categoria-de-receita',

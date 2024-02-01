@@ -1,0 +1,16 @@
+<div [formGroup]="parentForm">
+  <label for="input-type" class="form-control-label">{{ label }}</label>
+  <div class="row">
+    <div class="col">
+      <div class="form-group">
+        <input type="date" id="startDate" name="startDate" formControlName="startDate" class="form-control">
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="form-group">
+        <input type="date" id="endDate" name="endDate" formControlName="endDate" class="form-control">
+      </div>
+    </div>
+  </div>
+</div>
