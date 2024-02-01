@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+=======
+import { NgModule } from '@angular/core';
+
+>>>>>>> d621535 (dashboard customer)
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +22,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
+<<<<<<< HEAD
 import { CustomerComponent } from './customer/customer.component';
 import { HarborComponent } from './harbor/harbor.component';
 import { SurveyComponent } from './survey/survey.component';
@@ -26,6 +32,9 @@ import { AccountComponent } from './account/account.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
+=======
+import { CommonModule } from '@angular/common';
+>>>>>>> d621535 (dashboard customer)
 
 registerLocaleData(localePt);
 
@@ -44,12 +53,11 @@ registerLocaleData(localePt);
     ExpenseCategoryComponent
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
     HttpClientModule,
     AppRoutingModule,
     DefaultLayoutModule,
-    DashboardModule,
-    SharedAppModule,
+        SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
     ToastrModule.forRoot()
