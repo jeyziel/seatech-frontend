@@ -1,0 +1,49 @@
+<div class="dp-hidden position-absolute">
+  <div class="input-group">
+    <input
+      name="datepicker"
+      class="form-control"
+      ngbDatepicker
+      #datepicker="ngbDatepicker"
+      [autoClose]="'outside'"
+      (dateSelect)="onDateSelection($event)"
+      [displayMonths]="2"
+      [dayTemplate]="t"
+      [startDate]="fromDate!"
+      tabindex="-1"
+    />
+    <ng-template #t let-date let-focused="focused">
+      <span
+        class="custom-day"
+        [class.focused]="focused"
+        [class.range]="isRange(date)"
+        [class.faded]="isHovered(date) || isInside(date)"
+        (mouseenter)="hoveredDate = date"
+        (mouseleave)="hoveredDate = null"
+      >
+        {{ date.day }}
+      </span>
+    </ng-template>
+  </div>
+</div>
+<div class="input-group">
+  <input
+  disabled
+    #dpFromDate
+    class="form-control"
+    placeholder="dd-mm-yyyy"
+    name="dpFromDate"
+    [value]="dateSelect(fromDate, toDate)"
+    (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+  />
+  <button class="btn btn-outline-secondary calendar mr-2" (click)="datepicker.toggle()" type="button">
+    <i class="icon-regular fa fa-calendar fa-lg" style="color:rgb(158, 175, 221);" ></i>
+    </button>
+
+
+    <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button">
+      <i class="icon-regular fa fa-search" style="color:rgb(158, 175, 221);" ></i>
+      </button>
+
+
+</div>

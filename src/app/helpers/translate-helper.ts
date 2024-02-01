@@ -3,7 +3,7 @@ const list = {
   FINISHED: 'Finalizado',
   CANCELLED: 'Cancelado',
   PENDING: 'Pendente',
-  DRAFT: 'Projeto',
+  DRAFT: 'NÃO FATURADO',
   CONCLUDED: 'Concluído',
   PAID: 'Pago',
   NOT_PAID: 'Não Pago',

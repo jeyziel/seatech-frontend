@@ -1,8 +1,20 @@
 export const navItems: any[] = [
   {
-    name: 'Dashboard',
-    url: '/dashboard',
-    iconComponent: { name: 'nav-icon fas fa-tachometer-alt' }
+    name: 'Dashboards',
+    id: 1,
+    iconComponent: { name: 'nav-icon fas fa-tachometer-alt' },
+    children: [
+      {
+        name: 'Geral',
+        url: '/dashboard',
+        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      },
+      {
+        name: 'Cliente',
+        url: '/dashboard/cliente',
+        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      },
+    ]
   },
   {
     name: 'Usuários',

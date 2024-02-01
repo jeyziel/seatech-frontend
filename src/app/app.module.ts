@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 
 
 
@@ -13,7 +13,7 @@ import { ResetPasswordComponent } from './modules/auth/reset-password/reset-pass
 import { FeatureGuard } from './core/permission/guards/feature.guard';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/shared/interceptors/auth.interceptor';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -27,7 +27,7 @@ import { IncomeCategoryComponent } from './income-category/income-category.compo
 import { AccountComponent } from './account/account.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import localePt from '@angular/common/locales/pt';
-import { registerLocaleData } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 
 import { CommonModule } from '@angular/common';
 
@@ -38,6 +38,8 @@ import { SearchPipe } from './pipes/search.pipe';
 import { ServiceManagerComponent } from './service-manager/service-manager.component';
 import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
+import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
+import { NgDateRangePickerComponent } from './components/ng-date-range-picker/ng-date-range-picker.component';
 
 registerLocaleData(localePt);
 
@@ -59,7 +61,9 @@ registerLocaleData(localePt);
     SearchPipe,
     ServiceManagerComponent,
     BillsToReceiveComponent,
-    DateRangePickerComponent
+    BillsToPayComponent,
+    DateRangePickerComponent,
+    NgDateRangePickerComponent,
   ],
   imports: [
     CommonModule,
@@ -71,6 +75,7 @@ registerLocaleData(localePt);
     NgbModule,
     ToastrModule.forRoot(),
     NgxPaginationModule,
+    NgbDatepickerModule,
   ],
   providers: [
     FeatureGuard,
@@ -82,7 +87,10 @@ registerLocaleData(localePt);
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    },],
+    },
+    { provide: LOCALE_ID, useValue: "pt-BR"},
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

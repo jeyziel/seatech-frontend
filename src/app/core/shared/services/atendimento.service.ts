@@ -15,30 +15,30 @@ export class AtendimentoService {
   create(params) {
 
 
-    return this.http.post(`${environment.api_url}/harbors`, params)
+    return this.http.post(`${environment.api_url}/services`, params)
   }
 
   update(id: Number, params) {
 
-    return this.http.put(`${environment.api_url}/harbors/${id}`, params)
+    return this.http.put(`${environment.api_url}/services/${id}`, params)
 
   }
 
   show(id: Number) {
 
-    return this.http.get(`${environment.api_url}/harbors`)
+    return this.http.get(`${environment.api_url}/services`)
 
   }
 
   delete(id: Number) {
 
-    return this.http.delete(`${environment.api_url}/harbors/${id}`)
+    return this.http.delete(`${environment.api_url}/services/${id}`)
 
   }
 
   list() {
 
-    return this.http.get(`${environment.api_url}/harbors`)
+    return this.http.get(`${environment.api_url}/services`)
 
   }
 

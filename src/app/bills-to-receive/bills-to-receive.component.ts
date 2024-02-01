@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -10,6 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class BillsToReceiveComponent {
 
+  itemsPerPage: number = 10;
+  currentPage: number = 1;
   closeResult: string = '';
   public addIncomesForm: FormGroup;
   public editIncomesForm: FormGroup;
@@ -23,6 +25,9 @@ export class BillsToReceiveComponent {
   public successIncome: Boolean;
 
   public incomeSelected: any;
+
+  fromDate: NgbDate | null
+  toDate: NgbDate | null
 
   fn: any;
   paramsDelete: any;
@@ -72,8 +77,6 @@ export class BillsToReceiveComponent {
       type: new FormControl(null, [Validators.nullValidator]),
       income_category_id: new FormControl(null, [Validators.nullValidator]),
       status: new FormControl(null, [Validators.nullValidator]),
-      startDate: new FormControl((new Date)?.toJSON()?.slice(0, 10), [Validators.nullValidator]),
-      endDate: new FormControl((new Date)?.toJSON()?.slice(0, 10), [Validators.nullValidator])
     })
 
     this.getIncomes();
@@ -192,8 +195,13 @@ export class BillsToReceiveComponent {
   }
 
   getIncomeWithFilter() {
+    console.log(this.fromDate)
+    console.log(this.toDate)
+
     const invalid = [undefined, null, ''];
-    const filters = this.filtersForm.value
+    const filters = this.filtersForm.value;
+    filters.startDate = `${this.fromDate.year}-${this.fromDate.month}-${this.fromDate.day}`;
+    filters.endDate = `${this.toDate.year}-${this.toDate.month}-${this.toDate.day}`;
 
     for (const key in filters) {
       if (invalid.includes(filters?.[key])) {
