@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +17,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -27,12 +28,11 @@ import { ToastrModule } from 'ngx-toastr';
     ResetPasswordComponent
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
     HttpClientModule,
     AppRoutingModule,
     DefaultLayoutModule,
-    DashboardModule,
-    SharedAppModule,
+        SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
     ToastrModule.forRoot() 
