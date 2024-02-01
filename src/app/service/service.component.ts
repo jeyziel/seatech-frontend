@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { AtendimentoService } from '../core/shared/services/atendimento.service';
 
 @Component({
   selector: 'app-service',
@@ -28,7 +29,8 @@ export class ServiceComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private atendimentoService: AtendimentoService
   ) { }
 
 

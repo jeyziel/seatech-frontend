@@ -44,7 +44,17 @@ registerLocaleData(localePt);
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    CustomerComponent,
+    HarborComponent,
+    SurveyComponent,
+    SurveyCategoryComponent,
+    IncomeCategoryComponent,
+    AccountComponent,
+    ExpenseCategoryComponent,
+    ServiceComponent,
+    TranslatePipe,
+    SearchPipe
   ],
   imports: [
     CommonModule,
@@ -54,7 +64,8 @@ registerLocaleData(localePt);
         SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
-    ToastrModule.forRoot() 
+    ToastrModule.forRoot() ,
+    NgxPaginationModule,
   ],
   providers: [
     FeatureGuard,
