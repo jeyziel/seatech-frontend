@@ -24,7 +24,7 @@ import { DashboardCustomerComponent } from './pages/dashboard-customer/dashboard
   imports: [
     CommonModule,
     ToastrModule.forRoot(),
-    BrowserAnimationsModule,
+   // BrowserAnimationsModule,
     NgChartsModule,
     MainHeaderModule,
     MainSidebarModule,

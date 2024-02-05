@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { HarborService } from '../core/shared/services/harbor.service';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class HarborComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private harborService: HarborService
   ) { }
 
 
@@ -75,6 +77,27 @@ export class HarborComponent {
 
     if (this.addHarborsForm.invalid)
       return;
+
+    
+    const data = this.addHarborsForm.value
+    
+    
+    this.harborService.create(data)
+      .subscribe({
+        next: (res : any) => {
+
+        
+          this.toastr.success("Porto Cadastrado com sucesso", "Criar Porto")
+        
+
+        },
+        error: err => {
+          console.log("Falha ao realizar Login", err)
+        }
+      })
+
+
+    
   }
 
   onEditHarbor(harbor: any) {
@@ -102,6 +125,24 @@ export class HarborComponent {
   }
 
   getHarbors() {
+
+   
+    
+    
+    this.harborService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.harbors = res 
+
+        },
+        error: err => {
+          console.log("Falha ao realizar Login", err)
+        }
+      })
+
+
+
+    /*
     this.harbors = [
       {
         id: 1,
@@ -121,7 +162,7 @@ export class HarborComponent {
         state: 'Fechado',
         description: 'Descrição do terceiro Porto',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {

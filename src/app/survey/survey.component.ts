@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { SurveyService } from '../core/shared/services/surveys.service';
+import { SurveyCategoriesService } from '../core/shared/services/survey-categories.service';
 
 @Component({
   selector: 'app-survey',
@@ -26,7 +28,9 @@ export class SurveyComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private surveyService : SurveyService,
+    private surveyCategoriesService: SurveyCategoriesService
   ) { }
 
 
@@ -43,6 +47,8 @@ export class SurveyComponent {
       default_value: new FormControl(null, [Validators.required]),
       survey_category_id: new FormControl(null, [Validators.nullValidator])
     })
+
+    console.log('surveyss')
 
     this.getSurveys();
     this.getSurveyCategorys();
@@ -76,6 +82,33 @@ export class SurveyComponent {
 
     if (this.addSurveysForm.invalid)
       return;
+
+    const data = this.addSurveysForm.value 
+
+    this.surveyService.create(data)
+      .subscribe({
+        next: (res: any) => {
+          
+          this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
+
+          this.addSurveysForm.reset()
+
+          this.submittedSurvey = false
+          this.successSurvey = true;
+
+
+        },
+        error: err => {
+
+          this.submittedSurvey = false
+          this.successSurvey = false;
+
+          this.toastr.error("Falha ao cadastrar as vistoria", "Cadastrar Vistoria")
+        }
+      })
+
+
+    
   }
 
   onEditSurvey(survey: any) {
@@ -92,6 +125,21 @@ export class SurveyComponent {
 
     if (this.editSurveysForm.invalid)
       return;
+
+    const data = this.editSurveysForm.value 
+
+    this.surveyService.update(this.surveySelected?.id, data)
+        .subscribe({
+          next: (res: any) => {
+            
+            this.toastr.success("Vistoria editada com sucesso!", "Cadastrar Vistoria")
+         
+            this.getSurveys()
+          },
+          error: err => {
+            this.toastr.error("Falha ao editar as vistoria", "Cadastrar Vistoria")
+          }
+        })
   }
 
   setSurveySelected(survey: any) {
@@ -103,6 +151,25 @@ export class SurveyComponent {
   }
 
   getSurveys() {
+
+
+    this.surveyService.list()
+      .subscribe({
+        next: (res: any[]) => {
+
+          this.surveys = res
+
+          
+
+        },
+        error: err => {
+          this.toastr.error("Falha ao buscar as vistorias", "Vistórias")
+          console.log(err)
+        }
+      })
+
+
+    /** 
     this.surveys = [
       {
         id: 1,
@@ -124,10 +191,27 @@ export class SurveyComponent {
           name: 'Categoria de Receita 1',
         }
       }
-    ];
+    ];*/
   }
 
   getSurveyCategorys() {
+
+
+    this.surveyCategoriesService.list()
+    .subscribe({
+      next: (res: any[]) => {
+
+        this.surveyCategorys = res
+
+      },
+      error: err => {
+        this.toastr.error("Falha ao buscar as vistorias", "Vistórias")
+        console.log(err)
+      }
+    })
+
+
+    /** 
     this.surveyCategorys = [
       {
         id: 1,
@@ -137,11 +221,32 @@ export class SurveyComponent {
         id: 2,
         name: 'Categoria de Receita 2',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {
     this.fn(...this.paramsDelete);
+  }
+
+  delete(){
+
+    console.log('deleted')
+
+    this.surveyService.delete(this.surveySelected?.id)
+    .subscribe({
+      next: (res: any) => {
+        
+        this.toastr.success("Vistoria deletada com sucesso!", "Deletar Vistoria")
+
+        this.getSurveys()
+
+      },
+      error: err => {
+        this.toastr.error("Falha ao deletar a vistoria", "Deletar Vistoria")
+      }
+    })
+
+
   }
 
   private getDismissReason(reason: any): string {
