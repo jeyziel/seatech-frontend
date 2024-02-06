@@ -89,6 +89,11 @@ export class HarborComponent {
         
           this.toastr.success("Porto Cadastrado com sucesso", "Criar Porto")
         
+          this.addHarborsForm.reset()
+          this.addHarborsForm.clearValidators()
+
+          this.submittedHarbor = false
+          this.successHarbor = true;
 
         },
         error: err => {
@@ -114,6 +119,23 @@ export class HarborComponent {
 
     if (this.editHarborsForm.invalid)
       return;
+
+
+    const data = this.editHarborsForm.value
+
+    this.harborService.update(this.harborSelected?.id, data)
+        .subscribe({
+          next: (res: any) => {
+            
+            this.toastr.success("Porto editado com sucesso!", "Cadastrar Porto")
+         
+            this.getHarbors()
+          },
+          error: err => {
+            this.toastr.error("Falha ao editar porto", "Cadastrar Porto")
+          }
+        })
+    
   }
 
   setHarborSelected(harbor: any) {
@@ -121,6 +143,23 @@ export class HarborComponent {
   }
 
   removerHarbor(id: Number) {
+
+
+    this.harborService.delete(id)
+    .subscribe({
+      next: (res : any) => {
+        
+        this.toastr.success("Porto deletado com sucesso!", "Deletar Porto")
+
+        this.getHarbors()
+
+      },
+      error: err => {
+        this.toastr.error("Falha ao deletar Porto!", "Deletar Porto")
+      }
+    })
+
+
 
   }
 

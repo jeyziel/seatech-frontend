@@ -89,6 +89,9 @@ export class SurveyComponent {
       .subscribe({
         next: (res: any) => {
           
+
+          this.surveys = res
+
           this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
 
           this.addSurveysForm.reset()
@@ -158,8 +161,6 @@ export class SurveyComponent {
         next: (res: any[]) => {
 
           this.surveys = res
-
-          
 
         },
         error: err => {

@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class HarborService {
+export class AccountService {
 
   constructor(
     private http: HttpClient
