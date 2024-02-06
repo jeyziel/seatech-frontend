@@ -27,7 +27,14 @@ import { AccountComponent } from './account/account.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
+
 import { CommonModule } from '@angular/common';
+
+import { ServiceComponent } from './service/service.component';
+import { TranslatePipe } from './pipes/translate.pipe';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { SearchPipe } from './pipes/search.pipe';
+
 
 registerLocaleData(localePt);
 
@@ -43,7 +50,10 @@ registerLocaleData(localePt);
     SurveyCategoryComponent,
     IncomeCategoryComponent,
     AccountComponent,
-    ExpenseCategoryComponent
+    ExpenseCategoryComponent,
+    ServiceComponent,
+    TranslatePipe,
+    SearchPipe
   ],
   imports: [
     CommonModule,
@@ -53,7 +63,8 @@ registerLocaleData(localePt);
         SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    NgxPaginationModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' },

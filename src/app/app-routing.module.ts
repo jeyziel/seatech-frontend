@@ -13,6 +13,7 @@ import { ExpenseCategoryComponent } from './expense-category/expense-category.co
 import { HarborComponent } from './harbor/harbor.component';
 import { IncomeCategoryComponent } from './income-category/income-category.component';
 import { AccountComponent } from './account/account.component';
+import { ServiceComponent } from './service/service.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,10 @@ const routes: Routes = [
       {
         path: 'vistorias',
         component: SurveyComponent,
+      },
+      {
+        path: 'atendimento',
+        component: ServiceComponent,
       },
       {
         path: 'categoria-de-vistoria',
