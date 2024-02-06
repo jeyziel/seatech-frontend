@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Usuários do Sistema</h1>
+        <h1>Categoria de Vistoria</h1>
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@
               <h3 class="mb-0">Listagem</h3>
             </div>
             <div class="col-4 text-right">
-              <a class="btn btn-sm btn-primary" (click)="open(addUsers)">Adicionar</a>
+              <a class="btn btn-sm btn-primary" (click)="open(addSurveyCategorys)">Adicionar</a>
             </div>
           </div>
 
@@ -28,22 +28,18 @@
             <thead class="thead-light">
               <tr>
                 <th scope="col">Nome</th>
-                <th scope="col">E-mail</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let user of users">
+              <tr *ngFor="let surveyCategory of surveyCategorys">
                 <td>
-                  {{ user?.name }}
-                </td>
-                <td>
-                  {{ user?.email }}
+                  {{ surveyCategory?.name }}
                 </td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
 
-                    <button type="button" (click)="onEditUser(user); open(editUsers);"
+                    <button type="button" (click)="onEditSurveyCategory(surveyCategory); open(editSurveyCategorys);"
                       class="btn btn-dark btn-sm" title="Editar">
                       Editar &nbsp;
                       <span>
@@ -53,7 +49,7 @@
                   </div>
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
-                      (click)="setUserSelected(user); open(modalConfirmation, removerUser, user?.id)"
+                      (click)="setSurveyCategorySelected(surveyCategory); open(modalConfirmation, removerSurveyCategory, surveyCategory?.id)"
                       class="btn btn-dark btn-sm" title="Deletar">
                       Deletar &nbsp;
                       <span>
@@ -69,28 +65,20 @@
       </div>
     </div>
 
-    <ng-template #addUsers let-modal class="modal-dialog fade">
+    <ng-template #addSurveyCategorys let-modal class="modal-dialog fade">
       <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Cadastrar Usuário</h4>
+        <h4 class="modal-title" id="modal-basic-title">Cadastrar Categoria de Despesa</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="addUsersForm">
+        <form [formGroup]="addSurveyCategorysForm">
           <div class="form-group">
             <label for="input-name" class="form-control-label">Nome(*)</label>
             <input formControlName="name" id="input-name" class="form-control" type="text">
-            <div *ngIf="submittedUser && !successUser && addForm.name.errors">
+            <div *ngIf="submittedSurveyCategory && !successSurveyCategory && addForm.name.errors">
               <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="input-email" class="form-control-label">E-mail</label>
-            <input formControlName="email" id="input-email" class="form-control" type="text">
-            <div *ngIf="submittedUser && !successUser && addForm.email.errors">
-              <small class="invalid-feedback" style="display: inline;">O E-mail é obrigatório.</small>
             </div>
           </div>
         </form>
@@ -100,28 +88,20 @@
       </div>
     </ng-template>
 
-    <ng-template #editUsers let-modal class="modal-dialog">
+    <ng-template #editSurveyCategorys let-modal class="modal-dialog">
       <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Editar Usuário</h4>
+        <h4 class="modal-title" id="modal-basic-title">Editar Categoria de Despesa</h4>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="editUsersForm">
+        <form [formGroup]="editSurveyCategorysForm">
           <div class="form-group">
             <label for="input-name" class="form-control-label">Nome(*)</label>
             <input formControlName="name" id="input-name" class="form-control" type="text">
-            <div *ngIf="submittedUser && !successUser && editForm.name.errors">
+            <div *ngIf="submittedSurveyCategory && !successSurveyCategory && editForm.name.errors">
               <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="input-email" class="form-control-label">E-mail</label>
-            <input formControlName="email" id="input-email" class="form-control" type="text">
-            <div *ngIf="submittedUser && !successUser && editForm.email.errors">
-              <small class="invalid-feedback" style="display: inline;">O E-mail é obrigatório.</small>
             </div>
           </div>
         </form>
@@ -139,7 +119,7 @@
         </button>
       </div>
       <div class="modal-body">
-        Deseja Remover Esse Usuário '{{ userSelected?.name }}'?
+        Deseja Remover Essa Categoria de serviço '{{ surveyCategorySelected?.name }}'?
       </div>
       <div class="modal-footer">
         <button type="button" (click)="modal.dismiss('Cross click')"

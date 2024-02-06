@@ -19,8 +19,8 @@ export class SurveysComponent implements OnInit {
   public successVistorias: Boolean;
 
   public vistoriasSelected: any
-  
-  
+
+
   public fn: any;
   public paramsDelete: any;
 
@@ -44,7 +44,7 @@ export class SurveysComponent implements OnInit {
     this.paramsDelete = params;
   }
 
-  
+
   confirmationDelete() {
     this.fn(...this.paramsDelete);
   }
@@ -52,7 +52,7 @@ export class SurveysComponent implements OnInit {
   private getDismissReason(reason: any): string {
 
 
-   
+
 
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';

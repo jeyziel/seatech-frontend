@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'lte-angular';
@@ -12,6 +12,6 @@ export class AppComponent {
   constructor(private toastr: ToastrService){}
 
   ngOnInit(){
-    this.toastr.success('Falha ao cadastrar Atividade ', 'ERRO');
+    // this.toastr.success('Falha ao cadastrar Atividade ', 'ERRO');
   }
 }
