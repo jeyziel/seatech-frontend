@@ -1,6 +1,7 @@
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DefaultLayoutModule } from './core/default-layout/default-layout.module';
@@ -26,10 +27,14 @@ import { AccountComponent } from './account/account.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
+
+import { CommonModule } from '@angular/common';
+
 import { ServiceComponent } from './service/service.component';
 import { TranslatePipe } from './pipes/translate.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SearchPipe } from './pipes/search.pipe';
+
 
 registerLocaleData(localePt);
 
@@ -51,12 +56,11 @@ registerLocaleData(localePt);
     SearchPipe
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
     HttpClientModule,
     AppRoutingModule,
     DefaultLayoutModule,
-    DashboardModule,
-    SharedAppModule,
+        SharedAppModule,
     BrowserAnimationsModule,
     NgbModule,
     ToastrModule.forRoot(),

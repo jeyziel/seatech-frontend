@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { SurveyCategoriesService } from '../core/shared/services/survey-categories.service';
 
 @Component({
   selector: 'app-survey-category',
@@ -25,7 +26,8 @@ export class SurveyCategoryComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private surveyCategoryService: SurveyCategoriesService
   ) { }
 
   ngOnInit(): void {
@@ -71,6 +73,32 @@ export class SurveyCategoryComponent {
 
     if (this.addSurveyCategorysForm.invalid)
       return;
+
+    const data = this.addSurveyCategorysForm.value
+
+    this.surveyCategoryService.create(data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
+
+          this.addSurveyCategorysForm.reset()
+          this.addSurveyCategorysForm.clearValidators()
+
+          this.submittedSurveyCategory = false
+          this.successSurveyCategory = true;
+
+
+        },
+        error: err => {
+
+          this.submittedSurveyCategory = false
+          this.successSurveyCategory = false;
+
+          this.toastr.error("Falha ao cadastrar as Tipos de vistoria", "Cadastrar Tipos Vistoria")
+        }
+      })
+
   }
 
   onEditSurveyCategory(surveyCategory: any) {
@@ -85,6 +113,21 @@ export class SurveyCategoryComponent {
 
     if (this.editSurveyCategorysForm.invalid)
       return;
+
+    const data = this.editSurveyCategorysForm.value
+
+    this.surveyCategoryService.update(this.surveyCategorySelected?.id, data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Vistoria editada com sucesso!", "Cadastrar Vistoria")
+
+          this.getSurveyCategorys()
+        },
+        error: err => {
+          this.toastr.error("Falha ao editar as vistoria", "Cadastrar Vistoria")
+        }
+      })
   }
 
   setSurveyCategorySelected(surveyCategory: any) {
@@ -96,6 +139,22 @@ export class SurveyCategoryComponent {
   }
 
   getSurveyCategorys() {
+
+    this.surveyCategoryService.list()
+      .subscribe({
+        next: (res: any[]) => {
+
+          this.surveyCategorys = res
+
+        },
+        error: err => {
+          this.toastr.error("Falha ao buscar as vistorias", "Vistórias")
+          console.log(err)
+        }
+      })
+
+
+    /** 
     this.surveyCategorys = [
       {
         id: 1,
@@ -105,7 +164,7 @@ export class SurveyCategoryComponent {
         id: 2,
         name: 'Categoria de Receita 2',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {

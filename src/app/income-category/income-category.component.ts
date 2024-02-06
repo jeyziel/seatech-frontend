@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { IncomeCategoriesService } from '../core/shared/services/income-categories.service';
 
 @Component({
   selector: 'app-income-category',
@@ -25,7 +26,8 @@ export class IncomeCategoryComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private incomeCategoryService : IncomeCategoriesService
   ) { }
 
 
@@ -72,6 +74,36 @@ export class IncomeCategoryComponent {
 
     if (this.addIncomeCategorysForm.invalid)
       return;
+
+    const data = this.addIncomeCategorysForm.value
+
+    this.incomeCategoryService.create(data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
+
+          this.addIncomeCategorysForm.reset()
+          this.addIncomeCategorysForm.clearValidators()
+
+          this.submittedIncomeCategory = false
+          this.successIncomeCategory = true;
+
+          this.getIncomeCategorys()
+
+
+        },
+        error: err => {
+
+          this.submittedIncomeCategory = false
+          this.successIncomeCategory = false;
+
+          this.toastr.error("Falha ao cadastrar as Tipos de vistoria", "Cadastrar Tipos Vistoria")
+        }
+      })
+
+
+
   }
 
   onEditIncomeCategory(incomeCategory: any) {
@@ -86,6 +118,36 @@ export class IncomeCategoryComponent {
 
     if (this.editIncomeCategorysForm.invalid)
       return;
+
+    const data = this.editIncomeCategorysForm.value
+
+    this.incomeCategoryService.update(this.incomeCategorySelected?.id, data)
+    .subscribe({
+      next: (res : any) => {
+        
+        this.toastr.success("Categoria de Receita cadastrada com sucesso!", "Categoria de Receita")
+
+        this.submittedIncomeCategory = false
+        this.successIncomeCategory = true;
+
+        this.getIncomeCategorys()
+
+
+
+      },
+      error: err => {
+        
+
+        this.submittedIncomeCategory = false
+        this.successIncomeCategory = false;
+
+        this.toastr.error("Falha ao buscar categoria de receita", "Categoria de Receita")
+
+      }
+    })
+
+
+
   }
 
   setIncomeCategorySelected(incomeCategory: any) {
@@ -94,9 +156,40 @@ export class IncomeCategoryComponent {
 
   removerIncomeCategory(id: Number) {
 
+
+    this.incomeCategoryService.delete(id)
+    .subscribe({
+      next: (res : any) => {
+        
+        this.getIncomeCategorys()
+
+      },
+      error: err => {
+        
+        this.toastr.error("Falha ao buscar categoria de receita", "Categoria de Receita")
+
+      }
+    })
+
   }
 
   getIncomeCategorys() {
+
+
+    this.incomeCategoryService.list()
+    .subscribe({
+      next: (res : any) => {
+        this.incomeCategorys = res 
+      },
+      error: err => {
+        
+        this.toastr.error("Falha ao buscar categoria de receita", "Categoria de Receita")
+
+      }
+    })
+
+
+    /** 
     this.incomeCategorys = [
       {
         id: 1,
@@ -106,7 +199,7 @@ export class IncomeCategoryComponent {
         id: 2,
         name: 'Categoria de Receita 2',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {

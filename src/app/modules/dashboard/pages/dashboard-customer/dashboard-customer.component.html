@@ -1,12 +1,14 @@
 
-
+<app-main-header></app-main-header>
+<app-main-sidebar></app-main-sidebar>
 <!-- Content Wrapper. Contains page content -->
-
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Dashboard Geral</h1>
+            <h1 class="m-0">Dashboard de Cliente</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
            
@@ -32,7 +34,7 @@
               <div class="inner">
                 <h3>150</h3>
 
-                <p>Total de Atendimentos</p>
+                <p>Total de Vistorias</p>
               </div>
               <div class="icon">
                 <i class="ion ion-bag"></i>
@@ -58,11 +60,11 @@
           <!-- ./col -->
           <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box bg-danger">
+            <div class="small-box bg-success">
               <div class="inner">
                 <h3>R$ 45.000,75</h3>
 
-                <p>Despesas</p>
+                <p>% De Contribuição</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
@@ -73,11 +75,11 @@
           <!-- ./col -->
           <div class="col-lg-3 col-6">
             <!-- small box -->
-            <div class="small-box bg-success">
+            <div class="small-box bg-danger">
               <div class="inner">
-                <h3>R$ 28.000<sup style="font-size: 20px"></sup></h3>
+                <h3>20<sup style="font-size: 20px"></sup></h3>
 
-                <p>Lucratividade</p>
+                <p>Pagamentos Pendentes</p>
               </div>
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
@@ -131,6 +133,9 @@
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
+  </div>
+  <app-control-sidebar></app-control-sidebar>
+  <app-main-footer></app-main-footer>
 
 
 
