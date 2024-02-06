@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { AccountService } from '../core/shared/services/account.service';
 
 @Component({
   selector: 'app-account',
@@ -25,7 +26,8 @@ export class AccountComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private accountService: AccountService
   ) { }
 
 
@@ -72,6 +74,34 @@ export class AccountComponent {
 
     if (this.addAccountsForm.invalid)
       return;
+
+    const data = this.addAccountsForm.value
+
+
+    this.accountService.create(data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Conta cadastrada com sucesso!", "Conta Bancárias")
+
+          this.editAccountsForm.reset()
+          this.editAccountsForm.clearValidators()
+
+          this.submittedAccount = false
+          this.successAccount = true
+
+          this.getAccounts()
+
+
+        },
+        error: err => {
+
+          this.submittedAccount = false
+          this.successAccount = false;
+
+          this.toastr.error("Falha ao cadastrar as Tipos de vistoria", "Cadastrar Tipos Vistoria")
+        }
+      })
   }
 
   onEditAccount(account: any) {
@@ -87,6 +117,35 @@ export class AccountComponent {
 
     if (this.editAccountsForm.invalid)
       return;
+
+    const data = this.editAccountsForm.value
+
+
+    this.accountService.update(this.accountSelected?.id, data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Conta atualizada com sucesso!", "Conta Bancária")
+
+          
+
+          this.submittedAccount = false
+          this.successAccount = true
+
+          this.getAccounts()
+
+
+        },
+        error: err => {
+
+          this.submittedAccount = false
+          this.successAccount = false;
+
+          this.toastr.error("Falha ao atualizar conta bancária", "Conta Bancária")
+        }
+      })
+
+
   }
 
   setAccountSelected(account: any) {
@@ -95,9 +154,39 @@ export class AccountComponent {
 
   removerAccount(id: Number) {
 
+    this.accountService.delete(id)
+      .subscribe({
+        next: (res: any) => {
+
+          this.getAccounts()
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao buscar as contas bancárias", "Contas Bancárias")
+
+        }
+      })
+
+
   }
 
   getAccounts() {
+
+    this.accountService.list()
+      .subscribe({
+        next: (res: any) => {
+          this.accounts = res
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao buscar as contas bancárias", "Contas Bancárias")
+
+        }
+      })
+
+    /** 
     this.accounts = [
       {
         id: 1,
@@ -109,7 +198,7 @@ export class AccountComponent {
         name: 'Caixa',
         number: '5552-2223-4111-5698',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {

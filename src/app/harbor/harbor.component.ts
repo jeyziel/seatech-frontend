@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { HarborService } from '../core/shared/services/harbor.service';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class HarborComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private harborService: HarborService
   ) { }
 
 
@@ -75,6 +77,32 @@ export class HarborComponent {
 
     if (this.addHarborsForm.invalid)
       return;
+
+    
+    const data = this.addHarborsForm.value
+    
+    
+    this.harborService.create(data)
+      .subscribe({
+        next: (res : any) => {
+
+        
+          this.toastr.success("Porto Cadastrado com sucesso", "Criar Porto")
+        
+          this.addHarborsForm.reset()
+          this.addHarborsForm.clearValidators()
+
+          this.submittedHarbor = false
+          this.successHarbor = true;
+
+        },
+        error: err => {
+          console.log("Falha ao realizar Login", err)
+        }
+      })
+
+
+    
   }
 
   onEditHarbor(harbor: any) {
@@ -91,6 +119,23 @@ export class HarborComponent {
 
     if (this.editHarborsForm.invalid)
       return;
+
+
+    const data = this.editHarborsForm.value
+
+    this.harborService.update(this.harborSelected?.id, data)
+        .subscribe({
+          next: (res: any) => {
+            
+            this.toastr.success("Porto editado com sucesso!", "Cadastrar Porto")
+         
+            this.getHarbors()
+          },
+          error: err => {
+            this.toastr.error("Falha ao editar porto", "Cadastrar Porto")
+          }
+        })
+    
   }
 
   setHarborSelected(harbor: any) {
@@ -99,9 +144,44 @@ export class HarborComponent {
 
   removerHarbor(id: Number) {
 
+
+    this.harborService.delete(id)
+    .subscribe({
+      next: (res : any) => {
+        
+        this.toastr.success("Porto deletado com sucesso!", "Deletar Porto")
+
+        this.getHarbors()
+
+      },
+      error: err => {
+        this.toastr.error("Falha ao deletar Porto!", "Deletar Porto")
+      }
+    })
+
+
+
   }
 
   getHarbors() {
+
+   
+    
+    
+    this.harborService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.harbors = res 
+
+        },
+        error: err => {
+          console.log("Falha ao realizar Login", err)
+        }
+      })
+
+
+
+    /*
     this.harbors = [
       {
         id: 1,
@@ -121,7 +201,7 @@ export class HarborComponent {
         state: 'Fechado',
         description: 'Descrição do terceiro Porto',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {

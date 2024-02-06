@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { ExpenseCategoriesService } from '../core/shared/services/expense-categories.service';
 
 @Component({
   selector: 'app-expense-category',
@@ -25,7 +26,8 @@ export class ExpenseCategoryComponent {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private expenseCategoryService: ExpenseCategoriesService
   ) { }
 
 
@@ -72,6 +74,38 @@ export class ExpenseCategoryComponent {
 
     if (this.addExpenseCategorysForm.invalid)
       return;
+
+    
+    const data = this.addExpenseCategorysForm.value
+
+    this.expenseCategoryService.create(data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Categoria de Despesas cadastrada com sucesso!", "Categoria de Despesas")
+
+          this.addExpenseCategorysForm.reset()
+          this.addExpenseCategorysForm.clearValidators()
+
+          this.submittedExpenseCategory = false
+          this.successExpenseCategory = true;
+
+
+          this.getExpenseCategorys()
+
+        },
+        error: err => {
+
+  
+          this.submittedExpenseCategory = false
+          this.successExpenseCategory = true;
+        
+
+          this.toastr.error("Falha ao cadastrar as Tipos de vistoria", "Cadastrar Tipos Vistoria")
+        }
+      })
+
+
   }
 
   onEditExpenseCategory(expenseCategory: any) {
@@ -87,6 +121,30 @@ export class ExpenseCategoryComponent {
 
     if (this.editExpenseCategorysForm.invalid)
       return;
+
+    const data = this.editExpenseCategorysForm.value
+
+    this.expenseCategoryService.update(this.expenseCategorySelected?.id, data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Categoria de Despesas atualizada com sucesso!", "Categoria de Despesas")
+
+          this.submittedExpenseCategory = false
+          this.successExpenseCategory = true;
+
+          this.getExpenseCategorys()
+
+
+        },
+        error: err => {
+
+          this.submittedExpenseCategory = false
+          this.successExpenseCategory = false;
+
+          this.toastr.error("Falha ao atualizar categoria de depesas", "Categoria de Despesas")
+        }
+      })
   }
 
   setExpenseCategorySelected(expenseCategory: any) {
@@ -95,9 +153,38 @@ export class ExpenseCategoryComponent {
 
   removerExpenseCategory(id: Number) {
 
+    this.expenseCategoryService.delete(id)
+    .subscribe({
+      next: (res : any) => {
+
+        this.getExpenseCategorys()
+
+      },
+      error: err => {
+        this.toastr.error("Falha ao remover a categoria de Despesas", "Categoria de Depesas")
+      }
+    })
+
+
   }
 
   getExpenseCategorys() {
+
+
+    this.expenseCategoryService.list()
+    .subscribe({
+      next: (res : any) => {
+        this.expenseCategorys = res 
+
+      },
+      error: err => {
+        console.log("Falha ao buscar os categorias de Despesas", err)
+      }
+    })
+
+
+
+    /** 
     this.expenseCategorys = [
       {
         id: 1,
@@ -109,7 +196,7 @@ export class ExpenseCategoryComponent {
         name: 'Categoria de Despesa 2',
         description: 'Desc categoria de despesa 2',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {

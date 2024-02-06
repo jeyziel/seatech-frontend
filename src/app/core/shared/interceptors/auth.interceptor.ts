@@ -45,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
     }))
   }
   AddBrowserIdAndToken(request: HttpRequest<any>, fingerprint: string, token: string) {
-    debugger
+ 
     let userInfo = JSON.parse(localStorage.getItem('userInfo'));
     if(!userInfo){userInfo = {user_id:null}}
     return request.clone({

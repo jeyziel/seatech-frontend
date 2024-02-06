@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { CustomerService } from '../core/shared/services/customers.service';
 
 @Component({
   selector: 'app-customer',
@@ -25,7 +26,8 @@ export class CustomerComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private customerService: CustomerService
   ) { }
 
 
@@ -74,6 +76,35 @@ export class CustomerComponent implements OnInit {
 
     if (this.addCustomersForm.invalid)
       return;
+
+    const data = this.addCustomersForm.value
+
+    this.customerService.create(data)
+      .subscribe({
+        next: (res: any) => {
+
+          this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
+
+          this.addCustomersForm.reset()
+          this.addCustomersForm.clearValidators()
+
+          this.submittedCustomer = false
+          this.successCustomer = true;
+
+          this.getCustomers()
+
+
+        },
+        error: err => {
+
+          this.submittedCustomer = false
+          this.successCustomer = false;
+
+          this.toastr.error("Falha ao cadastrar as Tipos de vistoria", "Cadastrar Tipos Vistoria")
+        }
+      })
+
+
   }
 
   onEditCustomer(customer: any) {
@@ -90,6 +121,31 @@ export class CustomerComponent implements OnInit {
 
     if (this.editCustomersForm.invalid)
       return;
+
+      const data = this.editCustomersForm.value
+
+    this.customerService.update(this.customerSelected?.id, data)
+        .subscribe({
+          next: (res: any) => {
+  
+            this.toastr.success("Cliente cadastrado com sucesso!", "Cadastrar Cliente")
+
+  
+            this.submittedCustomer = false
+            this.successCustomer = true;
+  
+            this.getCustomers()
+  
+  
+          },
+          error: err => {
+  
+            this.submittedCustomer = false
+            this.successCustomer = false;
+  
+            this.toastr.error("Falha ao cadastrar o cliente", "Cadastrar Cliente")
+          }
+        })
   }
 
   setCustomerSelected(customer: any) {
@@ -98,9 +154,37 @@ export class CustomerComponent implements OnInit {
 
   removerCustomer(id: Number) {
 
+    this.customerService.delete(id)
+        .subscribe({
+          next: (res: any) => {
+  
+            this.toastr.success("Cliente removido com sucesso!", "Remover Cliente")
+
+            this.getCustomers()
+          },
+          error: err => {
+            this.toastr.error("Falha ao cadastrar o cliente", "Cadastrar Cliente")
+          }
+        })
+
   }
 
   getCustomers() {
+
+
+    this.customerService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.customers = res 
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+
+
+    /** 
     this.customers = [
       {
         id: 1,
@@ -114,7 +198,7 @@ export class CustomerComponent implements OnInit {
         cnpj: '555222234',
         description: 'Cliente 2',
       }
-    ];
+    ];*/
   }
 
   confirmationDelete() {
