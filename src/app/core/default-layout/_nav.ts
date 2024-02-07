@@ -15,8 +15,8 @@ export const navItems: any[] = [
     iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
   },
   {
-    name: 'Atendimento',
-    url: '/atendimento',
+    name: 'Atendimentos',
+    url: '/atendimentos',
     iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
   },
   {

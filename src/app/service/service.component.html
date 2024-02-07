@@ -62,7 +62,7 @@
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
 
-                    <button type="button" (click)="onManagerService(service); open(managerServices);"
+                    <button type="button" (click)="onManagerService(service);"
                       class="btn btn-dark btn-sm" title="Gerenciar">
                       Gerenciar &nbsp;
                       <span>
@@ -123,12 +123,23 @@
           </div>
 
           <div class="form-group">
+            <label for="input-harbor-create">Status(*)</label>
+            <select formControlName="Status" class="form-control" id="input-harbor-create">
+              <option value="IN_PROGRESS">Em Andamento</option>
+              <option value="FINISHED">Finalizado</option>
+              <option value="CANCELLED">Cancelado</option>
+            </select>
+            <div *ngIf="submittedService && !successService && addForm.Status.errors">
+              <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>
+            </div>
+          </div>
+          <!-- <div class="form-group">
             <label for="input-status" class="form-control-label">Status</label>
             <input formControlName="status" id="input-status" class="form-control" type="text">
             <div *ngIf="submittedService && !successService && addForm.status.errors">
               <small class="invalid-feedback" style="display: inline;">O Status é obrigatório.</small>
             </div>
-          </div>
+          </div> -->
         </form>
       </div>
       <div class="modal-footer">
