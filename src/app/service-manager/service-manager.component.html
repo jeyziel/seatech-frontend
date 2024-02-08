@@ -1,0 +1,443 @@
+<section class="content-header mb-1">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col d-flex flex-row">
+        <button type="button" class="btn btn-primary btn-sm mr-3" style="color: white;" title="Atendimento"
+          (click)="back()">
+          <span>
+            <i class="fas fa-arrow-circle-left"></i>
+          </span>
+        </button>
+        <h1>Gerenciar</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-4 col-lg-6 col-md-8 col-sm-12 col-xs-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-text-width"></i>
+            Sumário
+          </h3>
+        </div>
+
+        <div class="card-body details__content">
+          <ul class="list-unstyled">
+            <li><span class="font-weight-bold m-1">Nome: </span> {{ service?.ship_name }}</li>
+            <li><span class="font-weight-bold m-1">Descrição: </span> {{ service?.description }}</li>
+            <li><span class="font-weight-bold m-1">Valor Vistorias: </span> {{ service?.value_survey | currency: 'BRL'
+              }}</li>
+            <li><span class="font-weight-bold m-1">Valor Despesas: </span> {{ service?.value_expense | currency: 'BRL'
+              }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-7 text-left">
+              <h3 class="mb-0">Vistorias</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addServiceSurvey)">
+                <i class="fas fa-plus"></i>&nbsp; Vistoria
+              </a>
+            </div>
+          </div>
+
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Porto</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Vistoria</th>
+                <th scope="col">Status</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Data Vistoria</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let serviceSurvey of serviceSurveys">
+                <td>{{ serviceSurvey?.harbor?.name }}</td>
+                <td>{{ serviceSurvey?.customer?.name }}</td>
+                <td>{{ serviceSurvey?.survey?.name }}</td>
+                <td>
+                  <span
+                    [class]="'badge badge-' + (serviceSurvey?.biling_status == 'PENDING' ? 'warning' : serviceSurvey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"
+                    style="padding: .5em;">
+                    {{ serviceSurvey?.biling_status | translate }}
+                  </span>
+                </td>
+                <td>{{ serviceSurvey?.price | currency: 'BRL' }}</td>
+                <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
+                <td class="text-right">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button"
+                      (click)="setSurveySelected(serviceSurvey); open(modalConfirmationSur, removerSurvey, serviceSurvey?.id)"
+                      class="btn btn-dark btn-sm" title="Deletar">
+                      Deletar &nbsp;
+                      <span>
+                        <i class="fas fa-trash-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-7 text-left">
+              <h3 class="mb-0">Despesas</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-danger" (click)="open(addExpense)">
+                <i class="fas fa-plus"></i>&nbsp; Despesa
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Valor Pago</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Status</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Data Dívida</th>
+                <th scope="col">Data Lançamento</th>
+                <th scope="col">Pago em</th>
+                <th scope="col">Desconto</th>
+                <th scope="col">Multa</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let expense of expenses">
+                <td>{{ expense?.name }}</td>
+                <td>{{ expense?.value | currency: 'BRL' }}</td>
+                <td>{{ expense?.value_paid | currency: 'BRL' }}</td>
+                <td>{{ expense?.type | translate }}</td>
+                <td>
+                  <span [class]="'badge badge-' + (expense?.status == 'NOT_PAID' ? 'warning' : 'success')"
+                    style="padding: .5em;">
+                    {{ expense?.status | translate }}</span>
+                </td>
+                <td>{{ expense?.expense_category?.name }}</td>
+                <td>{{ (expense?.due_at | date: 'dd/MM/yyyy') ?? '-' }}</td>
+                <td>{{ (expense?.launch_at | date: 'dd/MM/yyyy') ?? '-'}}</td>
+                <td>{{ (expense?.paid_at | date: 'dd/MM/yyyy') ?? '-'}}</td>
+                <td>{{ expense?.discount }}</td>
+                <td>{{ expense?.fines }}</td>
+                <td class="text-right">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button"
+                      (click)="setExpenseSelected(expense); open(modalConfirmationExp, removerExpense, expense?.id)"
+                      class="btn btn-dark btn-sm" title="Deletar">
+                      Deletar &nbsp;
+                      <span>
+                        <i class="fas fa-trash-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #addServiceSurvey let-modal class="modal-dialog fade">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Cadastrar Vistoria</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="addServiceSurveys">
+        <div class="form-group">
+          <label for="input-survey-at" class="form-control-label">Data de Vistoria(*)</label>
+          <input type="date" formControlName="survey_at" id="input-survey-at" class="form-control">
+          <div *ngIf="submitted && !success && addServiceSurveyForm.survey_at.errors">
+            <small class="invalid-feedback" style="display: inline;">A Data é obrigatória.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-price" class="form-control-label">Preço(*)</label>
+          <input formControlName="price" id="input-price" class="form-control" type="number" step=".01">
+          <div *ngIf="submitted && !success && addServiceSurveyForm.price.errors">
+            <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-customer-create">Cliente(*)</label>
+          <select formControlName="customer_id" class="form-control" id="input-customer-create">
+            <option *ngFor="let customer of customers" [ngValue]="customer?.id">
+              {{ customer.name }}
+            </option>
+          </select>
+          <div *ngIf="submitted && !success && addServiceSurveyForm.customer_id.errors">
+            <small class="invalid-feedback" style="display: inline;">O Cliente é obrigatório.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-survey-create">Vistoria(*)</label>
+          <select formControlName="survey_id" class="form-control" id="input-survey-create">
+            <option *ngFor="let survey of surveys" [ngValue]="survey?.id">
+              {{ survey.name }}
+            </option>
+          </select>
+          <div *ngIf="submitted && !success && addServiceSurveyForm.survey_id.errors">
+            <small class="invalid-feedback" style="display: inline;">A Vistoria é obrigatória.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-harbor-create">Porto(*)</label>
+          <select formControlName="harbor_id" class="form-control" id="input-harbor-create">
+            <option *ngFor="let harbor of harbors" [ngValue]="harbor?.id">
+              {{ harbor.name }}
+            </option>
+          </select>
+          <div *ngIf="submitted && !success && addServiceSurveyForm.harbor_id.errors">
+            <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+    </div>
+  </ng-template>
+
+  <ng-template #addExpense let-modal class="modal-dialog fade">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Cadastrar Despesa</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="addExpenses">
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="input-name" class="form-control-label">Nome(*)</label>
+              <input formControlName="name" id="input-name" class="form-control" type="text">
+              <div *ngIf="submitted && !success && addExpenseForm.name.errors">
+                <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="input-value" class="form-control-label">Valor(*)</label>
+              <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
+              <div *ngIf="submitted && !success && addExpenseForm.value.errors">
+                <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="input-harbor-create">Tipo(*)</label>
+              <select formControlName="type" class="form-control" id="input-harbor-create">
+                <option value="DEFAULT">Padrão</option>
+                <option value="OPERATION">Operação</option>
+              </select>
+              <div *ngIf="submitted && !success && addExpenseForm.type.errors">
+                <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="input-harbor-create">Status(*)</label>
+              <select formControlName="status" class="form-control" id="input-harbor-create">
+                <option value="PAID">Pago</option>
+                <option value="NOT_PAID">Não Pago</option>
+              </select>
+              <div *ngIf="submitted && !success && addExpenseForm.status.errors">
+                <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
+              <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
+              <div *ngIf="submitted && !success && addExpenseForm.due_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="input-launch-at" class="form-control-label">Data de Lançamento(*)</label>
+              <input type="date" formControlName="launch_at" id="input-launch-at" class="form-control">
+              <div *ngIf="submitted && !success && addExpenseForm.launch_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de Lançamento é obrigatória.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="input-account-create">Conta(*)</label>
+              <select formControlName="account_id" class="form-control" id="input-account-create">
+                <option *ngFor="let account of accounts" [ngValue]="account?.id">
+                  {{ account.name }}
+                </option>
+              </select>
+              <div *ngIf="submitted && !success && addExpenseForm.account_id.errors">
+                <small class="invalid-feedback" style="display: inline;">A conta é obrigatória.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="input-expense-category-create">Categoria(*)</label>
+              <select formControlName="expense_category_id" class="form-control" id="input-expense-category-create">
+                <option *ngFor="let expenseCategory of expenseCategorys" [ngValue]="expenseCategory?.id">
+                  {{ expenseCategory.name }}
+                </option>
+              </select>
+              <div *ngIf="submitted && !success && addExpenseForm.expense_category_id.errors">
+                <small class="invalid-feedback" style="display: inline;">A Categoria é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+            <input type="checkbox" class="custom-control-input" id="customSwitch4" formControlName="isPayment">
+            <label class="custom-control-label" for="customSwitch4">Pagamento?</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="form-group" *ngIf="addExpenses.controls['isPayment'].value">
+              <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+              <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+              <div *ngIf="submitted && !success && addExpenseForm.value_paid.errors">
+                <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group" *ngIf="addExpenses.controls['isPayment'].value">
+              <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+              <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+              <div *ngIf="submitted && !success && addExpenseForm.paid_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de Lançamento é obrigatória.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="form-group" *ngIf="addExpenses.controls['isPayment'].value">
+              <label for="input-discount" class="form-control-label">Desconto(*)</label>
+              <input formControlName="discount" id="input-discount" class="form-control" type="number" step=".01">
+              <div *ngIf="submitted && !success && addExpenseForm.discount.errors">
+                <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group" *ngIf="addExpenses.controls['isPayment'].value">
+              <label for="input-fines" class="form-control-label">Multa(*)</label>
+              <input formControlName="fines" id="input-fines" class="form-control" type="number" step=".01">
+              <div *ngIf="submitted && !success && addExpenseForm.fines.errors">
+                <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+    </div>
+  </ng-template>
+
+  <ng-template #modalConfirmationSur let-modal class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Deseja Remover Essa Vistoria?
+    </div>
+    <div class="modal-footer">
+      <button type="button" (click)="modal.dismiss('Cross click')"
+        class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+        Cancelar
+      </button>
+      <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+        class="btn bg-gradient-danger float-right">
+        Confimar
+      </button>
+    </div>
+  </ng-template>
+  <ng-template #modalConfirmationExp let-modal class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Deseja Remover Essa despesa '{{ expenseSelected?.name }}'?
+    </div>
+    <div class="modal-footer">
+      <button type="button" (click)="modal.dismiss('Cross click')"
+        class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+        Cancelar
+      </button>
+      <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+        class="btn bg-gradient-danger float-right">
+        Confimar
+      </button>
+    </div>
+  </ng-template>
+</div>

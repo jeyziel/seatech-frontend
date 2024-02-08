@@ -14,6 +14,7 @@ import { HarborComponent } from './harbor/harbor.component';
 import { IncomeCategoryComponent } from './income-category/income-category.component';
 import { AccountComponent } from './account/account.component';
 import { ServiceComponent } from './service/service.component';
+import { ServiceManagerComponent } from './service-manager/service-manager.component';
 
 const routes: Routes = [
   {
@@ -39,8 +40,12 @@ const routes: Routes = [
         component: SurveyComponent,
       },
       {
-        path: 'atendimento',
+        path: 'atendimentos',
         component: ServiceComponent,
+      },
+      {
+        path: 'atendimentos/:id/gerenciar',
+        component: ServiceManagerComponent,
       },
       {
         path: 'categoria-de-vistoria',

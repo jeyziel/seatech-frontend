@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AtendimentoService } from '../core/shared/services/atendimento.service';
@@ -30,7 +31,8 @@ export class ServiceComponent {
   constructor(
     private modalService: NgbModal,
     private toastr: ToastrService,
-    private atendimentoService: AtendimentoService
+    private atendimentoService: AtendimentoService,
+    private router: Router
   ) { }
 
 
@@ -90,8 +92,8 @@ export class ServiceComponent {
   }
 
   onManagerService(service: any) {
-
-    this.serviceSelected = service
+    this.router.navigate(['atendimentos', service?.id, 'gerenciar']);
+    // this.router.navigate(['atendimentos', service?.id, 'gerenciar']);
   }
 
   update() {

@@ -35,6 +35,7 @@ import { ServiceComponent } from './service/service.component';
 import { TranslatePipe } from './pipes/translate.pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SearchPipe } from './pipes/search.pipe';
+import { ServiceManagerComponent } from './service-manager/service-manager.component';
 
 
 registerLocaleData(localePt);
@@ -54,7 +55,8 @@ registerLocaleData(localePt);
     ExpenseCategoryComponent,
     ServiceComponent,
     TranslatePipe,
-    SearchPipe
+    SearchPipe,
+    ServiceManagerComponent
   ],
   imports: [
     CommonModule,
