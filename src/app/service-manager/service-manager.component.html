@@ -233,7 +233,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+      <button (click)="createServiceSurvey()" type="button" class="btn btn-outline-dark">Criar</button>
     </div>
   </ng-template>
 
@@ -272,7 +272,6 @@
             <div class="form-group">
               <label for="input-harbor-create">Tipo(*)</label>
               <select formControlName="type" class="form-control" id="input-harbor-create">
-                <option value="DEFAULT">Padrão</option>
                 <option value="OPERATION">Operação</option>
               </select>
               <div *ngIf="submitted && !success && addExpenseForm.type.errors">
@@ -394,7 +393,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+      <button (click)="createExpense()" type="button" class="btn btn-outline-dark">Criar</button>
     </div>
   </ng-template>
 
