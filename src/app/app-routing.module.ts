@@ -15,17 +15,19 @@ import { IncomeCategoryComponent } from './income-category/income-category.compo
 import { AccountComponent } from './account/account.component';
 import { ServiceComponent } from './service/service.component';
 import { ServiceManagerComponent } from './service-manager/service-manager.component';
+import { NonAuthGuard } from './modules/auth/guards/non-auth.guard';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'login',
+   
     pathMatch: 'full'
   },
   {
     path: '',
     component: DefaultLayoutComponent,
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     data: {
       title: 'Home'
     },
@@ -67,16 +69,6 @@ const routes: Routes = [
         path: 'contas-bancarias',
         component: AccountComponent,
       },
-      {
-        path: 'widgets',
-        loadChildren: () =>
-          import('./modules/common/widgets/widgets.module').then((m) => m.WidgetsModule)
-      },
-      {
-        path: 'simple-table',
-        loadChildren: () =>
-          import('./modules/common/tables/simple-table/simple-table.module').then((m) => m.DataTableModule)
-      },
       { path: 'vistorias', loadChildren: () => import('./modules/common/pages/surveys/surveys.module').then(m => m.SurveyModule) },
       { path: 'dashboard', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
 
@@ -84,24 +76,10 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    // canActivate: [authGuard],
+    canActivate: [NonAuthGuard],
     component: LoginComponent,
     data: {
       title: 'Login Page'
-    }
-  },
-  {
-    path: 'register',
-    component: RegisterComponent,
-    data: {
-      title: 'Register Page'
-    }
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent,
-    data: {
-      title: 'Reset Password Page'
     }
   },
   {path: '**', redirectTo: 'dashboard'}

@@ -41,7 +41,7 @@ export class ServiceComponent {
     this.addServicesForm = new FormGroup({
       ship_name: new FormControl(null, [Validators.required]),
       description: new FormControl(null, [Validators.nullValidator]),
-      status: new FormControl(null, [Validators.required])
+      status: new FormControl("IN_PROGRESS", [Validators.required])
     })
 
     this.editServicesForm = new FormGroup({
@@ -81,6 +81,26 @@ export class ServiceComponent {
 
     if (this.addServicesForm.invalid)
       return;
+
+    const data = this.addServicesForm.value
+
+    this.atendimentoService.create(data)
+      .subscribe({
+        next: res => {
+
+
+          this.toastr.success("Atendimento criado com sucesso", "Atendimento")
+
+          this.getServices()
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao buscar atendimento", "Atendimento")
+
+
+        }
+      })
+
   }
 
   onEditService(service: any) {
@@ -102,6 +122,25 @@ export class ServiceComponent {
 
     if (this.editServicesForm.invalid)
       return;
+
+    const data = this.addServicesForm.value
+
+    this.atendimentoService.update(this.serviceSelected?.id, data)
+      .subscribe({
+        next: res => {
+
+
+          this.toastr.success("Atendimento criado com sucesso", "Atendimento")
+
+          this.getServices()
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao buscar atendimento", "Atendimento")
+
+
+        }
+      })
   }
 
   setServiceSelected(service: any) {
@@ -110,10 +149,37 @@ export class ServiceComponent {
 
   removerService(id: Number) {
 
+
+    this.atendimentoService.delete(id)
+      .subscribe({
+        next: (res: any[]) => {
+
+          this.toastr.success("Atendimento excluído com sucesso", "Excluir Atendimento");
+
+        },
+        error: err => {
+          this.toastr.error("Falha ao buscar atendimento", "Atendimentos")
+        }
+      })
+
+
   }
 
   async getServices() {
 
+
+    this.atendimentoService.list()
+      .subscribe({
+        next: (res: any[]) => {
+          this.services = res
+        },
+        error: err => {
+          this.toastr.error("Falha ao buscar atendimento", "Atendimentos")
+        }
+      })
+
+
+    /*
     const auxList = [
       {
         id: 1,
@@ -141,7 +207,9 @@ export class ServiceComponent {
     for (let i = 0; i < 25; i++) {
       const position = (Math.random() * (auxList.length - 1)).toFixed();
       this.services.push(auxList[position])
-    }
+    }*/
+
+
   }
 
   confirmationDelete() {

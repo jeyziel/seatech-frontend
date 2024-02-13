@@ -27,7 +27,7 @@ import { IncomeCategoryComponent } from './income-category/income-category.compo
 import { AccountComponent } from './account/account.component';
 import { ExpenseCategoryComponent } from './expense-category/expense-category.component';
 import localePt from '@angular/common/locales/pt';
-import { registerLocaleData } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 
 import { CommonModule } from '@angular/common';
 
@@ -79,7 +79,9 @@ registerLocaleData(localePt);
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    },],
+    },
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
