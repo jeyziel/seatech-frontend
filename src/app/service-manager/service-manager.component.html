@@ -61,7 +61,7 @@
                 <th scope="col">Porto</th>
                 <th scope="col">Cliente</th>
                 <th scope="col">Vistoria</th>
-                <th scope="col">Status</th>
+                <th scope="col">Situação</th>
                 <th scope="col">Preço</th>
                 <th scope="col">Data Vistoria</th>
                 <th scope="col"></th>
@@ -123,7 +123,7 @@
                 <th scope="col">Valor</th>
                 <th scope="col">Valor Pago</th>
                 <th scope="col">Tipo</th>
-                <th scope="col">Status</th>
+                <th scope="col">Situação</th>
                 <th scope="col">Categoria</th>
                 <th scope="col">Data Dívida</th>
                 <th scope="col">Data Lançamento</th>
@@ -252,7 +252,7 @@
               <label for="input-name" class="form-control-label">Nome(*)</label>
               <input formControlName="name" id="input-name" class="form-control" type="text">
               <div *ngIf="submitted && !success && addExpenseForm.name.errors">
-                <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+                <small class="invalid-feedback" style="display: inline;">O Nome é obrigatório.</small>
               </div>
             </div>
           </div>
@@ -261,7 +261,7 @@
               <label for="input-value" class="form-control-label">Valor(*)</label>
               <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
               <div *ngIf="submitted && !success && addExpenseForm.value.errors">
-                <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+                <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
               </div>
             </div>
           </div>
@@ -281,13 +281,13 @@
           </div>
           <div class="col">
             <div class="form-group">
-              <label for="input-harbor-create">Status(*)</label>
+              <label for="input-harbor-create">Situação(*)</label>
               <select formControlName="status" class="form-control" id="input-harbor-create">
                 <option value="PAID">Pago</option>
                 <option value="NOT_PAID">Não Pago</option>
               </select>
               <div *ngIf="submitted && !success && addExpenseForm.status.errors">
-                <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>
+                <small class="invalid-feedback" style="display: inline;">A Situação é obrigatória.</small>
               </div>
             </div>
           </div>
