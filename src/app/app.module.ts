@@ -37,6 +37,7 @@ import { SearchPipe } from './pipes/search.pipe';
 import { ServiceManagerComponent } from './service-manager/service-manager.component';
 import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
+import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
 
 registerLocaleData(localePt);
 
@@ -58,7 +59,8 @@ registerLocaleData(localePt);
     SearchPipe,
     ServiceManagerComponent,
     BillsToReceiveComponent,
-    DateRangePickerComponent
+    DateRangePickerComponent,
+    BillsToPayComponent
   ],
   imports: [
     CommonModule,
