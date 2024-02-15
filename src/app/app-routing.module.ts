@@ -24,6 +24,11 @@ const routes: Routes = [
    
     pathMatch: 'full'
   },
+
+ 
+    { path: 'inbox', loadChildren: () => import('./modules/common/mailbox/inbox/inbox.module').then(m => m.InboxModule) },
+   
+
   {
     path: '',
     component: DefaultLayoutComponent,
