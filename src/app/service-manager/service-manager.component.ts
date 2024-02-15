@@ -2,7 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from '@angular/common';
+import { AtendimentoService } from '../core/shared/services/atendimento.service';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute } from '@angular/router';
+import { SurveyService } from '../core/shared/services/surveys.service';
+import { CustomerService } from '../core/shared/services/customers.service';
+import { HarborService } from '../core/shared/services/harbor.service';
+import { SurveyServiceService } from '../core/shared/services/surveys-service.service';
+import { AccountService } from '../core/shared/services/account.service';
+import { ExpenseServiceService } from '../core/shared/services/surveys-service.service copy';
+import { ExpenseCategoriesService } from '../core/shared/services/expense-categories.service';
 
 @Component({
   selector: 'app-service-manager',
@@ -18,6 +27,8 @@ export class ServiceManagerComponent {
   public serviceSurveys: any[];
   public expenses: any[];
 
+  public service_id;
+
   public surveys: any[];
   public harbors: any[];
   public customers: any[];
@@ -28,6 +39,9 @@ export class ServiceManagerComponent {
   public submitted: Boolean;
   public success: Boolean;
 
+  public surveys_value: Number = 0;
+  public expense_value: Number = 0;
+
   public serviceSurveysSelected: any;
   public expenseSelected: any;
 
@@ -37,7 +51,16 @@ export class ServiceManagerComponent {
   constructor(
     private modalService: NgbModal,
     private location: Location,
-    private toast: ToastrService,
+    private atendimentoService: AtendimentoService,
+    private managerSurveyService: SurveyServiceService,
+    private expenseService: ExpenseServiceService,
+    private surveyService: SurveyService,
+    private customerService: CustomerService,
+    private harborService: HarborService,
+    private accountService: AccountService,
+    private expenseCategoriesService : ExpenseCategoriesService,
+    private toastr: ToastrService,
+    private router: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -56,17 +79,46 @@ export class ServiceManagerComponent {
       type: new FormControl('OPERATION', [Validators.required]),
       account_id: new FormControl(null, [Validators.required]),
       expense_category_id: new FormControl(null, [Validators.required]),
-      status: new FormControl(null, [Validators.required]),
       due_at: new FormControl(null, [Validators.required]),
       launch_at: new FormControl(null, [Validators.required]),
       isPayment: new FormControl(false, [Validators.nullValidator]),
       value_paid: new FormControl(null, [Validators.nullValidator]),
       paid_at: new FormControl(null, [Validators.nullValidator]),
-      discount: new FormControl(null, [Validators.nullValidator]),
-      fines: new FormControl(null, [Validators.nullValidator]),
+      discount: new FormControl(0, [Validators.nullValidator]),
+      fines: new FormControl(0, [Validators.nullValidator]),
+      status: new FormControl(false, [Validators.nullValidator]),
     })
 
-    this.getServiceManagers();
+    this.service_id = this.router.snapshot.params['id']
+
+    console.log("service_id", this.service_id)
+
+    // "name": "Pagamento de Agua",
+    // "value": 50,
+    // "type": "OPERATION",
+    // "account_id": 1,
+    // "expense_category_id": 1,
+    // "status": "PAID",
+    // "due_at": "2023-12-25",
+    // "launch_at": "2023-12-20",
+    // "value_paid": 50,
+    // "paid_at": "2023-12-23",
+    // "discount": 2,
+    // "fines": 1
+
+
+    this.getServiceSurveys();
+    this.getServiceExpenses();
+
+    this.getServices()
+   // this.getCustomers()
+   // this.getHarbors()
+   // this.getSurveys()
+
+    this.getExpenseCategories()
+    this.getAccounts()
+
+
   }
 
   get addServiceSurveyForm() {
@@ -91,46 +143,245 @@ export class ServiceManagerComponent {
   }
 
 
-  createServiceSurvey() {
+  create() {
     this.submitted = true
     this.success = false;
+
+    if (this.addServiceSurveyForm.invalid)
+      return;
+
+    const data = this.addServiceSurveys.value
+
+    this.managerSurveyService.create(this.service_id, data)
+      .subscribe({
+        next: res => {
+
+          this.submitted = false
+          this.success = true;
+
+          this.toastr.success("Vistoria adicionada com sucesso", "Vistórias")
+
+          this.getServiceSurveys()
+
+        },
+        error: err => {
+
+          this.submitted = true
+          this.success = false;
+
+          this.toastr.error("Falha ao adicionar vistórias", "Vistórias")
+        }
+      })
+
+
   }
 
   createExpense() {
     this.submitted = true
     this.success = false;
 
-    //Validação
-    if (this.addExpenses.controls['isPayment'].value) {
-      const invalid = [undefined, null, ''];
-      const fields = [
-        {name: 'value_paid', error_name: 'Valor pago'},
-        {name: 'paid_at', error_name: 'Data de Pagamento'},
-        {name: 'discount', error_name: 'Desconto'},
-        {name: 'fines', error_name: 'Multa'},
-      ];
-      let haveError: boolean = false;
-      for (const field of fields) {
-        if (invalid.includes(this.addExpenses.controls[field.name].value)) {
-          this.toast.error(`O(a) ${field.error_name} é obrigatório(a)!`, 'Formulário Inválido')
-          haveError = true;
-        }
-      }
+    console.log(this.addExpenseForm.value)
 
-      if(haveError) return;
-    }
+    if (this.addExpenseForm.invalid)
+      return;
+
+
+    const data = this.addExpenses.value
+    data["status"] = data["status"] == true ? "PAID" : "NOT_PAID";
+    data["service_id"] = this.service_id
+    data["type"] = "SERVICES"
+
+
+
+    this.expenseService.create(this.service_id, data)
+    .subscribe({
+      next: (res: any) => {
+
+
+        this.toastr.success("Despesa adicionada ao atendimento", "Despesa de Atendimento");
+
+
+        this.getServiceExpenses()
+
+      },
+      error: err => {
+
+        console.log(err)
+
+        this.toastr.error("Falha ao adicionar despesa ao atendimento", "Despesa de Atendimento");
+
+
+      }
+    })
+
+
 
   }
 
   removerServiceSurvey(id: Number) {
 
+
+    this.managerSurveyService.delete(this.service_id, id)
+      .subscribe({
+        next: res => {
+
+          this.getServiceExpenses()
+
+          this.toastr.success("Despesa removida com sucesso", "Excluir Despesa")
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao excluir despesa", "Excluir Despesa")
+
+        }
+      })
+
+
   }
 
   removerExpense(id: Number) {
 
+    this.expenseService.delete(this.service_id, this.expenseSelected.id)
+      .subscribe({
+        next: res => {
+
+          this.getServiceExpenses()
+
+          this.toastr.success("Despesa removida com sucesso", "Excluir Despesa")
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao excluir despesa", "Excluir Despesa")
+
+        }
+      })
+
+
   }
 
-  getServiceManagers() {
+  async getServices() {
+
+
+    this.atendimentoService.show(this.service_id)
+      .subscribe({
+        next: (res: any[]) => {
+          this.service = res[0]
+        },
+        error: err => {
+          this.toastr.error("Falha ao buscar atendimento", "Atendimentos")
+        }
+      })
+  }
+
+  getSurveys() {
+
+
+    this.surveyService.list()
+      .subscribe({
+        next: (res: any[]) => {
+
+          this.surveys = res
+
+        },
+        error: err => {
+          this.toastr.error("Falha ao buscar as vistorias", "Vistórias")
+          console.log(err)
+        }
+      })
+  }
+
+  getHarbors() {
+
+
+
+
+    this.harborService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.harbors = res
+
+        },
+        error: err => {
+          console.log("Falha ao realizar Login", err)
+        }
+      })
+  }
+
+
+  getCustomers() {
+
+
+    this.customerService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.customers = res
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+  }
+
+  getAccounts() {
+
+
+    this.accountService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.accounts = res
+
+          console.log(this.accounts)
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+  }
+
+  getExpenseCategories() {
+
+
+    this.expenseCategoriesService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.expenseCategorys = res
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+  }
+
+  getServiceSurveys() {
+
+    this.managerSurveyService.show(this.service_id)
+      .subscribe({
+        next: (res: any) => {
+          this.serviceSurveys = res
+
+          console.log(res)
+
+
+          this.surveys_value = this.serviceSurveys.reduce((acc, curr) => {
+            return acc + curr.price;
+          }, 0) ?? 0;
+
+
+          console.log(this.surveys_value)
+
+        },
+        error: err => {
+
+          console.log("Fakha")
+
+        }
+      })
+
+
+    /**
     this.service = {
       id: 1,
       ship_name: 'Navio Pequeno',
@@ -139,6 +390,9 @@ export class ServiceManagerComponent {
       value_survey: 190.59,
       value_expense: 20.59,
     };
+
+
+
 
     this.serviceSurveys = [
       {
@@ -235,7 +489,27 @@ export class ServiceManagerComponent {
     this.accounts = [
       { id: 1, name: 'PIX', },
       { id: 2, name: 'Caixa', }
-    ];
+    ];*/
+  }
+
+  getServiceExpenses() {
+
+    this.expenseService.show(this.service_id)
+      .subscribe({
+        next: (res: any) => {
+          this.expenses = res
+
+          this.expense_value = this.expenses.reduce((acc, curr) => {
+            return acc + curr.price;
+          }, 0) ?? 0;
+
+        },
+        error: err => {
+
+          console.log("Falha expenseSurvey", err)
+
+        }
+      })
   }
 
   setSurveySelected(serviceSurvey: any) {

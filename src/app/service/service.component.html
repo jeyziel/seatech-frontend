@@ -127,7 +127,6 @@
             <select formControlName="status" class="form-control" id="input-harbor-create">
               <option value="IN_PROGRESS">Em Andamento</option>
               <option value="FINISHED">Finalizado</option>
-              <option value="CANCELLED">Cancelado</option>
             </select>
             <div *ngIf="submittedService && !successService && addForm.status.errors">
               <small class="invalid-feedback" style="display: inline;">A Situação é obrigatória.</small>
