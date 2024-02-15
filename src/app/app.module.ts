@@ -13,7 +13,7 @@ import { ResetPasswordComponent } from './modules/auth/reset-password/reset-pass
 import { FeatureGuard } from './core/permission/guards/feature.guard';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/shared/interceptors/auth.interceptor';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -39,6 +39,7 @@ import { ServiceManagerComponent } from './service-manager/service-manager.compo
 import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
+import { NgDateRangePickerComponent } from './components/ng-date-range-picker/ng-date-range-picker.component';
 
 registerLocaleData(localePt);
 
@@ -60,8 +61,9 @@ registerLocaleData(localePt);
     SearchPipe,
     ServiceManagerComponent,
     BillsToReceiveComponent,
+    BillsToPayComponent,
     DateRangePickerComponent,
-    BillsToPayComponent
+    NgDateRangePickerComponent,
   ],
   imports: [
     CommonModule,
@@ -73,6 +75,7 @@ registerLocaleData(localePt);
     NgbModule,
     ToastrModule.forRoot(),
     NgxPaginationModule,
+    NgbDatepickerModule,
   ],
   providers: [
     FeatureGuard,
