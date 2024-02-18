@@ -52,6 +52,11 @@ export const navItems: any[] = [
     iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
     children: [
       {
+        name: 'Contas a Pagar',
+        url: '/contas-a-pagar',
+        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      },
+      {
         name: 'Categoria',
         url: '/categoria-de-despesa',
         iconComponent: { name: 'nav-icon fas fa-regular fa-user'}

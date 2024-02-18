@@ -368,7 +368,7 @@ export class BillsToReceiveComponent {
   }
 
   getIncomeWithFilter() {
-  
+
 
     const invalid = [undefined, null, ''];
     const filters = this.filtersForm.value;

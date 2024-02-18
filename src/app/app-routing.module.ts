@@ -17,6 +17,7 @@ import { ServiceComponent } from './service/service.component';
 import { ServiceManagerComponent } from './service-manager/service-manager.component';
 import { NonAuthGuard } from './modules/auth/guards/non-auth.guard';
 import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
+import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
 
 const routes: Routes = [
   {
@@ -70,6 +71,10 @@ const routes: Routes = [
       {
         path: 'contas-a-receber',
         component: BillsToReceiveComponent,
+      },
+      {
+        path: 'contas-a-pagar',
+        component: BillsToPayComponent,
       },
       {
         path: 'categoria-de-receita',

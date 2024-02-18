@@ -1,1 +1,444 @@
-<p>bills-to-pay works!</p>
+<section class="content-header mb-1">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Contas a Pagar</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-4 text-left">
+              <h3 class="mb-0">Listagem</h3>
+            </div>
+            <div class="col-7 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addExpenses)">Adicionar</a>
+            </div>
+            <div class="col-1 text-right">
+              <a class="btn btn-sm btn-secondary" (click)="open(filter)">Filtros</a>
+            </div>
+          </div>
+
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Situação</th>
+                <th scope="col">Data Vencimento</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let expense of expenses | paginate: { itemsPerPage, currentPage }">
+                <td>
+                  {{ expense?.name }}
+                </td>
+                <td>
+                  {{ expense?.type | translate }}
+                </td>
+                <td>
+                  {{ expense?.expense_category?.name ?? '-' }}
+                </td>
+                <td>
+                  {{ expense?.value | currency: 'BRL' }}
+                </td>
+                <td>
+                  {{ expense?.status | translate }}
+                </td>
+                <td>
+                  {{ (expense?.due_at | date: 'dd/MM/yyyy') ?? '-' }}
+                </td>
+                <td class="text-right">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button" (click)="onEditExpense(expense); open(editExpenses);" class="btn btn-dark btn-sm"
+                      title="Editar">
+                      Editar &nbsp;
+                      <span>
+                        <i class="fas fa-pencil-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button" (click)="onConfirmPaymentSelected(expense); open(confirmPayment)"
+                      class="btn btn-dark btn-sm" title="Pagar">
+                      Pagar &nbsp;
+                      <span>
+                        <i class="fas fa-file-invoice-dollar"></i>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button type="button"
+                      (click)="setExpenseSelected(expense); open(modalConfirmation, removerExpense, expense?.id)"
+                      class="btn btn-dark btn-sm" title="Deletar">
+                      Deletar &nbsp;
+                      <span>
+                        <i class="fas fa-trash-alt"></i>
+                      </span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <pagination-controls (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
+          [previousLabel]="'Anterior'"></pagination-controls>
+      </div>
+    </div>
+
+    <ng-template #addExpenses let-modal class="modal-dialog fade">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Cadastrar Conta a Pagar</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addExpensesForm">
+          <div class="form-group">
+            <label for="input-nf" class="form-control-label">N.F</label>
+            <input formControlName="nf" id="input-nf" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedExpense && !successExpense && addForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O Nome é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-value" class="form-control-label">Valor(*)</label>
+            <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
+            <div *ngIf="submittedExpense && !successExpense && addForm.value.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
+            <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
+            <div *ngIf="submittedExpense && !successExpense && addForm.due_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="input-account-create">Conta(*)</label>
+                <select formControlName="account_id" class="form-control" id="input-account-create">
+                  <option *ngFor="let account of accounts" [ngValue]="account?.id">
+                    {{ account.name }}
+                  </option>
+                </select>
+                <div *ngIf="submittedExpense && !successExpense && addForm.account_id.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Conta é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="input-expense-category-create">Categoria(*)</label>
+                <select formControlName="expense_category_id" class="form-control" id="input-expense-category-create">
+                  <option *ngFor="let expenseCategory of expenseCategorys" [ngValue]="expenseCategory?.id">
+                    {{ expenseCategory.name }}
+                  </option>
+                </select>
+                <div *ngIf="submittedExpense && !successExpense && addForm.expense_category_id.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Categoria é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+              <input type="checkbox" class="custom-control-input" id="customSwitch4" formControlName="isPayment">
+              <label class="custom-control-label" for="customSwitch4">Pagamento?</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group" *ngIf="addExpensesForm.controls['isPayment'].value">
+                <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+                <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedExpense && !successExpense && addForm.value_paid.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Valor Pago é obrigatório.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group" *ngIf="addExpensesForm.controls['isPayment'].value">
+                <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+                <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+                <div *ngIf="submittedExpense && !successExpense && addForm.paid_at.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group" *ngIf="addExpensesForm.controls['isPayment'].value">
+                <label for="input-discount" class="form-control-label">Desconto(*)</label>
+                <input formControlName="discount" id="input-discount" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedExpense && !successExpense && addForm.discount.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Desconto é obrigatório.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group" *ngIf="addExpensesForm.controls['isPayment'].value">
+                <label for="input-fines" class="form-control-label">Multa(*)</label>
+                <input formControlName="fines" id="input-fines" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedExpense && !successExpense && addForm.fines.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Multa é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
+      </div>
+    </ng-template>
+
+    <ng-template #editExpenses let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Conta a Pagar</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editExpensesForm">
+          <div class="form-group">
+            <label for="input-nf" class="form-control-label">N.F</label>
+            <input formControlName="nf" id="input-nf" class="form-control" type="text">
+          </div>
+
+          <div class="form-group">
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedExpense && !successExpense && editForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O Nome é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-value" class="form-control-label">Valor(*)</label>
+            <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
+            <div *ngIf="submittedExpense && !successExpense && editForm.value.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
+            <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
+            <div *ngIf="submittedExpense && !successExpense && editForm.due_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="input-account-create">Conta(*)</label>
+                <select formControlName="account_id" class="form-control" id="input-account-create">
+                  <option *ngFor="let account of accounts" [ngValue]="account?.id">
+                    {{ account.name }}
+                  </option>
+                </select>
+                <div *ngIf="submittedExpense && !successExpense && editForm.account_id.errors">
+                  <small class="invalid-feedback" style="display: inline;">A conta é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="input-expense-category-create">Categoria(*)</label>
+                <select formControlName="expense_category_id" class="form-control" id="input-expense-category-create">
+                  <option *ngFor="let expenseCategory of expenseCategorys" [ngValue]="expenseCategory?.id">
+                    {{ expenseCategory.name }}
+                  </option>
+                </select>
+                <div *ngIf="submittedExpense && !successExpense && editForm.expense_category_id.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Categoria é obrigatório.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+              <input type="checkbox" class="custom-control-input" id="customSwitch4" formControlName="isPayment">
+              <label class="custom-control-label" for="customSwitch4">Pagamento?</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group" *ngIf="editExpensesForm.controls['isPayment'].value">
+                <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+                <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedExpense && !successExpense && editForm.value_paid.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Valor Pago é obrigatório.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group" *ngIf="editExpensesForm.controls['isPayment'].value">
+                <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+                <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+                <div *ngIf="submittedExpense && !successExpense && editForm.paid_at.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group" *ngIf="editExpensesForm.controls['isPayment'].value">
+                <label for="input-discount" class="form-control-label">Desconto(*)</label>
+                <input formControlName="discount" id="input-discount" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedExpense && !successExpense && editForm.discount.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Desconto é obrigatório.</small>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group" *ngIf="editExpensesForm.controls['isPayment'].value">
+                <label for="input-fines" class="form-control-label">Multa(*)</label>
+                <input formControlName="fines" id="input-fines" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedExpense && !successExpense && editForm.fines.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Multa é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="update()" type="button" class="btn btn-outline-dark">SALVAR</button>
+      </div>
+    </ng-template>
+
+    <ng-template #confirmPayment let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Confirmar Pagamento '{{ expenseSelected?.name }}'</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="confirmPaymentForm">
+          <div class="form-group">
+            <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+            <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+            <div *ngIf="submittedExpense && !successExpense && paymentForm.value_paid.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+            <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+            <div *ngIf="submittedExpense && !successExpense && paymentForm.paid_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
+      </div>
+    </ng-template>
+
+    <ng-template #filter let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Filtros</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="filtersForm">
+          <div class="form-group">
+            <label for="input-harbor-create">Tipo</label>
+            <select formControlName="type" class="form-control" id="input-harbor-create">
+              <option value="OPERATION">Operação</option>
+              <option value="DEFAULT">Padrão</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="input-harbor-create">Situação</label>
+                <select formControlName="status" class="form-control" id="input-harbor-create">
+                  <option value="PAID">Pago</option>
+                  <option value="NOT_PAID">Não Pago</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="input-expense-category-create">Categoria</label>
+                <select formControlName="expense_category_id" class="form-control" id="input-expense-category-create">
+                  <option *ngFor="let expenseCategory of expenseCategorys" [ngValue]="expenseCategory?.id">
+                    {{ expenseCategory.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <app-ng-date-range-picker [(fromDate)]="fromDate" [(toDate)]="toDate"></app-ng-date-range-picker>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="getExpenseWithFilter()" type="button" class="btn btn-outline-dark">Buscar</button>
+      </div>
+    </ng-template>
+
+    <ng-template #modalConfirmation let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Deseja Remover Essa Conta a Pagar '{{ expenseSelected?.name }}'?
+      </div>
+      <div class="modal-footer">
+        <button type="button" (click)="modal.dismiss('Cross click')"
+          class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+          Cancelar
+        </button>
+        <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+          class="btn bg-gradient-danger float-right">
+          Confimar
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
