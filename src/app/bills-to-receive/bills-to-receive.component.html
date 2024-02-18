@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Contas a Receber</h1>
+        <h1>Receitas</h1>
       </div>
     </div>
   </div>
@@ -11,11 +11,11 @@
 <div class="container-fluid mt--7">
   <div class="row">
     <div class="col">
-      <div class="card shadow">
+      <div class="card">
         <div class="card-header border-0">
           <div class="row align-items-center">
             <div class="col-4 text-left">
-              <h3 class="mb-0">Listagem</h3>
+              <h3 class="mb-0">Lista de Contas a Receber</h3>
             </div>
             <div class="col-7 text-right">
               <a class="btn btn-sm btn-primary" (click)="open(addIncomes)">Adicionar</a>
@@ -28,7 +28,7 @@
         </div>
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
-            <thead class="thead-light">
+            <thead class="thead">
               <tr>
                 <th scope="col">Nome</th>
                 <th scope="col">Tipo</th>
@@ -36,6 +36,7 @@
                 <th scope="col">Valor</th>
                 <th scope="col">Situação</th>
                 <th scope="col">Data Vencimento</th>
+                <th scope="col">Data de Pagamento</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -51,7 +52,7 @@
                   {{ income?.income_category?.name ?? '-' }}
                 </td>
                 <td>
-                  {{ income?.value | currency: 'BRL' }}
+                  {{ income?.value_paid ??  income?.value | currency: 'BRL' }}
                 </td>
                 <td>
                   {{ income?.status | translate }}
@@ -59,8 +60,14 @@
                 <td>
                   {{ (income?.due_at | date: 'dd/MM/yyyy') ?? '-' }}
                 </td>
+
+                <td>
+                  {{ (income?.paid_at | date: 'dd/MM/yyyy') ?? '-' }}
+                </td>
+
+
                 <td class="text-right">
-                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group" *ngIf="income?.type == 'OPERATION'">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group" *ngIf="income?.type == 'SERVICES'">
                     <button type="button" (click)="toServices(income);" class="btn btn-dark btn-sm"
                       title="Visualizar Atendimentos">
                       <span>
@@ -101,7 +108,7 @@
             </tbody>
           </table>
         </div>
-        <pagination-controls (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
+        <pagination-controls class="text-center" (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
           [previousLabel]="'Anterior'"></pagination-controls>
       </div>
     </div>
@@ -115,10 +122,7 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="addIncomesForm">
-          <div class="form-group">
-            <label for="input-nf" class="form-control-label">N.F</label>
-            <input formControlName="nf" id="input-nf" class="form-control" type="text">
-          </div>
+         
 
           <div class="form-group">
             <label for="input-name" class="form-control-label">Nome(*)</label>
@@ -128,21 +132,82 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="input-value" class="form-control-label">Valor(*)</label>
-            <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
-            <div *ngIf="submittedIncome && !successIncome && addForm.value.errors">
-              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+          <div class="row">
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-value" class="form-control-label">Valor(*)</label>
+                <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedIncome && !successIncome && addForm.value.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+                </div>
+              </div>
             </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-due-at" class="form-control-label">Data de Emissão(*)</label>
+                <input type="date" formControlName="launch_at" id="input-due-at" class="form-control">
+                <div *ngIf="submittedIncome && !successIncome && addForm.launch_at.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Data de emissão é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="form-group">
-            <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
-            <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
-            <div *ngIf="submittedIncome && !successIncome && addForm.due_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+          <div class="row">
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-harbor-create">Forma de Pagamento</label>
+                <select formControlName="payment_type" class="form-control" id="input-harbor-create">
+                  <option  selected value="NF">Nota Fiscal</option>
+                  <option value="INVOICE">Invoice</option>
+                </select>
+              </div>
             </div>
+            <div class="col">
+            <div class="form-group">
+              <label for="input-nf" class="form-control-label">Nº</label>
+              <input formControlName="nf" id="input-nf" class="form-control" type="text">
+            </div>
+            </div>
+
+
           </div>
+         
+
+          <div class="row">
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-due-at" class="form-control-label">Data de Vencimento(*)</label>
+                <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
+                <div *ngIf="submittedIncome && !successIncome && addForm.due_at.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Data de vencimento é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-account-create">Cliente</label>
+                <select formControlName="customer_id" class="form-control" id="input-account-create">
+                  <option></option>
+                  <option *ngFor="let customer of customers" [ngValue]="customer?.id">
+                    {{ customer.name }}
+                  </option>
+                </select>
+                <div *ngIf="submittedIncome && !successIncome && addForm.customer_id.errors">
+                  <small class="invalid-feedback" style="display: inline;">A Conta é obrigatória.</small>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          
 
           <div class="row">
             <div class="col">
@@ -179,6 +244,7 @@
               <label class="custom-control-label" for="customSwitch4">Pagamento?</label>
             </div>
           </div>
+          <!-- -->
           <div class="row">
             <div class="col">
               <div class="form-group" *ngIf="addIncomesForm.controls['isPayment'].value">
@@ -199,7 +265,8 @@
               </div>
             </div>
           </div>
-          <div class="row">
+           <!--<div class="row">
+            
             <div class="col">
               <div class="form-group" *ngIf="addIncomesForm.controls['isPayment'].value">
                 <label for="input-discount" class="form-control-label">Desconto(*)</label>
@@ -218,7 +285,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
 
         </form>
       </div>
@@ -236,18 +303,7 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="editIncomesForm">
-          <div class="form-group">
-            <label for="input-nf" class="form-control-label">N.F</label>
-            <input formControlName="nf" id="input-nf" class="form-control" type="text">
-          </div>
-
-          <div class="form-group">
-            <label for="input-name" class="form-control-label">Nome(*)</label>
-            <input formControlName="name" id="input-name" class="form-control" type="text">
-            <div *ngIf="submittedIncome && !successIncome && editForm.name.errors">
-              <small class="invalid-feedback" style="display: inline;">O Nome é obrigatório.</small>
-            </div>
-          </div>
+         
 
           <div class="form-group">
             <label for="input-value" class="form-control-label">Valor(*)</label>
@@ -258,12 +314,66 @@
           </div>
 
           <div class="form-group">
-            <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
-            <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
-            <div *ngIf="submittedIncome && !successIncome && editForm.due_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+            <label for="input-name" class="form-control-label">Nome(*)</label>
+            <input formControlName="name" id="input-name" class="form-control" type="text">
+            <div *ngIf="submittedIncome && !successIncome && editForm.name.errors">
+              <small class="invalid-feedback" style="display: inline;">O Nome é obrigatório.</small>
             </div>
           </div>
+
+          <div class="row">
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-harbor-create">Forma de Pagamento</label>
+                <select formControlName="payment_type" class="form-control" id="input-harbor-create">
+                  <option value="NF">Nota Fiscal</option>
+                  <option value="INVOICE">Invoice</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="input-nf" class="form-control-label">Nº</label>
+                <input formControlName="nf" id="input-nf" class="form-control" type="text">
+              </div>
+
+          </div>
+          </div>
+
+         
+    
+            <div class="form-group">
+              <label for="input-due-at" class="form-control-label">Data de Emissão(*)</label>
+              <input type="date" formControlName="launch_at" id="input-due-at" class="form-control">
+              <div *ngIf="submittedIncome && !successIncome && editForm.launch_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de emissão é obrigatória.</small>
+              </div>
+            </div>
+        
+      
+          <div class="form-group">
+            <label for="input-due-at" class="form-control-label">Data de vencimento(*)</label>
+            <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
+            <div *ngIf="submittedIncome && !successIncome && editForm.due_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de vencimento é obrigatória.</small>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="input-account-create">Cliente</label>
+            <select formControlName="customer_id" class="form-control" id="input-account-create">
+              <option></option>
+              <option *ngFor="let customer of customers" [ngValue]="customer?.id">
+                {{ customer.name }}
+              </option>
+            </select>
+            <div *ngIf="submittedIncome && !successIncome && editForm.customer_id.errors">
+              <small class="invalid-feedback" style="display: inline;">A Conta é obrigatória.</small>
+            </div>
+          </div>
+
 
           <div class="row">
             <div class="col">
@@ -320,6 +430,7 @@
               </div>
             </div>
           </div>
+          <!-- 
           <div class="row">
             <div class="col">
               <div class="form-group" *ngIf="editIncomesForm.controls['isPayment'].value">
@@ -339,7 +450,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
 
         </form>
       </div>
@@ -373,10 +484,13 @@
             </div>
           </div>
         </form>
+
+        <div class="modal-footer">
+          <button (click)="paidIncome()" type="button" class="btn btn-outline-dark">Confirmar</button>
+        </div>
+
       </div>
-      <div class="modal-footer">
-        <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
-      </div>
+
     </ng-template>
 
     <ng-template #filter let-modal class="modal-dialog">
