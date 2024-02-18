@@ -79,7 +79,7 @@
                   </div>
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button" (click)="onConfirmPaymentSelected(income); open(confirmPayment)"
-                      class="btn btn-dark btn-sm" title="Deletar">
+                      class="btn btn-dark btn-sm" title="Pagar">
                       Pagar &nbsp;
                       <span>
                         <i class="fas fa-file-invoice-dollar"></i>
@@ -418,7 +418,6 @@
           </div>
 
           <div class="form-group">
-            <!-- <app-date-range-picker [parentForm]="filtersForm" [label]="'Data'"></app-date-range-picker> -->
             <app-ng-date-range-picker [(fromDate)]="fromDate" [(toDate)]="toDate"></app-ng-date-range-picker>
           </div>
         </form>

@@ -195,8 +195,6 @@ export class BillsToReceiveComponent {
   }
 
   getIncomeWithFilter() {
-    console.log(this.fromDate)
-    console.log(this.toDate)
 
     const invalid = [undefined, null, ''];
     const filters = this.filtersForm.value;
