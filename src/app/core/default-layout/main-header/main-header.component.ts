@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthenticateService } from '../../shared/services/authenticate.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-header',
@@ -7,13 +9,34 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainHeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthenticateService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
   logout(){
     
+    this.authService.logout({})
+      .subscribe({
+        next: resLogout => {
+
+          localStorage.removeItem('user')
+          localStorage.removeItem('token')
+
+          this.router.navigate(['/login'])
+
+
+        },
+        error: err => {
+          localStorage.removeItem('user')
+          localStorage.removeItem('token')
+
+          this.router.navigate(['/login'])
+
+        }
+      })
+
+
   }
 
 }
