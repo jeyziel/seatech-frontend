@@ -27,13 +27,13 @@ export class AuthenticateService {
 
   logout(params) {
 
-    this.http.post(`${environment.api_url}/logout`, params)
+    return this.http.post(`${environment.api_url}/auth/logout`, params)
 
   }
 
   refresh(params) {
 
-    this.http.post(`${environment.api_url}/refresh`, params)
+    return this.http.post(`${environment.api_url}/refresh`, params)
 
   }
 

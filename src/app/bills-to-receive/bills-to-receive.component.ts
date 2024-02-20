@@ -3,6 +3,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { IncomeService } from '../core/shared/services/income.service';
+import { AccountService } from '../core/shared/services/account.service';
+import { CustomerService } from '../core/shared/services/customers.service';
+import { IncomeCategoriesService } from '../core/shared/services/income-categories.service';
 
 @Component({
   selector: 'app-bills-to-receive',
@@ -21,8 +25,8 @@ export class BillsToReceiveComponent {
   public chargersForm: FormGroup;
   public incomes: any[];
   public accounts: any[];
-  public incomeCategorys: any[];
   public customers: any[];
+  public incomeCategorys: any[];
 
   public submittedIncome: Boolean;
   public successIncome: Boolean;
@@ -38,6 +42,10 @@ export class BillsToReceiveComponent {
   constructor(
     private modalService: NgbModal,
     private toastr: ToastrService,
+    private incomeService: IncomeService,
+    private accountService: AccountService,
+    private customerService: CustomerService,
+    private incomeCategoryService: IncomeCategoriesService,
     private router: Router
   ) { }
 
@@ -49,8 +57,11 @@ export class BillsToReceiveComponent {
       value: new FormControl(null, [Validators.required]),
       account_id: new FormControl(null, [Validators.required]),
       income_category_id: new FormControl(null, [Validators.required]),
+      customer_id: new FormControl(null,  [Validators.required]),
       due_at: new FormControl(null, [Validators.required]),
       nf: new FormControl(null, [Validators.nullValidator]),
+      launch_at: new FormControl(null, [Validators.nullValidator]),
+      payment_type: new FormControl(null, [Validators.nullValidator]),
       isPayment: new FormControl(false, [Validators.nullValidator]),
       value_paid: new FormControl(null, [Validators.nullValidator]),
       paid_at: new FormControl(null, [Validators.nullValidator]),
@@ -63,8 +74,11 @@ export class BillsToReceiveComponent {
       value: new FormControl(null, [Validators.required]),
       account_id: new FormControl(null, [Validators.required]),
       income_category_id: new FormControl(null, [Validators.required]),
+      customer_id: new FormControl(null,  [Validators.required]),
       due_at: new FormControl(null, [Validators.required]),
       nf: new FormControl(false, [Validators.nullValidator]),
+      launch_at: new FormControl(null, [Validators.nullValidator]),
+      payment_type: new FormControl(null, [Validators.nullValidator]),
       isPayment: new FormControl(false, [Validators.nullValidator]),
       value_paid: new FormControl(null, [Validators.nullValidator]),
       paid_at: new FormControl(null, [Validators.nullValidator]),
@@ -95,6 +109,9 @@ export class BillsToReceiveComponent {
     })
 
     this.getIncomes();
+    this.getCustomers()
+    this.getAccounts()
+    this.getIncomeCategorys()
   }
 
   get addForm() {
@@ -117,6 +134,54 @@ export class BillsToReceiveComponent {
     return this.chargersForm.controls
   }
 
+  getCustomers() {
+
+
+    this.customerService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.customers = res
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+  }
+
+  getAccounts() {
+
+
+    this.accountService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.accounts = res
+
+          console.log(this.accounts)
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+  }
+
+  getIncomeCategorys() {
+
+
+    this.incomeCategoryService.list()
+    .subscribe({
+      next: (res : any) => {
+        this.incomeCategorys = res
+      },
+      error: err => {
+
+        this.toastr.error("Falha ao buscar categoria de receita", "Categoria de Receita")
+
+      }
+    })
+  }
+
   open(content: any, fn = null, ...params: any[]) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered': true }).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
@@ -130,6 +195,21 @@ export class BillsToReceiveComponent {
     this.paramsDelete = params;
   }
 
+  getDataAtual() {
+
+    const dataAtual = new Date();
+
+    // Obtém o dia, mês e ano da data atual
+    const dia = String(dataAtual.getDate()).padStart(2, '0');
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Os meses são indexados de 0 a 11
+    const ano = dataAtual.getFullYear();
+
+    // Formata a data no estilo americano (MM/DD/AAAA)
+    const dataFormatada = `${ano}-${mes}-${dia}`;
+
+    return dataFormatada
+
+  }
 
   create() {
     this.submittedIncome = true
@@ -160,6 +240,31 @@ export class BillsToReceiveComponent {
     }
 
     const data = this.addIncomesForm.value
+
+    data["type"] = "DEFAULT";
+    data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
+    data["launch_at"] = this.getDataAtual()
+
+    this.incomeService.create(data)
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+
+          this.toastr.success("Receita editada com sucesso!", "Receita")
+
+          this.getIncomes()
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao editar Receita!", "Receita")
+
+          console.log("error", err)
+        }
+      })
+
+
   }
 
   onEditIncome(income: any) {
@@ -167,6 +272,7 @@ export class BillsToReceiveComponent {
     this.editIncomesForm.controls['name'].setValue(income.name)
     this.editIncomesForm.controls['value'].setValue(income.value)
     this.editIncomesForm.controls['account_id'].setValue(income.account_id)
+    this.editIncomesForm.controls['customer_id'].setValue(income.customer_id)
     this.editIncomesForm.controls['income_category_id'].setValue(income.income_category_id)
     this.editIncomesForm.controls['due_at'].setValue(income.due_at)
     this.editIncomesForm.controls['isPayment'].setValue(income?.value_paid ? true : false)
@@ -174,6 +280,9 @@ export class BillsToReceiveComponent {
     this.editIncomesForm.controls['paid_at'].setValue(income.paid_at)
     this.editIncomesForm.controls['discount'].setValue(income.discount)
     this.editIncomesForm.controls['fines'].setValue(income.fines)
+
+    this.editIncomesForm.controls['payment_type'].setValue(income.payment_type)
+    this.editIncomesForm.controls['launch_at'].setValue(income.launch_at)
 
     this.incomeSelected = income
   }
@@ -194,6 +303,29 @@ export class BillsToReceiveComponent {
 
     const data = this.editIncomesForm.value
 
+
+    data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
+
+    this.incomeService.update(this.incomeSelected?.id, data )
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+
+          this.toastr.success("Receita editada com sucesso!", "Receita")
+
+          this.getIncomes()
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao editar Receita!", "Receita")
+
+          console.log("error", err)
+        }
+      })
+
+
   }
 
   setIncomeSelected(income: any) {
@@ -202,15 +334,55 @@ export class BillsToReceiveComponent {
 
   removerIncome(id: Number) {
 
+    this.incomeService.delete(id)
+      .subscribe({
+        next: (resIncome : any) => {
+
+         this.toastr.success("Contas a receber deletada com sucesso", "Receitas")
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao deletar contas a receber", "Receitas")
+
+          console.log("error", err)
+        }
+      })
+
+
 
   }
 
-  confirmPayment() {
+  paidIncome() {
     this.submittedIncome = true
     this.successIncome = false;
 
+    console.log(this.confirmPaymentForm.invalid)
+
     if (this.confirmPaymentForm.invalid)
       return;
+
+    const data = this.confirmPaymentForm.value
+
+    this.incomeService.confirmPayment(this.incomeSelected?.id, data )
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+
+          this.toastr.success("Receita paga com sucesso!", "Receita")
+
+          this.getIncomes()
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao pagar Receita!", "Receita")
+
+          console.log("error", err)
+        }
+      })
   }
 
   createCharge() {
@@ -227,6 +399,7 @@ export class BillsToReceiveComponent {
 
   getIncomeWithFilter() {
 
+
     const invalid = [undefined, null, ''];
     const filters = this.filtersForm.value;
     filters.startDate = `${this.fromDate.year}-${this.fromDate.month}-${this.fromDate.day}`;
@@ -236,16 +409,40 @@ export class BillsToReceiveComponent {
       if (invalid.includes(filters?.[key])) {
         delete filters[key];
       }
+
+
     }
 
+
+    console.log(filters)
+
+   // console.log(this.fromDate)
+    //console.log(this.toDate)
     this.getIncomes(filters);
   }
 
   getIncomes(filters?: any) {
+
     if (filters) {
       //aplicar filtros
     }
 
+
+    this.incomeService.list()
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+          this.incomes = resIncome
+
+
+        },
+        error: err => {
+          console.log("error", err)
+        }
+      })
+
+
+    /**
     this.incomes = [
       {
         id: 3,
@@ -299,12 +496,7 @@ export class BillsToReceiveComponent {
     this.accounts = [
       { id: 1, name: 'PIX', },
       { id: 2, name: 'Caixa', }
-    ];
-
-    this.customers = [
-      { id: 1, name: 'Carlos', },
-      { id: 2, name: 'Antonio', }
-    ];
+    ]; */
   }
 
   toServices(income: any) {

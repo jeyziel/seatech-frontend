@@ -9,5 +9,6 @@ const list = {
   NOT_PAID: 'Não Pago',
   DEFAULT: 'Padrão',
   OPERATION: 'Operação',
+  SERVICES: 'Atendimento',
 };
 export const translate = (value: string) => list?.[value.toUpperCase()];
