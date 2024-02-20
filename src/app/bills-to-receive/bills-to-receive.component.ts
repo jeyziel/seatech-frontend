@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 
@@ -17,9 +18,11 @@ export class BillsToReceiveComponent {
   public editIncomesForm: FormGroup;
   public confirmPaymentForm: FormGroup;
   public filtersForm: FormGroup;
+  public chargersForm: FormGroup;
   public incomes: any[];
   public accounts: any[];
   public incomeCategorys: any[];
+  public customers: any[];
 
   public submittedIncome: Boolean;
   public successIncome: Boolean;
@@ -35,6 +38,7 @@ export class BillsToReceiveComponent {
   constructor(
     private modalService: NgbModal,
     private toastr: ToastrService,
+    private router: Router
   ) { }
 
 
@@ -79,6 +83,17 @@ export class BillsToReceiveComponent {
       status: new FormControl(null, [Validators.nullValidator]),
     })
 
+    this.chargersForm = new FormGroup({
+      type: new FormControl('SERVICES', [Validators.required]),
+      name: new FormControl(null, [Validators.required]),
+      account_id: new FormControl(null, [Validators.required]),
+      payment_type: new FormControl(null, [Validators.required]),
+      number: new FormControl(null, [Validators.required]),
+      customer_id: new FormControl(null, [Validators.required]),
+      launch_at: new FormControl((new Date)?.toJSON()?.slice(0, 10), [Validators.required]),
+      due_at: new FormControl(null, [Validators.required]),
+    })
+
     this.getIncomes();
   }
 
@@ -96,6 +111,10 @@ export class BillsToReceiveComponent {
 
   get filterForm() {
     return this.filtersForm.controls
+  }
+
+  get chargerForm() {
+    return this.chargersForm.controls
   }
 
   open(content: any, fn = null, ...params: any[]) {
@@ -194,6 +213,18 @@ export class BillsToReceiveComponent {
       return;
   }
 
+  createCharge() {
+    this.submittedIncome = true
+    this.successIncome = false;
+
+    if (this.chargersForm.invalid)
+      return;
+
+      // cobrancas/:id
+      this.modalService.dismissAll()
+      this.router.navigate(['/cobrancas', 2]);
+  }
+
   getIncomeWithFilter() {
 
     const invalid = [undefined, null, ''];
@@ -269,6 +300,11 @@ export class BillsToReceiveComponent {
       { id: 1, name: 'PIX', },
       { id: 2, name: 'Caixa', }
     ];
+
+    this.customers = [
+      { id: 1, name: 'Carlos', },
+      { id: 2, name: 'Antonio', }
+    ];
   }
 
   toServices(income: any) {
@@ -293,6 +329,8 @@ export class BillsToReceiveComponent {
 
     this.confirmPaymentForm.reset()
     this.confirmPaymentForm.setErrors(null)
+
+    this.chargersForm.controls['launch_at'].setValue((new Date)?.toJSON()?.slice(0, 10))
 
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
