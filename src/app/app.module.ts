@@ -40,6 +40,7 @@ import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.com
 import { DateRangePickerComponent } from './components/date-range-picker/date-range-picker.component';
 import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
 import { NgDateRangePickerComponent } from './components/ng-date-range-picker/ng-date-range-picker.component';
+import { ChargeComponent } from './charge/charge.component';
 
 registerLocaleData(localePt);
 
@@ -64,6 +65,7 @@ registerLocaleData(localePt);
     BillsToPayComponent,
     DateRangePickerComponent,
     NgDateRangePickerComponent,
+    ChargeComponent,
   ],
   imports: [
     CommonModule,

@@ -18,6 +18,7 @@ import { ServiceManagerComponent } from './service-manager/service-manager.compo
 import { NonAuthGuard } from './modules/auth/guards/non-auth.guard';
 import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
 import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
+import { ChargeComponent } from './charge/charge.component';
 
 const routes: Routes = [
   {
@@ -83,6 +84,10 @@ const routes: Routes = [
       {
         path: 'contas-bancarias',
         component: AccountComponent,
+      },
+      {
+        path: 'cobrancas/:id',
+        component: ChargeComponent,
       },
       { path: 'vistorias', loadChildren: () => import('./modules/common/pages/surveys/surveys.module').then(m => m.SurveyModule) },
       { path: 'dashboard', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule) },
