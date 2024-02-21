@@ -1,0 +1,173 @@
+<section class="content-header mb-1">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col d-flex flex-row">
+        <button type="button" class="btn btn-primary btn-sm mr-3" style="color: white;" title="Atendimento"
+          (click)="back()">
+          <span>
+            <i class="fas fa-arrow-circle-left"></i>
+          </span>
+        </button>
+        <h1>Cobrança</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-xs-8">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-text-width"></i>
+            Sumário
+          </h3>
+        </div>
+
+        <div class="card-body details__content">
+          <div class="row">
+            <div class="col">
+              <h2>Cobrança: #{{ sumary.id }}</h2>
+              <ul class="list-unstyled">
+                <li><span class="font-weight-bold m-1">Forma de Cobrança: </span>
+                  {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + '#' +
+                  sumary?.number}}</li>
+                <li><span class="font-weight-bold m-1">Cliente: </span> {{ sumary?.customer?.name }}</li>
+                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value | currency: 'BRL'}}</li>
+                <li><span class="font-weight-bold m-1">Data de Cobrança </span> {{ sumary?.launch_at | date:
+                  'dd/MM/yyyy' }}</li>
+                <li><span class="font-weight-bold m-1">Data de Vencimento </span> {{ sumary?.due_at | date: 'dd/MM/yyyy'
+                  }}</li>
+                <li><span class="font-weight-bold m-1">Status: </span> {{ sumary?.status | translate }}
+                  <i
+                    [class]="sumary?.status == 'PAID' ? 'far fa-check-circle text-success' : 'fas fa-times-circle text-danger'"></i>
+                </li>
+                <li><span class="font-weight-bold m-1">Data de Pagamento </span> {{ sumary?.paid_at | date: 'dd/MM/yyyy'
+                  }}</li>
+              </ul>
+            </div>
+            <div class="col d-flex justify-content-end align-items-end">
+              <button type="button" (click)="payCharger(); open(confirmPayment)" class="btn btn-primary btn-sm"
+                title="Deletar">
+                Pagar &nbsp;
+                <span>
+                  <i class="fas fa-dollar-sign"></i>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col-7 text-left">
+              <h3 class="mb-0">Vistorias</h3>
+            </div>
+            <div class="col-4 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addServiceSurvey); setServiceSurveys()">
+                <i class="fas fa-plus"></i>&nbsp; Vistorias
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Navio</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Status de Faturamento</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Data Vistoria</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let serviceSurvey of serviceSurveys">
+                <td>{{ serviceSurvey?.name }}</td>
+                <td>{{ serviceSurvey?.harbor_name }}</td>
+                <td>{{ serviceSurvey?.customer_name}}</td>
+                <td>
+                  <span
+                    [class]="'badge badge-' + (serviceSurvey?.billing_status == 'PENDING' ? 'warning' : serviceSurvey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"
+                    style="padding: .5em;">
+                    {{ serviceSurvey?.billing_status | translate }}
+                  </span>
+                </td>
+                <td>{{ serviceSurvey?.price | currency: 'BRL' }}</td>
+                <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
+                <td class="text-right">
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" [checked]="serviceSurvey?.is_checked"
+                        (change)="setCheckBox($event, serviceSurvey)"
+                        [disabled]="serviceSurvey?.billing_status != 'DRAFT'">
+                      <label class="form-check-label">{{ serviceSurvey?.billing_status != 'DRAFT' ? 'Incluso' :
+                        'Adicionar' }}</label>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #confirmPayment let-modal class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">Confirmar Pagamento</h3>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="confirmPaymentForm">
+        <div class="form-group">
+          <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+          <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+          <div *ngIf="submitted && !success && paymentForm.value_paid.errors">
+            <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+          <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+          <div *ngIf="submitted && !success && paymentForm.paid_at.errors">
+            <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
+    </div>
+  </ng-template>
+
+  <ng-template #addServiceSurvey let-modal class="modal-dialog fade">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Cadastrar Vistoria</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      {{ serviceSurveysSelected?.length > 0 ? 'Confirma a adição dessas Vistorias?' : 'Nenhuma vistoria foi adicionada!'}}
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="addServices()" type="button" class="btn btn-outline-dark"
+        [disabled]="serviceSurveysSelected?.length == 0">Adicionar</button>
+    </div>
+  </ng-template>
+</div>

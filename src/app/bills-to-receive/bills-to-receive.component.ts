@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ModalDismissReasons, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { IncomeService } from '../core/shared/services/income.service';
@@ -21,6 +22,7 @@ export class BillsToReceiveComponent {
   public editIncomesForm: FormGroup;
   public confirmPaymentForm: FormGroup;
   public filtersForm: FormGroup;
+  public chargersForm: FormGroup;
   public incomes: any[];
   public accounts: any[];
   public customers: any[];
@@ -44,6 +46,7 @@ export class BillsToReceiveComponent {
     private accountService: AccountService,
     private customerService: CustomerService,
     private incomeCategoryService: IncomeCategoriesService,
+    private router: Router
   ) { }
 
 
@@ -94,6 +97,17 @@ export class BillsToReceiveComponent {
       status: new FormControl(null, [Validators.nullValidator]),
     })
 
+    this.chargersForm = new FormGroup({
+      type: new FormControl('SERVICES', [Validators.required]),
+      name: new FormControl(null, [Validators.required]),
+      account_id: new FormControl(null, [Validators.required]),
+      payment_type: new FormControl(null, [Validators.required]),
+      number: new FormControl(null, [Validators.required]),
+      customer_id: new FormControl(null, [Validators.required]),
+      launch_at: new FormControl((new Date)?.toJSON()?.slice(0, 10), [Validators.required]),
+      due_at: new FormControl(null, [Validators.required]),
+    })
+
     this.getIncomes();
     this.getCustomers()
     this.getAccounts()
@@ -114,6 +128,10 @@ export class BillsToReceiveComponent {
 
   get filterForm() {
     return this.filtersForm.controls
+  }
+
+  get chargerForm() {
+    return this.chargersForm.controls
   }
 
   getCustomers() {
@@ -152,10 +170,10 @@ export class BillsToReceiveComponent {
     this.incomeCategoryService.list()
     .subscribe({
       next: (res : any) => {
-        this.incomeCategorys = res 
+        this.incomeCategorys = res
       },
       error: err => {
-        
+
         this.toastr.error("Falha ao buscar categoria de receita", "Categoria de Receita")
 
       }
@@ -185,7 +203,7 @@ export class BillsToReceiveComponent {
     const ano = dataAtual.getFullYear();
 
     // Formata a data no estilo americano (MM/DD/AAAA)
-    const dataFormatada = `${ano}-${mes}-${dia}`; 
+    const dataFormatada = `${ano}-${mes}-${dia}`;
 
     return dataFormatada
 
@@ -282,10 +300,10 @@ export class BillsToReceiveComponent {
       return;
 
     const data = this.editIncomesForm.value
-   
+
 
     data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
-    
+
     this.incomeService.update(this.incomeSelected?.id, data )
       .subscribe({
         next: (resIncome : any[]) => {
@@ -344,7 +362,7 @@ export class BillsToReceiveComponent {
       return;
 
     const data = this.confirmPaymentForm.value
-    
+
     this.incomeService.confirmPayment(this.incomeSelected?.id, data )
       .subscribe({
         next: (resIncome : any[]) => {
@@ -363,6 +381,18 @@ export class BillsToReceiveComponent {
           console.log("error", err)
         }
       })
+  }
+
+  createCharge() {
+    this.submittedIncome = true
+    this.successIncome = false;
+
+    if (this.chargersForm.invalid)
+      return;
+
+      // cobrancas/:id
+      this.modalService.dismissAll()
+      this.router.navigate(['/cobrancas', 2]);
   }
 
   getIncomeWithFilter() {
@@ -410,7 +440,7 @@ export class BillsToReceiveComponent {
       })
 
 
-    /** 
+    /**
     this.incomes = [
       {
         id: 3,
@@ -489,6 +519,8 @@ export class BillsToReceiveComponent {
 
     this.confirmPaymentForm.reset()
     this.confirmPaymentForm.setErrors(null)
+
+    this.chargersForm.controls['launch_at'].setValue((new Date)?.toJSON()?.slice(0, 10))
 
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
