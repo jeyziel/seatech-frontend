@@ -2,6 +2,10 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbDate, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { ExpenseService } from '../core/shared/services/expense.service';
+import { AccountService } from '../core/shared/services/account.service';
+import { CustomerService } from '../core/shared/services/customers.service';
+import { ExpenseCategoriesService } from '../core/shared/services/expense-categories.service';
 
 @Component({
   selector: 'app-bills-to-pay',
@@ -35,6 +39,9 @@ export class BillsToPayComponent {
   constructor(
     private modalService: NgbModal,
     private toastr: ToastrService,
+    private expenseService: ExpenseService,
+    private accountService: AccountService,
+    private expenseCategoryService: ExpenseCategoriesService,
   ) { }
 
 
@@ -52,6 +59,8 @@ export class BillsToPayComponent {
       paid_at: new FormControl(null, [Validators.nullValidator]),
       discount: new FormControl(null, [Validators.nullValidator]),
       fines: new FormControl(null, [Validators.nullValidator]),
+      launch_at : new FormControl(null, [Validators.nullValidator]),
+      service_id: new FormControl(null, [Validators.nullValidator]),
     })
 
     this.editExpensesForm = new FormGroup({
@@ -66,6 +75,8 @@ export class BillsToPayComponent {
       paid_at: new FormControl(null, [Validators.nullValidator]),
       discount: new FormControl(null, [Validators.nullValidator]),
       fines: new FormControl(null, [Validators.nullValidator]),
+      launch_at : new FormControl(null, [Validators.nullValidator]),
+      service_id: new FormControl(null, [Validators.nullValidator]),  
     })
 
     this.confirmPaymentForm = new FormGroup({
@@ -80,6 +91,8 @@ export class BillsToPayComponent {
     })
 
     this.getExpenses();
+    this.getAccounts()
+    this.getExpenseCategorys()
   }
 
   get addForm() {
@@ -96,6 +109,41 @@ export class BillsToPayComponent {
 
   get filterForm() {
     return this.filtersForm.controls
+  }
+
+
+
+  getAccounts() {
+
+
+    this.accountService.list()
+      .subscribe({
+        next: (res : any) => {
+          this.accounts = res
+
+          console.log(this.accounts)
+
+        },
+        error: err => {
+          console.log("Falha ao buscar os clientes", err)
+        }
+      })
+  }
+
+  getExpenseCategorys() {
+
+
+    this.expenseCategoryService.list()
+    .subscribe({
+      next: (res : any) => {
+        this.expenseCategorys = res 
+      },
+      error: err => {
+        
+        this.toastr.error("Falha ao buscar categoria de despesas", "Categoria de despesas")
+
+      }
+    })
   }
 
   open(content: any, fn = null, ...params: any[]) {
@@ -141,6 +189,30 @@ export class BillsToPayComponent {
     }
 
     const data = this.addExpensesForm.value
+    data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
+    data["type"] = "DEFAULT";
+
+    this.expenseService.create(data)
+      .subscribe({
+        next: resExpense => {
+
+
+          this.toastr.success("Despesa criada com sucesso!" ,"Despesas")
+
+
+        },
+        error: err => {
+
+
+          this.toastr.error("Falha ao criar Despesas" ,"Despesas")
+
+          console.log("Falha ao criar despesas", err)
+
+
+        }
+      })
+
+
   }
 
   onEditExpense(expense: any) {
@@ -155,6 +227,9 @@ export class BillsToPayComponent {
     this.editExpensesForm.controls['paid_at'].setValue(expense.paid_at)
     this.editExpensesForm.controls['discount'].setValue(expense.discount)
     this.editExpensesForm.controls['fines'].setValue(expense.fines)
+
+
+    this.editExpensesForm.controls['launch_at'].setValue(expense.launch_at)
 
     this.expenseSelected = expense
   }
@@ -175,6 +250,30 @@ export class BillsToPayComponent {
 
     const data = this.editExpensesForm.value
 
+    data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
+    data["type"] = this.expenseSelected?.type;
+
+    this.expenseService.update(this.expenseSelected?.id, data)
+      .subscribe({
+        next: resExpense => {
+
+
+          this.toastr.success("Despesa criada com sucesso!" ,"Despesas")
+
+          this.getExpenses()
+
+        },
+        error: err => {
+
+
+          this.toastr.error("Falha ao criar Despesas" ,"Despesas")
+
+          console.log("Falha ao criar despesas", err)
+
+
+        }
+      })
+
   }
 
   setExpenseSelected(expense: any) {
@@ -184,14 +283,55 @@ export class BillsToPayComponent {
   removerExpense(id: Number) {
 
 
+    this.expenseService.delete(id)
+    .subscribe({
+      next: (resIncome : any) => {
+
+       this.toastr.success("Contas a pagar deletada com sucesso", "Despesas")
+
+
+      },
+      error: err => {
+
+        this.toastr.error("Falha ao deletar contas a pagar", "Despesas")
+
+        console.log("error", err)
+      }
+    })
+
+
   }
 
-  confirmPayment() {
+  paidExpense() {
     this.submittedExpense = true
     this.successExpense = false;
 
     if (this.confirmPaymentForm.invalid)
       return;
+
+    
+    const data = this.confirmPaymentForm.value
+    
+    this.expenseService.confirmPayment(this.expenseSelected?.id, data )
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+
+          this.toastr.success("Receita paga com sucesso!", "Receita")
+
+          this.getExpenses()
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao pagar Receita!", "Receita")
+
+          console.log("error", err)
+        }
+      })
+
+    
   }
 
   getExpenseWithFilter() {
@@ -215,6 +355,25 @@ export class BillsToPayComponent {
       //aplicar filtros
     }
 
+
+    this.expenseService.list()
+      .subscribe({
+        next: (resExpense : any[]) => {
+
+          this.expenses = resExpense
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao buscar Despesas", "Despesas")
+          console.log("error", err)
+
+        }
+      })
+
+
+    /** 
     this.expenses = [
       {
         id: 3,
@@ -258,8 +417,9 @@ export class BillsToPayComponent {
           name: 'Categoria de Despesa 2',
         },
       }
-    ];
+    ];*/
 
+    /** 
     this.expenseCategorys = [
       { id: 1, name: 'Categoria de Despesa 1', },
       { id: 2, name: 'Categoria de Despesa 2', }
@@ -268,7 +428,7 @@ export class BillsToPayComponent {
     this.accounts = [
       { id: 1, name: 'Bradesco', },
       { id: 2, name: 'Santander', }
-    ];
+    ]; */
   }
 
   confirmationDelete() {

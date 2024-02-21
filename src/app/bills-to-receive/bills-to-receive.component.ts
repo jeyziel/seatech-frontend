@@ -118,12 +118,10 @@ export class BillsToReceiveComponent {
 
   getCustomers() {
 
-
     this.customerService.list()
       .subscribe({
         next: (res : any) => {
           this.customers = res
-
         },
         error: err => {
           console.log("Falha ao buscar os clientes", err)

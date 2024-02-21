@@ -83,7 +83,7 @@ export class CustomerComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
 
-          this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
+          this.toastr.success("Cliente cadastrado com sucesso!", "Cadastrar Vistoria")
 
           this.addCustomersForm.reset()
           this.addCustomersForm.clearValidators()
@@ -100,7 +100,7 @@ export class CustomerComponent implements OnInit {
           this.submittedCustomer = false
           this.successCustomer = false;
 
-          this.toastr.error("Falha ao cadastrar as Tipos de vistoria", "Cadastrar Tipos Vistoria")
+          this.toastr.error("Falha ao cadastrar Cliente!", "Cadastrar Cliente!")
         }
       })
 

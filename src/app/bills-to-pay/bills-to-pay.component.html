@@ -129,12 +129,22 @@
           </div>
 
           <div class="form-group">
+            <label for="input-launch_at" class="form-control-label">Data de Emissão(*)</label>
+            <input type="date" formControlName="launch_at" id="input-launch_at" class="form-control">
+            <div *ngIf="submittedExpense && !successExpense && addForm.launch_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de emissão é obrigatória.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
             <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
             <div *ngIf="submittedExpense && !successExpense && addForm.due_at.errors">
               <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
             </div>
           </div>
+
+        
 
           <div class="row">
             <div class="col">
@@ -246,6 +256,14 @@
             <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
             <div *ngIf="submittedExpense && !successExpense && editForm.value.errors">
               <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-launch_at" class="form-control-label">Data de Emissão(*)</label>
+            <input type="date" formControlName="launch_at" id="input-launch_at" class="form-control">
+            <div *ngIf="submittedExpense && !successExpense && addForm.launch_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de emissão é obrigatória.</small>
             </div>
           </div>
 
@@ -367,7 +385,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
+        <button (click)="paidExpense()" type="button" class="btn btn-outline-dark">Confirmar</button>
       </div>
     </ng-template>
 
