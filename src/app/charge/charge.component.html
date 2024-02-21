@@ -70,7 +70,7 @@
               <h3 class="mb-0">Vistorias</h3>
             </div>
             <div class="col-4 text-right">
-              <a class="btn btn-sm btn-primary" (click)="open(addServiceSurvey); setServiceSurveys()">
+              <a class="btn btn-sm btn-primary" (click)="open(addServiceSurvey);">
                 <i class="fas fa-plus"></i>&nbsp; Vistorias
               </a>
             </div>
@@ -80,13 +80,12 @@
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
-                <th scope="col">Nome</th>
+                <th scope="col">Nome de Atendimento</th>
                 <th scope="col">Navio</th>
                 <th scope="col">Cliente</th>
-                <th scope="col">Status de Faturamento</th>
                 <th scope="col">Valor</th>
                 <th scope="col">Data Vistoria</th>
-                <th scope="col"></th>
+                <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -94,24 +93,18 @@
                 <td>{{ serviceSurvey?.name }}</td>
                 <td>{{ serviceSurvey?.harbor_name }}</td>
                 <td>{{ serviceSurvey?.customer_name}}</td>
-                <td>
-                  <span
-                    [class]="'badge badge-' + (serviceSurvey?.billing_status == 'PENDING' ? 'warning' : serviceSurvey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"
-                    style="padding: .5em;">
-                    {{ serviceSurvey?.billing_status | translate }}
-                  </span>
-                </td>
                 <td>{{ serviceSurvey?.price | currency: 'BRL' }}</td>
                 <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" [checked]="serviceSurvey?.is_checked"
-                        (change)="setCheckBox($event, serviceSurvey)"
-                        [disabled]="serviceSurvey?.billing_status != 'DRAFT'">
-                      <label class="form-check-label">{{ serviceSurvey?.billing_status != 'DRAFT' ? 'Incluso' :
-                        'Adicionar' }}</label>
-                    </div>
+                    <button type="button"
+                      (click)="setServiceSurvey(serviceSurvey); open(modalConfirmation, removerServiceSurvey, serviceSurvey?.id)"
+                      class="btn btn-dark btn-sm" title="Deletar">
+                      Deletar &nbsp;
+                      <span>
+                        <i class="fas fa-trash-alt"></i>
+                      </span>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -153,21 +146,137 @@
     </div>
   </ng-template>
 
+  <ng-template #confirmPayment let-modal class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">Confirmar Pagamento</h3>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="confirmPaymentForm">
+        <div class="form-group">
+          <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+          <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+          <div *ngIf="submitted && !success && paymentForm.value_paid.errors">
+            <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+          <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+          <div *ngIf="submitted && !success && paymentForm.paid_at.errors">
+            <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
+    </div>
+  </ng-template>
+
   <ng-template #addServiceSurvey let-modal class="modal-dialog fade">
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Cadastrar Vistoria</h4>
+      <h4 class="modal-title" id="modal-basic-title">Adicionar Vistorias</h4>
       <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
 
     <div class="modal-body">
-      {{ serviceSurveysSelected?.length > 0 ? 'Confirma a adição dessas Vistorias?' : 'Nenhuma vistoria foi adicionada!'}}
+      <div class="row d-flex justify-content-center align-items-end">
+        <div class="col-5">
+          <div class="form-group">
+            <label for="input-service">Atendimento(*)</label>
+            <select class="form-control" id="input-service" (change)="setService($event);">
+              <option value=""></option>
+              <option *ngFor="let service of services" [value]="service?.id">
+                {{ service.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center align-items-end" *ngIf="serviceSelected?.name">
+        <div class="col-8">
+          <div class="callout callout-info">
+            <h5>Nome: {{serviceSelected?.name}}</h5>
+            <p>Vistorias Faturas: {{ serviceSelected?.surveys?.length }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive" *ngIf="serviceSelected?.surveys?.length > 0">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Nome de Atendimento</th>
+              <th scope="col">Navio</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Status</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Data Vistoria</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let survey of serviceSelected?.surveys">
+              <td>{{ survey?.name }}</td>
+              <td>{{ survey?.harbor_name }}</td>
+              <td>{{ survey?.customer_name}}</td>
+              <td>
+                <span
+                  [class]="'badge badge-' + (survey?.billing_status == 'PENDING' ? 'warning' : survey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"
+                  style="padding: .5em;">
+                  {{ survey?.billing_status | translate }}
+                </span>
+              </td>
+              <td>{{ survey?.price | currency: 'BRL' }}</td>
+              <td>{{ survey?.survey_at | date: 'dd/MM/yyyy' }}</td>
+              <td class="text-right">
+                <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                  <div class="form-check icheck-primary">
+                    <input class="form-check-input" type="checkbox" [checked]="survey?.is_checked"
+                      (change)="setCheckBox($event, survey); setServiceSurveys();"
+                      [disabled]="survey?.billing_status != 'DRAFT'" [id]="'check-' + survey?.id">
+                    <label class="form-check-label" [for]="'check-' + survey?.id">
+                      {{ survey?.billing_status != 'DRAFT' ? 'Incluso' :'Adicionar' }}
+                    </label>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="modal-footer">
       <button (click)="addServices()" type="button" class="btn btn-outline-dark"
-        [disabled]="serviceSurveysSelected?.length == 0">Adicionar</button>
+        [disabled]="surveysSelected?.length == 0">Adicionar</button>
+    </div>
+  </ng-template>
+
+  <ng-template #modalConfirmation let-modal class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">Confirmação de Ação</h3>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      Deseja Remover Essa Vistoria '{{ serviceSurveySelected?.name }}'?
+    </div>
+    <div class="modal-footer">
+      <button type="button" (click)="modal.dismiss('Cross click')"
+        class="btn bg-gradient-secondary mr-3 mr-auto text-left">
+        Cancelar
+      </button>
+      <button (click)="confirmationDelete(); modal.dismiss('Cross click')" type="button"
+        class="btn bg-gradient-danger float-right">
+        Confimar
+      </button>
     </div>
   </ng-template>
 </div>

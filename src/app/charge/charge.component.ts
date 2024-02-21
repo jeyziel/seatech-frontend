@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from '@angular/common';
@@ -17,12 +17,15 @@ export class ChargeComponent {
   public confirmPaymentForm: FormGroup;
   public sumary: any;
   public serviceSurveys: any[];
+  public services: any[];
   public charge_id: number;
 
   public submitted: Boolean;
   public success: Boolean;
 
-  public serviceSurveysSelected: any = [];
+  public serviceSurveySelected: any;
+  public surveysSelected: any = [];
+  public serviceSelected: any;
 
   fn: any;
   paramsDelete: any;
@@ -35,10 +38,6 @@ export class ChargeComponent {
 
   ngOnInit(): void {
 
-    this.addServiceSurveys = new FormGroup({
-      price: new FormControl(null, [Validators.required]),
-    })
-
     this.confirmPaymentForm = new FormGroup({
       value_paid: new FormControl(null, [Validators.required]),
       paid_at: new FormControl(null, [Validators.required]),
@@ -49,16 +48,13 @@ export class ChargeComponent {
     this.getServiceSurveys();
   }
 
-  get addServiceSurveyForm() {
-    return this.addServiceSurveys.controls
-  }
-
   get paymentForm() {
     return this.confirmPaymentForm.controls
   }
 
   open(content: any, fn = null, ...params: any[]) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered': true }).result.then((result) => {
+    const sizeModal = content?._declarationTContainer?.localNames?.[0] == 'addServiceSurvey' ? 'xl' : '';
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered': true, 'size': sizeModal }).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
 
     }, (reason) => {
@@ -75,17 +71,25 @@ export class ChargeComponent {
     this.submitted = true
     this.success = false;
 
-    console.log(this.serviceSurveysSelected)
+    console.log(this.surveysSelected)
 
     //Reset list e refresh nos dados
-    this.serviceSurveysSelected = [];
+    this.surveysSelected = [];
     this.modalService.dismissAll()
   }
 
   setServiceSurveys() {
-    this.serviceSurveysSelected = this.serviceSurveys?.filter(
-      servSurv => servSurv.billing_status == 'DRAFT' && servSurv.is_checked
-    )?.map(item => ({ id: item.id, price: item.price }))
+    this.surveysSelected = this.serviceSelected?.surveys?.filter(
+      servSurv => servSurv?.billing_status == 'DRAFT' && servSurv?.is_checked
+    )?.map(item => ({ id: item?.id, price: item?.price }))
+  }
+
+  setService(event: any) {
+    this.serviceSelected = this.services.find(({ id }) => id == event.target.value)
+  }
+
+  setServiceSurvey(serviceSurvey: any) {
+    this.serviceSurveySelected = serviceSurvey
   }
 
   removerServiceSurvey(id: Number) {
@@ -149,9 +153,62 @@ export class ChargeComponent {
       }
     ];
 
+    this.services = [
+      {
+        id: 1,
+        name: 'Atendimento 1',
+        surveys: [
+          {
+            id: 1,
+            name: 'Vistoria 1',
+            price: 125.72,
+            survey_at: '2024-03-01',
+            billing_status: 'PENDING',
+            harbor_name: 'Navio 1',
+            customer_name: 'Carlos',
+          },
+          {
+            id: 2,
+            name: 'Vistoria 2',
+            price: 35.72,
+            survey_at: '2024-03-01',
+            billing_status: 'DRAFT',
+            harbor_name: 'Navio 2',
+            customer_name: 'Maria',
+          },
+        ]
+      },
+      {
+        id: 2,
+        name: 'Atendimento 2',
+        surveys: [
+          {
+            id: 1,
+            name: 'Vistoria 11',
+            price: 89.72,
+            survey_at: '2024-03-01',
+            billing_status: 'PENDING',
+            harbor_name: 'Navio 1',
+            customer_name: 'Carlos',
+          },
+          {
+            id: 2,
+            name: 'Vistoria 12',
+            price: 45.72,
+            survey_at: '2024-03-01',
+            billing_status: 'DRAFT',
+            harbor_name: 'Navio 2',
+            customer_name: 'Maria',
+          },
+        ]
+      },
+    ];
+
     //manter apos chamada de API
-    for (const serviceSurvey of this.serviceSurveys) {
-      serviceSurvey.is_checked = serviceSurvey?.billing_status == 'DRAFT' ? false : true;
+    for (const service of this.services) {
+      for (const survey of service?.surveys) {
+        survey.is_checked = survey?.billing_status == 'DRAFT' ? false : true;
+      }
     }
   }
 
@@ -167,11 +224,6 @@ export class ChargeComponent {
 
     this.success = false;
     this.submitted = false;
-
-    this.addServiceSurveys.reset()
-    this.addServiceSurveys.setErrors(null)
-    this.addServiceSurveys.controls['survey_at'].setValue((new Date)?.toJSON()?.slice(0, 10))
-
 
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
