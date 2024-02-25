@@ -3,6 +3,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { ChargeService } from '../core/shared/services/charge.service';
+import { AtendimentoService } from '../core/shared/services/atendimento.service';
+import { IncomeService } from '../core/shared/services/income.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -20,8 +24,8 @@ export class ChargeComponent {
   public services: any[];
   public charge_id: number;
 
-  public submitted: Boolean;
-  public success: Boolean;
+  public submitted: Boolean = false;
+  public success: Boolean = true;
 
   public serviceSurveySelected: any;
   public surveysSelected: any = [];
@@ -33,7 +37,11 @@ export class ChargeComponent {
   constructor(
     private modalService: NgbModal,
     private location: Location,
-    private router: ActivatedRoute
+    private router: ActivatedRoute,
+    private chargeService: ChargeService,
+    private atendimentoService: AtendimentoService,
+    private incomeService: IncomeService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +54,8 @@ export class ChargeComponent {
     this.charge_id = this.router.snapshot.params['id']
 
     this.getServiceSurveys();
+
+    this.getIncomesService()
   }
 
   get paymentForm() {
@@ -74,38 +84,120 @@ export class ChargeComponent {
     console.log(this.surveysSelected)
 
     //Reset list e refresh nos dados
-    this.surveysSelected = [];
-    this.modalService.dismissAll()
+    //this.surveysSelected = [];
+
+    const data = {
+      "services_surveys" : this.surveysSelected
+    }
+
+    this.chargeService.create(this.charge_id,  data)
+      .subscribe({
+        next: resCharge => {
+
+        }
+      })
+
+
+    //this.modalService.dismissAll()
   }
 
   setServiceSurveys() {
-    this.surveysSelected = this.serviceSelected?.surveys?.filter(
+    this.surveysSelected = this.serviceSelected?.service_survey?.filter(
       servSurv => servSurv?.billing_status == 'DRAFT' && servSurv?.is_checked
     )?.map(item => ({ id: item?.id, price: item?.price }))
   }
 
   setService(event: any) {
     this.serviceSelected = this.services.find(({ id }) => id == event.target.value)
+
+
+    console.log("Service selectted", this.serviceSelected)
+
   }
 
   setServiceSurvey(serviceSurvey: any) {
     this.serviceSurveySelected = serviceSurvey
   }
 
-  removerServiceSurvey(id: Number) {
+  removerServiceSurvey(idServiceSurvey: Number) {
+
+    console.log("id Service survye",  idServiceSurvey)
+    
+
+    this.chargeService.delete(this.charge_id, idServiceSurvey)
+      .subscribe({
+        next: resCharge => {
+          this.toastr.success("Vistoria excluída com sucesso", "Remover Vistórias");
+        },
+        error: err => {
+          this.toastr.error("Falha ao remover Vistorias", "Remover Vistórias");
+        }
+      })
+
+
+    //incomes/{idIncome}/service-survey/{idServiceSurvey}
+
 
   }
 
 
-  payCharger() {
+
+
+
+  getIncomesService() {
+
+
+    this.chargeService.list(this.charge_id)
+      .subscribe({
+        next: (resCharge: any[]) => {
+          this.services = resCharge
+
+          this.sumary = this.services 
+          this.serviceSurveys = this.sumary?.service_surveys
+        },
+        error: err => {
+
+          console.log(err)
+
+        }
+      })
+
+
+
+  }
+
+
+  paidIncome() {
     this.submitted = true
     this.success = false;
+
+    console.log(this.confirmPaymentForm.invalid)
 
     if (this.confirmPaymentForm.invalid)
       return;
 
     const data = this.confirmPaymentForm.value
+
+    this.incomeService.confirmPayment(this.charge_id, data )
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+
+          this.toastr.success("Receita paga com sucesso!", "Receita")
+
+          this.getIncomesService()
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao pagar Receita!", "Receita")
+
+          console.log("error", err)
+        }
+      })
   }
+
 
   getServiceSurveys() {
 
@@ -153,6 +245,7 @@ export class ChargeComponent {
       }
     ];
 
+    /*
     this.services = [
       {
         id: 1,
@@ -202,14 +295,35 @@ export class ChargeComponent {
           },
         ]
       },
-    ];
+    ];*/
 
-    //manter apos chamada de API
-    for (const service of this.services) {
-      for (const survey of service?.surveys) {
-        survey.is_checked = survey?.billing_status == 'DRAFT' ? false : true;
-      }
-    }
+
+    this.atendimentoService.list()
+      .subscribe({
+        next: (resAtendimento: any[]) => {
+          this.services = resAtendimento
+
+          
+
+           //manter apos chamada de API
+          for (const service of this.services) {
+            for (const survey of service?.service_survey) {
+              survey.is_checked = survey?.billing_status == 'DRAFT' ? false : true;
+            }
+          }
+
+        },
+        error: err => {
+          
+          console.log("Falha ao buscar atendimento")
+
+
+        }
+      })
+
+
+
+   
   }
 
   setCheckBox(event: any, serviceSurvey: any) {

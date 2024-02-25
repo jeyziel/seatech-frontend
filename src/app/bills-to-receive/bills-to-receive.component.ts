@@ -499,6 +499,9 @@ export class BillsToReceiveComponent {
 
   toServices(income: any) {
 
+    return this.router.navigate([`/cobrancas/${income.id}`])
+
+
   }
 
   confirmationDelete() {

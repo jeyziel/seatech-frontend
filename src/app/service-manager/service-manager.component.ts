@@ -24,7 +24,7 @@ export class ServiceManagerComponent {
   public addServiceSurveys: FormGroup;
   public addExpenses: FormGroup;
   public service: any;
-  public serviceSurveys: any[];
+  public serviceSurveys: any;
   public expenses: any[];
 
   public service_id;
@@ -91,7 +91,7 @@ export class ServiceManagerComponent {
 
     this.service_id = this.router.snapshot.params['id']
 
-    console.log("service_id", this.service_id)
+   
 
     // "name": "Pagamento de Agua",
     // "value": 50,
@@ -111,9 +111,9 @@ export class ServiceManagerComponent {
     this.getServiceExpenses();
 
     this.getServices()
-   // this.getCustomers()
-   // this.getHarbors()
-   // this.getSurveys()
+    this.getCustomers()
+    this.getHarbors()
+    this.getSurveys()
 
     this.getExpenseCategories()
     this.getAccounts()
@@ -360,17 +360,15 @@ export class ServiceManagerComponent {
     this.managerSurveyService.show(this.service_id)
       .subscribe({
         next: (res: any) => {
-          this.serviceSurveys = res
+          this.serviceSurveys = res.service_surveys
 
-          console.log(res)
-
-
-          this.surveys_value = this.serviceSurveys.reduce((acc, curr) => {
+          
+          this.surveys_value = this.serviceSurveys?.reduce((acc, curr) => {
             return acc + curr.price;
           }, 0) ?? 0;
 
 
-          console.log(this.surveys_value)
+      
 
         },
         error: err => {

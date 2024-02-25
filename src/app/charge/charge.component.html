@@ -16,7 +16,7 @@
 
 <div class="container-fluid mt--7">
   <div class="row">
-    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-xs-8">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">
@@ -30,25 +30,26 @@
             <div class="col">
               <h2>Cobrança: #{{ sumary.id }}</h2>
               <ul class="list-unstyled">
+                <li><span class="font-weight-bold m-1">Nome: </span> {{ sumary?.name }}</li>
                 <li><span class="font-weight-bold m-1">Forma de Cobrança: </span>
-                  {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + '#' +
-                  sumary?.number}}</li>
+                  {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + 
+                  ( sumary?.number ?? ' : N/A ')}}</li>
                 <li><span class="font-weight-bold m-1">Cliente: </span> {{ sumary?.customer?.name }}</li>
-                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value | currency: 'BRL'}}</li>
-                <li><span class="font-weight-bold m-1">Data de Cobrança </span> {{ sumary?.launch_at | date:
+                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value_paid ?? sumary?.value | currency: 'BRL'}}</li>
+                <li><span class="font-weight-bold m-1">Data de Emissão </span> {{ sumary?.launch_at | date:
                   'dd/MM/yyyy' }}</li>
-                <li><span class="font-weight-bold m-1">Data de Vencimento </span> {{ sumary?.due_at | date: 'dd/MM/yyyy'
+                <li><span class="font-weight-bold m-1">Data de Vencimento: </span> {{ sumary?.due_at | date: 'dd/MM/yyyy'
                   }}</li>
                 <li><span class="font-weight-bold m-1">Status: </span> {{ sumary?.status | translate }}
                   <i
                     [class]="sumary?.status == 'PAID' ? 'far fa-check-circle text-success' : 'fas fa-times-circle text-danger'"></i>
                 </li>
-                <li><span class="font-weight-bold m-1">Data de Pagamento </span> {{ sumary?.paid_at | date: 'dd/MM/yyyy'
+                <li><span class="font-weight-bold m-1">Data de Pagamento: </span> {{ sumary?.paid_at ?? '-' | date: 'dd/MM/yyyy'
                   }}</li>
               </ul>
             </div>
             <div class="col d-flex justify-content-end align-items-end">
-              <button type="button" (click)="payCharger(); open(confirmPayment)" class="btn btn-primary btn-sm"
+              <button type="button" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
                 title="Deletar">
                 Pagar &nbsp;
                 <span>
@@ -79,33 +80,33 @@
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
-              <tr>
-                <th scope="col">Nome de Atendimento</th>
-                <th scope="col">Navio</th>
-                <th scope="col">Cliente</th>
+              <tr >
+                <th scope="col" >Atendimento</th>
+                <th scope="col" >Porto</th>
+                <th scope="col" >Cliente</th>
                 <th scope="col">Valor</th>
-                <th scope="col">Data Vistoria</th>
-                <th scope="col">Ações</th>
+                <th scope="col">Data da Vistoria</th>
+                <th  class="text-center">Ações</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let serviceSurvey of serviceSurveys">
-                <td>{{ serviceSurvey?.name }}</td>
+                <td>{{ serviceSurvey?.ship_name }}</td>
                 <td>{{ serviceSurvey?.harbor_name }}</td>
                 <td>{{ serviceSurvey?.customer_name}}</td>
                 <td>{{ serviceSurvey?.price | currency: 'BRL' }}</td>
                 <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
-                <td class="text-right">
-                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                <td class="text-center" >
+                 
                     <button type="button"
-                      (click)="setServiceSurvey(serviceSurvey); open(modalConfirmation, removerServiceSurvey, serviceSurvey?.id)"
+                      (click)="setServiceSurvey(serviceSurvey); open(modalConfirmation, removerServiceSurvey, serviceSurvey?.service_survey_id)"
                       class="btn btn-dark btn-sm" title="Deletar">
                       Deletar &nbsp;
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
                     </button>
-                  </div>
+                  
                 </td>
               </tr>
             </tbody>
@@ -142,7 +143,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
+      <button (click)="paidIncome()" type="button" class="btn btn-outline-dark">Confirmar</button>
     </div>
   </ng-template>
 
@@ -191,28 +192,28 @@
           <div class="form-group">
             <label for="input-service">Atendimento(*)</label>
             <select class="form-control" id="input-service" (change)="setService($event);">
-              <option value=""></option>
+             <option></option>
               <option *ngFor="let service of services" [value]="service?.id">
-                {{ service.name }}
+                {{ service.ship_name }}
               </option>
             </select>
           </div>
         </div>
       </div>
-      <div class="row d-flex justify-content-center align-items-end" *ngIf="serviceSelected?.name">
+      <div class="row d-flex justify-content-center align-items-end" *ngIf="serviceSelected?.ship_name">
         <div class="col-8">
           <div class="callout callout-info">
-            <h5>Nome: {{serviceSelected?.name}}</h5>
-            <p>Vistorias Faturas: {{ serviceSelected?.surveys?.length }}</p>
+            <h5>Nome: {{serviceSelected?.ship_name}}</h5>
+            <p>Vistorias Faturas: {{ serviceSelected?.service_survey?.length }}</p>
           </div>
         </div>
       </div>
-      <div class="table-responsive" *ngIf="serviceSelected?.surveys?.length > 0">
+      <div class="table-responsive" *ngIf="serviceSelected?.service_survey?.length > 0">
         <table class="table align-items-center table-flush">
           <thead class="thead-light">
             <tr>
-              <th scope="col">Nome de Atendimento</th>
-              <th scope="col">Navio</th>
+         
+              <th scope="col">Atendimento</th>
               <th scope="col">Cliente</th>
               <th scope="col">Status</th>
               <th scope="col">Valor</th>
@@ -221,10 +222,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let survey of serviceSelected?.surveys">
-              <td>{{ survey?.name }}</td>
-              <td>{{ survey?.harbor_name }}</td>
-              <td>{{ survey?.customer_name}}</td>
+            <tr *ngFor="let survey of serviceSelected?.service_survey">
+             
+              <td>{{ survey?.service?.ship_name }}</td>
+              <td>{{ survey?.harbor?.name }}</td>
+              <td>{{ survey?.customer?.name }}</td>
               <td>
                 <span
                   [class]="'badge badge-' + (survey?.billing_status == 'PENDING' ? 'warning' : survey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"

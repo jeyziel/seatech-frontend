@@ -55,7 +55,7 @@
                     </button>
 
 
-                    <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button">
+                    <button class="btn btn-outline-secondary calendar" (click)="getData()" type="button">
                       <i class="icon-regular fa fa-search" style="color:rgb(158, 175, 221);" ></i>
                       </button>
 
@@ -90,7 +90,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>150</h3>
+                <h3>{{ services.length }}</h3>
 
                 <p>Total de Atendimentos</p>
               </div>
@@ -105,7 +105,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>R$ 83.000<sup style="font-size: 20px"></sup></h3>
+                <h3>R$  {{ faturamento  }} <sup style="font-size: 20px"></sup></h3>
 
                 <p>Faturamento</p>
               </div>
@@ -120,7 +120,7 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>R$ 45.000,75</h3>
+                <h3>R$ {{ despesas }}</h3>
 
                 <p>Despesas</p>
               </div>
@@ -135,7 +135,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>R$ 28.000<sup style="font-size: 20px"></sup></h3>
+                <h3>R$ {{ faturamento -  despesas }}<sup style="font-size: 20px"></sup></h3>
 
                 <p>Lucratividade</p>
               </div>

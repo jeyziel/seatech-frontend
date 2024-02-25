@@ -68,6 +68,7 @@
               </tr>
             </thead>
             <tbody>
+
               <tr *ngFor="let serviceSurvey of serviceSurveys">
                 <td>{{ serviceSurvey?.name }}</td>
                 <td>{{ serviceSurvey?.harbor_name }}</td>
@@ -237,7 +238,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button (click)="createServiceSurvey()" type="button" class="btn btn-outline-dark">Criar</button>
+      <button (click)="create()" type="button" class="btn btn-outline-dark">Criar</button>
     </div>
   </ng-template>
 
