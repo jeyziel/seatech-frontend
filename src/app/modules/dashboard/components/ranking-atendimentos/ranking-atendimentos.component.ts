@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-ranking-atendimentos',
@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./ranking-atendimentos.component.css']
 })
 export class RankingAtendimentosComponent {
+
+
+  @Input() services: any[] = []
+
 
 }

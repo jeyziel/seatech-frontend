@@ -13,22 +13,42 @@
     <div class="col">
       <div class="card shadow">
         <div class="card-header border-0">
+
+          <h3 class="card-title mt-2">Lista de Despesas</h3>
+
+          <div class="card-tools mt-2">
+            <div class="input-group mb-3">
+              <button (click)="open(addExpenses)" alt="adicionar despesas" title="Adicionar Despesas"
+                class="btn btn-primary mr-3"><i class="fa fa-plus"></i></button>
+              <input type="text" placeholder="Filtro" [(ngModel)]="seachText"
+                class="form-control ng-untouched ng-pristine ng-valid">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-light border"><i class="fas fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+          <!-- 
           <div class="row align-items-center">
             <div class="col-4 text-left">
               <h3 class="mb-0">Listagem</h3>
             </div>
             <div class="col-7 text-right">
-              <a class="btn btn-sm btn-primary" (click)="open(addExpenses)">Adicionar</a>
+
+              <button type="button" title="Novo" class="btn btn-sm btn-primary" 
+              (click)="open(addExpenses)" style="border: 1px solid #ced4da; border-radius: 0.25rem;"><i class="fa fa-plus"></i></button>
+
+             
             </div>
             <div class="col-1 text-right">
               <a class="btn btn-sm btn-secondary" (click)="open(filter)">Filtros</a>
             </div>
-          </div>
+          </div>-->
 
         </div>
+
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
-            <thead class="thead-light">
+            <thead class="">
               <tr>
                 <th scope="col">Nome</th>
                 <th scope="col">Tipo</th>
@@ -40,7 +60,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let expense of expenses | paginate: { itemsPerPage, currentPage }">
+              <tr *ngFor="let expense of expenses |  search: seachText | paginate: { itemsPerPage, currentPage }">
                 <td>
                   {{ expense?.name }}
                 </td>
@@ -61,8 +81,8 @@
                 </td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
-                    <button type="button" (click)="onEditExpense(expense); open(editExpenses);" class="btn btn-dark btn-sm"
-                      title="Editar">
+                    <button type="button" (click)="onEditExpense(expense); open(editExpenses);"
+                      class="btn btn-dark btn-sm" title="Editar">
                       Editar &nbsp;
                       <span>
                         <i class="fas fa-pencil-alt"></i>
@@ -144,7 +164,7 @@
             </div>
           </div>
 
-        
+
 
           <div class="row">
             <div class="col">

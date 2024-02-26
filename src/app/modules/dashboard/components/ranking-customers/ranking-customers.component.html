@@ -21,21 +21,17 @@
           <tr>
             <th>Nome</th>
             <th>Receita</th>
-            <th>% de Lucro</th>
+            <th>% de Contribuição</th>
             
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Navio Peregrino</td>
-            <td>R$ 80.650,00</td>
-            <td>50 %</td>
+          <tr *ngFor="let customer of customers">
+            <td>{{ customer.name }}</td>
+            <td>R$ {{ customer.price  }}</td>
+            <td> {{ getContribuicao(customer.price) }} %</td>
           </tr>
-          <tr>
-            <td>Navio Velho Chico</td>
-            <td>R$ 80.650,00</td>
-            <td>50 %</td>
-          </tr>
+          
          
         </tbody>
       </table>

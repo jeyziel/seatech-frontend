@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 
 @Component({
@@ -13,11 +13,15 @@ export class ChartSurveysHarborComponent {
   public barChartLegend = true;
   public barChartPlugins = [];
 
+  public datasets: any[] = [
+    {data: [], label: '', stack: 'a'}
+  ]
+
+  @Input() surveyHabors: any[] = [];
+
   public barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [ 'Salvador', 'Candeias', 'Vitória' ],
+    labels: [],
     datasets: [
-      { data: [ 65, 59, 80 ], label: 'IRON ORE FINES', stack: 'a' },
-      { data: [ 28, 48, 40 ], label: 'OFF HIRE BUNKER', stack: 'a' }
     ]
   };
 
@@ -27,6 +31,51 @@ export class ChartSurveysHarborComponent {
   };
 
   constructor() {
+  }
+
+  ngOnInit() {
+
+    this.getIncomeByHarbors()
+
+
+  }
+
+
+  getIncomeByHarbors() {
+
+
+    const labels = []
+    const datasets = []
+
+
+    this.surveyHabors.forEach(porto => {
+      // Adicionando o nome do porto aos rótulos
+      labels.push(porto.harbor_name);
+    
+      // Iterando sobre as pesquisas do porto
+      porto.surveys.forEach(survey => {
+        // Verificando se o conjunto de dados para esta pesquisa já existe
+        const existingDatasetIndex = datasets.findIndex(dataset => dataset.label === survey.name);
+        if (existingDatasetIndex !== -1) {
+          // Se o conjunto de dados já existe, adiciona o preço multiplicado pela quantidade
+          datasets[existingDatasetIndex].data.push(survey.price);
+        } else {
+          // Se o conjunto de dados não existe, cria um novo
+          datasets.push({
+            data: [survey.price],
+            label: survey.name,
+            stack: 'a'
+          });
+        }
+      });
+    });
+    
+
+
+    this.barChartData.labels = labels
+    this.barChartData.datasets = datasets
+
+
   }
   
 

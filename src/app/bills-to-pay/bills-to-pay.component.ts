@@ -36,6 +36,8 @@ export class BillsToPayComponent {
   fn: any;
   paramsDelete: any;
 
+  public seachText = ''
+
   constructor(
     private modalService: NgbModal,
     private toastr: ToastrService,

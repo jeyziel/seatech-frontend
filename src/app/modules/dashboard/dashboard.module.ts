@@ -17,7 +17,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ToastrModule } from 'ngx-toastr';
 import { ChartSurveysHarborComponent } from './components/chart-surveys-harbor/chart-surveys-harbor.component';
-import { ChartCategoriesExpensesComponent } from './components/chart-categories-expenses/chart-categories-expenses.component';
 import { DashboardCustomerComponent } from './pages/dashboard-customer/dashboard-customer.component';
 import localePt from '@angular/common/locales/pt';
 
@@ -53,7 +52,6 @@ registerLocaleData(localePt);
      RankingCustomersComponent, 
      RankingSurveysComponent, 
      ChartSurveysHarborComponent, 
-     ChartCategoriesExpensesComponent, 
   ]
 })
 export class DashboardModule {

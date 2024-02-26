@@ -9,23 +9,24 @@ export const navItems: any[] = [
         url: '/dashboard',
         iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
       },
-      {
-        name: 'Cliente',
-        url: '/dashboard/cliente',
-        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-      },
+      // {
+      //   name: 'Cliente',
+      //   url: '/dashboard/cliente',
+      //   iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      // },
     ]
   },
+  // {
+  //   name: 'Usuários',
+  //   url: '/usuarios',
+  //   iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+  // },
+
   {
-    name: 'Usuários',
-    url: '/usuarios',
-    iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+    name: 'Gerenciar Atendimento',
+    point: true
   },
-  {
-    name: 'Clientes',
-    url: '/clientes',
-    iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-  },
+
   {
     name: 'Atendimentos',
     url: '/atendimentos',
@@ -41,8 +42,29 @@ export const navItems: any[] = [
         iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
       },
       {
-        name: 'Categoria',
+        name: 'Categorias',
         url: '/categoria-de-vistoria',
+        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      },
+    ]
+  },
+
+  {
+    name: 'Financeiro',
+    point: true
+  },
+  {
+    name: 'Receitas',
+    iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
+    children: [
+      {
+        name: 'Contas a Receber',
+        url: '/contas-a-receber',
+        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      },
+      {
+        name: 'Categorias',
+        url: '/categoria-de-receita',
         iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
       },
     ]
@@ -64,45 +86,30 @@ export const navItems: any[] = [
     ]
   },
   {
+    name: 'Contas Bancárias',
+    iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
+    url: '/contas-bancarias',
+    
+  },
+ 
+  
+  
+ 
+  {
     name: 'Cadastros',
     point: true
+  },
+ 
+  {
+    name: 'Clientes',
+    url: '/clientes',
+    iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
   },
   {
     name: 'Portos',
     iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
-    children: [
-      {
-        name: 'Listagem',
-        url: '/portos',
-        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-      },
-    ]
+    url: '/portos',  
   },
-  {
-    name: 'Receitas',
-    iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
-    children: [
-      {
-        name: 'Contas a Receber',
-        url: '/contas-a-receber',
-        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-      },
-      {
-        name: 'Categoria',
-        url: '/categoria-de-receita',
-        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-      },
-    ]
-  },
-  {
-    name: 'Contas Bancárias',
-    iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
-    children: [
-      {
-        name: 'Listagem',
-        url: '/contas-bancarias',
-        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-      },
-    ]
-  },
+  
+  
 ];

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ChartConfiguration, ChartDataset, ChartOptions } from 'chart.js';
 
 @Component({
@@ -9,12 +9,18 @@ import { ChartConfiguration, ChartDataset, ChartOptions } from 'chart.js';
 export class ChartCategoriesComponent {
 
 
-  title = 'ng2-charts-demo';
+  @Input() categories = [];
+  @Input() title = '';
 
-  public doughnutChartLabels: string[] = [ 'Vistórias', 'Investimentos' ];
+  public values: any[] = []
+
+
+  public doughnutChartLabels: string[] = [];
   public doughnutChartDatasets: ChartConfiguration<'doughnut'>['data']['datasets'] = [
-      { data: [ 350, 450], label: 'Series A' },
+      { data: []},
     ];
+
+
 
   public doughnutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
@@ -22,5 +28,42 @@ export class ChartCategoriesComponent {
   };
 
   constructor() {
+
+    
+  }
+
+  ngOnInit() {
+
+  
+
+    const data =  this.extrairDados(this.categories)
+
+    console.log("data", data)
+
+    this.doughnutChartLabels = data.names
+
+    this.doughnutChartDatasets[0].data = data.values
+
+
+    //this.values = data.values
+    
+ 
+  
+
+
+
+  }
+
+  extrairDados(array: any) {
+
+    const names = [];
+    const values = [];
+
+    array.forEach(obj => {
+      names.push(obj.category_name);
+      values.push(obj.total_value);
+    });
+
+    return { names, values } ;
   }
 }

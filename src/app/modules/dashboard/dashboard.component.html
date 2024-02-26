@@ -97,7 +97,7 @@
               <div class="icon">
                 <i class="ion ion-bag"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
@@ -112,7 +112,7 @@
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
@@ -127,7 +127,7 @@
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
@@ -142,7 +142,7 @@
               <div class="icon">
                 <i class="ion ion-stats-bars"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
             </div>
           </div>
           <!-- ./col -->
@@ -151,15 +151,15 @@
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
-          <div class="col-6">
+          <div class="col-7">
 
 
-              <app-ranking-atendimentos></app-ranking-atendimentos>
+              <app-ranking-atendimentos  [services]="servicesFinished" ></app-ranking-atendimentos>
 
           </div>
 
-          <div class="col-6">
-            <app-ranking-customers></app-ranking-customers>
+          <div class="col-5">
+            <app-ranking-customers  [customers]="customerSurvey" [faturamento]="faturamento" ></app-ranking-customers>
 
           </div>
           <!-- /.Left col -->
@@ -170,18 +170,20 @@
         <!-- /.row (main row) -->
         <div class="row">
           <div class="col-12">
-            <app-chart-surveys-harbor></app-chart-surveys-harbor>
+            
+            <app-chart-surveys-harbor  *ngIf="surveysHarbors.length > 0" [surveyHabors]="surveysHarbors"  ></app-chart-surveys-harbor>
           </div>
         </div>
 
         <div class="row">
 
           <div class="col-6">
-            <app-chart-categories></app-chart-categories>
+            <app-chart-categories *ngIf="incomesPaid?.length > 0" title="Categoria de Receita" [categories]="incomesPaid" ></app-chart-categories>
           </div>
-
+    
           <div class="col-6">
-            <app-chart-categories-expenses></app-chart-categories-expenses>
+
+            <app-chart-categories *ngIf="expensesPaid.length > 0" title="Categoria de Despesas"  [categories]="expensesPaid"  ></app-chart-categories>
           </div>
 
 

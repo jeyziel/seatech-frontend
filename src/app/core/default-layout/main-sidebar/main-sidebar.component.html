@@ -1,10 +1,10 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
-  <a href="index3.html" class="brand-link">
-    <img src="assets/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-      style="opacity: 0.8" />
-    <span class="brand-text font-weight-light">Seatech</span>
+  <a href="index3.html" class="brand-link text-center">
+    <!-- <img src="assets/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+      style="opacity: 0.8" /> -->
+    <span class="text-center"><b>Seatech</b></span>
   </a>
 
   <!-- Sidebar -->
@@ -15,7 +15,7 @@
         <img src="assets/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image" />
       </div>
       <div class="info">
-        <a href="#" class="d-block">Jeyziel Gama</a>
+        <a href="#" class="d-block">{{ getUser() }}</a>
       </div>
     </div>
 
@@ -57,35 +57,7 @@
           </li>
         </ng-container>
 
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-tree"></i>
-            <p>
-              Atendimentos
-              <i class="fas fa-angle-left right"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview ml-3">
-            <li class="nav-item">
-              <a [routerLink]="['/modals-alerts']" [routerLinkActive]="['active']" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Gerenciar Atendimento</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a [routerLink]="['/vistorias']" [routerLinkActive]="['active']" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Vistórias</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a [routerLink]="['/navs-tabs']" [routerLinkActive]="['active']" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Tipos de Vistórias</p>
-              </a>
-            </li>
-          </ul>
-        </li>
+       
         <!-- <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-edit"></i>

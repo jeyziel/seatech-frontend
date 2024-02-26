@@ -13,4 +13,10 @@ export class MainSidebarComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getUser() {
+
+    return localStorage.getItem('username')
+
+  }
+
 }

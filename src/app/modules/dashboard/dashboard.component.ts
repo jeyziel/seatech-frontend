@@ -26,6 +26,12 @@ export class DashboardComponent implements OnInit {
 	public faturamento: number = 0
 	public despesas: number = 0
 
+	public surveys: any[] = []
+	public surveysHarbors: any[] = []
+	public customerSurvey: any[] = []
+	public servicesFinished: any[] = []
+
+	public data : any[]
 
 	constructor(
 		private toastr: ToastrService,
@@ -42,12 +48,12 @@ export class DashboardComponent implements OnInit {
 		this.toDate = this.toNgbDate(lastDayOfMonth);
 
 
-		this.getIncomesPaid();
-
-
+		this.getData()
+		
 
 
 	}
+
 
 	private toNgbDate(date: Date): NgbDate {
 		return new NgbDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
@@ -108,8 +114,14 @@ export class DashboardComponent implements OnInit {
 
 		this.dashboardService.getSurveysPaid(params)
 			.subscribe({
-				next: resSurveyPaid=> {
-					console.log(resSurveyPaid)
+				next: (resSurveyPaid: any[] )=> {
+					this.surveys = resSurveyPaid
+
+					this.surveysHarbors = this.getIncomeByHarbors()
+
+
+					this.customerSurvey = this.getSurveyByCustomer()
+
 				}
 			})
 
@@ -124,6 +136,8 @@ export class DashboardComponent implements OnInit {
 			.subscribe({
 				next: (resServiceFinished : any[] ) => {
 					this.services = resServiceFinished
+
+					this.transformServiceFinished()
 				}
 			})
 
@@ -200,6 +214,160 @@ export class DashboardComponent implements OnInit {
 	validateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
 		const parsed = this.formatter.parse(input);
 		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
+	}
+
+
+	transformServiceFinished() {
+
+		this.services.forEach(servico => {
+			const shipName = servico.ship_name;
+			const clientesUnicos = new Set();
+			let qtdVistorias = 0;
+			let precoVistorias = 0;
+			let precoDespesas = 0;
+			let vistoriasFaturas = 0;
+		  
+			// Iterando sobre as pesquisas do serviço
+			servico.service_survey.forEach(item  => {
+			  clientesUnicos.add(item.customer_id);
+			  qtdVistorias++;
+			  precoVistorias += item.price;
+
+			  if (item.billing_status == "CONCLUDED") vistoriasFaturas++
+
+			});
+
+
+		  
+			// Calculando o preço total
+			servico.expenses.forEach(expense => {
+				precoDespesas += expense.value;
+			});
+		  
+			// Adicionando as informações do serviço à estrutura
+			this.servicesFinished.push({
+			  shipName,
+			  qtdClientesUnicos: clientesUnicos.size,
+			  qtdVistorias,
+			  vistoriasFaturas,
+			  precoVistorias,
+			  precoDespesas
+			});
+		  });
+
+		return this.servicesFinished
+
+	}
+
+
+	getSurveyByCustomer() {
+
+		
+
+		const resultado = [];
+
+		this.surveys.forEach(item => {
+			// Obtendo o nome do porto
+			const customerName = item.customer.name 
+
+			if (!resultado[customerName]) {
+				resultado[customerName] = {
+					name: customerName,
+					price : item.price
+				};
+
+				
+			}else{
+				resultado[customerName].price += item.price
+
+			}
+
+	
+
+
+				
+		});
+
+
+	
+		const customers = [];
+
+		// Iterando sobre as chaves do objeto original
+		for (const key in resultado) {
+		// Verificando se a chave é uma propriedade própria do objeto (não herdada)
+			if (resultado.hasOwnProperty(key)) {
+				// Adicionando cada valor correspondente ao array de resultados
+				
+				customers.push(resultado[key]);
+			}
+		}
+
+		
+		return customers
+
+
+	}
+
+
+	getIncomeByHarbors() {
+
+		
+
+		const resultado = [];
+
+		this.surveys.forEach(item => {
+			// Obtendo o nome do porto
+			const harborName = item.harbor.name 
+
+			if (!resultado[harborName]) {
+				resultado[harborName] = {
+					harbor_name: harborName,
+					surveys: []
+				};
+			}
+
+			// Obtendo o nome da pesquisa e o preço
+			const surveyName = item.survey.name;
+			const price = item.price;
+			const id = item.survey.id;
+
+
+			if (!resultado[harborName].surveys[id]) {
+				resultado[harborName].surveys[id] = {
+					id: id,
+					name: surveyName,
+					price: price,
+					qtd: 1
+				} 
+			}else{
+				resultado[harborName].surveys[id].price += price
+				resultado[harborName].surveys[id].qtd += 1
+			}
+
+				
+		});
+
+
+	
+		const harbors = [];
+
+		// Iterando sobre as chaves do objeto original
+		for (const key in resultado) {
+		// Verificando se a chave é uma propriedade própria do objeto (não herdada)
+			if (resultado.hasOwnProperty(key)) {
+				// Adicionando cada valor correspondente ao array de resultados
+				resultado[key].surveys = Object.values(resultado[key].surveys)
+				harbors.push(resultado[key]);
+			}
+		}
+
+		
+
+		console.log("harbor modificado", harbors)
+
+		return harbors
+
+
 	}
 
 }

@@ -7,6 +7,7 @@ import { navItems } from 'src/app/core/default-layout/_nav';
 import { AuthenticateService } from 'src/app/core/shared/services/authenticate.service';
 import { param } from 'jquery';
 import { Token } from '@angular/compiler';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -22,13 +23,28 @@ export class LoginComponent {
   });
   isError: boolean = false;
 
+  public submitted : Boolean = false
+  public success: Boolean = false
+
+  public wrongLogin: Boolean = false
+
   constructor(
     private authService : AuthenticateService, 
-    private router: Router, private socket: SocketService
+    private router: Router, private socket: SocketService,
+    private toastrService : ToastrService
   ) { }
 
 
   login(){
+
+    this.submitted = true
+
+
+
+    if (!this.loginForm.valid) {
+      this.success = false
+      return;
+    }
 
     const credentials = this.loginForm.value 
 
@@ -39,17 +55,30 @@ export class LoginComponent {
           localStorage.setItem('token', res?.access_token)
           localStorage.setItem('username', res?.user?.name)
 
+          this.submitted = false
+          this.success = true
+
+          this.toastrService.success(`Seja bem vindo(a) ${res?.user?.name} `, "Bem vindo!")
+
           this.router.navigate(['/dashboard'])
 
         },
         error: err => {
           console.log("Falha ao realizar Login", err)
+
+          this.submitted = false
+          this.success = false
+
+          this.wrongLogin = true
         }
       })
 
 
   }
 
+  get f() {
+    return this.loginForm.controls
+  }
 
   onSingIn(){
     this.router.navigate(['/dashboard']);
