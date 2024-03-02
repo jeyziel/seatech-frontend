@@ -9,11 +9,11 @@ export const navItems: any[] = [
         url: '/dashboard',
         iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
       },
-      // {
-      //   name: 'Cliente',
-      //   url: '/dashboard/cliente',
-      //   iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-      // },
+      {
+        name: 'Cliente',
+        url: '/dashboard/cliente',
+        iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+      },
     ]
   },
   // {

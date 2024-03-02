@@ -4,9 +4,22 @@
 <div class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
-      <div class="col-md-8 col-sm-6">
+      <div class="col-md-5 col-sm-6">
         <h1 class="m-0">Dashboard de Clientes</h1>
       </div><!-- /.col -->
+      
+      <div class="col-md-3">
+
+        
+
+          <select [(ngModel)]="customer" class="form-control" id="input-service" placeholder="Clientes">
+           <option></option>
+          
+           <option *ngFor="let customer of customers$ | async" [ngValue]="customer?.id">{{ customer.name }}</option>
+          </select>
+        
+      </div>
+      
       <div class="col-md-4 col-sm-6">
 
         <form class="row">
@@ -33,7 +46,7 @@
               </button>
 
 
-              <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button">
+              <button class="btn btn-outline-secondary calendar" (click)="getData()" type="button">
                 <i class="icon-regular fa fa-search" style="color:rgb(158, 175, 221);"></i>
               </button>
 

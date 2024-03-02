@@ -19,6 +19,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ChartSurveysHarborComponent } from './components/chart-surveys-harbor/chart-surveys-harbor.component';
 import { DashboardCustomerComponent } from './pages/dashboard-customer/dashboard-customer.component';
 import localePt from '@angular/common/locales/pt';
+import { FormsModule } from '@angular/forms';
 
 registerLocaleData(localePt);
 
@@ -26,6 +27,7 @@ registerLocaleData(localePt);
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     ToastrModule.forRoot(),
    // BrowserAnimationsModule,
     NgChartsModule,
