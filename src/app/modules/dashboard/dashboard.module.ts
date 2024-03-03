@@ -20,6 +20,12 @@ import { ChartSurveysHarborComponent } from './components/chart-surveys-harbor/c
 import { DashboardCustomerComponent } from './pages/dashboard-customer/dashboard-customer.component';
 import localePt from '@angular/common/locales/pt';
 import { FormsModule } from '@angular/forms';
+import { ChartSurveysCustomerHarborComponent } from './pages/dashboard-customer/components/chart-surveys-harbor/chart-surveys-harbor.component';
+import { SurveysCustomerComponent } from './pages/dashboard-customer/components/surveys-customers/surveys-customers.component';
+import { RankingSurveysCustomerComponent } from './pages/dashboard-customer/components/ranking-surveys/ranking-surveys.component';
+import { ChartCategoriesCustomerComponent } from './pages/dashboard-customer/components/chart-categories/chart-categories.component';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { SharedAppModule } from 'src/app/core/shared/shared.module';
 
 registerLocaleData(localePt);
 
@@ -37,6 +43,7 @@ registerLocaleData(localePt);
     ControlSidebarModule,
     MainFooterModule,
     NgbModule,
+    SharedAppModule,
 
     DashboardRoutingModule,
 
@@ -54,6 +61,17 @@ registerLocaleData(localePt);
      RankingCustomersComponent, 
      RankingSurveysComponent, 
      ChartSurveysHarborComponent, 
+
+     //CUSTOMER
+
+     ChartSurveysCustomerHarborComponent,
+     SurveysCustomerComponent,
+     RankingSurveysCustomerComponent,
+     ChartSurveysCustomerHarborComponent,
+     ChartCategoriesCustomerComponent,
+
+
+
   ]
 })
 export class DashboardModule {

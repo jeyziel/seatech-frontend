@@ -1,0 +1,43 @@
+<div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Vistórias Mais Rentáveis</h3>
+
+      <div class="card-tools">
+        <div class="input-group input-group-sm" style="width: 150px;">
+          <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-default">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body table-responsive p-0">
+      <table class="table table-hover text-nowrap">
+        <thead>
+          <tr> 
+            <th>Vistória</th>
+            <th>Valor</th>
+            <th>Data da Vistoria</th>
+            <th>Status</th>
+            <th>Data da cobrança</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let survey of surveys">
+            <td>{{ survey?.name }}</td>
+            <td>R$ {{ survey?.price }}</td>
+            <td>{{ survey?.survey_at | date: 'dd/MM/YYYY' }}</td>
+            <td>{{ survey?.billing_status | translate  }}</td>
+            <td>{{ survey?.billing_at | date: 'dd/MM/YYYY' ?? '-'  }}</td>
+          </tr>
+        
+        </tbody>
+      </table>
+    </div>
+    <!-- /.card-body -->
+  </div>

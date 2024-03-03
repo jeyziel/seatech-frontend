@@ -363,8 +363,6 @@ export class DashboardComponent implements OnInit {
 
 		
 
-		console.log("harbor modificado", harbors)
-
 		return harbors
 
 

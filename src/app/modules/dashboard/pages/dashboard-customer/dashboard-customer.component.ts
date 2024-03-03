@@ -29,6 +29,19 @@ export class DashboardCustomerComponent {
 	public faturamentoCustomer: Number = 0
 	public incomesNotPaid: Number = 0
 
+	public surveysPaid: any[] = []
+	public incomesSurveyPaid: Number = 0
+	public incomesSurveyContribuiton: Number = 0
+
+	public surveysRecorrentes: any[] = []
+	public surveysHarbors: any[] = []
+
+	public surveyGrouppedByName : any[] = []
+	public surveyGrouppedCategories : any[] = []
+	
+
+	public surveys: any[] = []
+
 	constructor(
 		private toastr: ToastrService,
 		private customerService: CustomerService,
@@ -47,11 +60,8 @@ export class DashboardCustomerComponent {
 		this.toDate = this.toNgbDate(lastDayOfMonth);
 
 
-
-		//this.getCustomers()
-
 		this.customers$ = this.customerService.list()
-		this.getIncomes()
+		
 
 
 	}
@@ -60,7 +70,7 @@ export class DashboardCustomerComponent {
 
 		this.getIncomes()
 		this.getIncomesNotPaid()
-		this.getExpenses()
+
 		this.getSurveysPaid()
 		this.getSurvey()
 
@@ -68,19 +78,12 @@ export class DashboardCustomerComponent {
 	}
 
 
-	getCustomers() {
+	public getDate() {
 
-
-		this.customerService.list()
-			.subscribe({
-				next: (res: any) => {
-					//this.customers = res 
-
-				},
-				error: err => {
-					console.log("Falha ao buscar os clientes", err)
-				}
-			})
+		return {
+			"startDate": `${this.fromDate.year}-${this.fromDate.month.toString().padStart(2, '0')}-${this.fromDate.day.toString().padStart(2, '0')}`,
+			"endDate": `${this.toDate.year}-${this.toDate.month.toString().padStart(2, '0')}-${this.toDate.day.toString().padStart(2, '0')}`,
+		}
 
 
 
@@ -100,6 +103,12 @@ export class DashboardCustomerComponent {
 
 					this.faturamentoGeral = incomes?.reduce((acc, curr) => curr.total_value + acc, 0)
 
+
+					this.incomesSurveyContribuiton = this.surveysPaid?.reduce((acc, curr) => curr.contribuiton_percentage + acc, 0)
+
+					console.log("porcentagem de contribuição", this.incomesSurveyContribuiton )
+
+
 				}
 			})
 
@@ -118,7 +127,10 @@ export class DashboardCustomerComponent {
 					const incomes = resIncomesPaid
 
 					this.faturamentoCustomer = incomes?.reduce((acc, curr) => curr.total_value + acc, 0)
+					this.incomesSurveyContribuiton = resIncomesPaid?.reduce((acc, curr) => curr.contribution_percentage + acc, 0)
 
+
+					console.log("incomes contribuition", this.incomesSurveyContribuiton)
 				}
 			})
 
@@ -145,23 +157,6 @@ export class DashboardCustomerComponent {
 	}
 
 
-	getExpenses() {
-
-
-		const params = this.getDate()
-
-		this.dashboardCustomerService.getExpensePaid(params)
-			.subscribe({
-				next: (resIncomesPaid: any[]) => {
-
-					const incomes = resIncomesPaid
-
-					this.faturamentoCustomer = incomes?.reduce((acc, curr) => curr.total_value + acc, 0)
-
-				}
-			})
-
-	}
 
 
 	getSurveysPaid() {
@@ -173,7 +168,16 @@ export class DashboardCustomerComponent {
 			.subscribe({
 				next: (resSurveyPaid: any[]) => {
 
-					console.log("surveys Paid", resSurveyPaid)
+					this.surveysPaid = resSurveyPaid
+
+					this.surveysHarbors = this.getIncomeByHarbors(this.surveysPaid)
+					this.surveyGrouppedByName = this.grouppedSurveyIncome(this.surveysPaid )
+					this.surveyGrouppedCategories = this.grouppedSurveyCategory(this.surveysPaid)
+
+					console.log("survey by name", this.surveyGrouppedByName)
+					console.log("surveys by cateogires", this.surveyGrouppedCategories)
+
+					
 					
 
 				}
@@ -191,9 +195,16 @@ export class DashboardCustomerComponent {
 			.subscribe({
 				next: (resSurvey: any[]) => {
 
-					console.log("surveys",  resSurvey)
-					
+					this.surveys = resSurvey
 
+					this.surveysRecorrentes = this.groupSurveysAndCalculate(this.surveys)
+
+					
+					console.log("surveys recorrentes", this.surveysRecorrentes)
+
+				},
+				error: err => {
+					this.toastr.error("Falha ao buscar vistórias", "Vistorias")
 				}
 		})
 
@@ -202,17 +213,149 @@ export class DashboardCustomerComponent {
 	}
 
 
+	groupSurveysAndCalculate(data) {
+
+		const grouped = {};
+
+		data.forEach(item => {
+			if (!grouped[item.survey_id]) {
+				grouped[item.survey_id] = {
+					survey_id: item.survey_id,
+					name: item.name,
+					quantidade: 0,
+					total_faturado: 0,
+					total_recebido: 0
+				};
+			}
+			grouped[item.survey_id].quantidade++;
+			grouped[item.survey_id].total_faturado += item.price;
+
+			if (item.billing_status === "CONCLUDED") {
+				grouped[item.survey_id].total_recebido += item.price;
+			}
+		});
+		return Object.values(grouped);
+	}
+
+	getIncomeByHarbors(surveys: any[]) {
+
+		
+
+		const resultado = [];
+
+		surveys.forEach(item => {
+			// Obtendo o nome do porto
+			const harborName = item.harbor.name 
+
+			if (!resultado[harborName]) {
+				resultado[harborName] = {
+					harbor_name: harborName,
+					surveys: []
+				};
+			}
+
+			// Obtendo o nome da pesquisa e o preço
+			const surveyName = item.survey.name;
+			const price = item.price;
+			const id = item.survey.id;
 
 
-	public getDate() {
+			if (!resultado[harborName].surveys[id]) {
+				resultado[harborName].surveys[id] = {
+					id: id,
+					name: surveyName,
+					price: price,
+					qtd: 1
+				} 
+			}else{
+				resultado[harborName].surveys[id].price += price
+				resultado[harborName].surveys[id].qtd += 1
+			}
 
-		return {
-			"startDate": `${this.fromDate.year}-${this.fromDate.month.toString().padStart(2, '0')}-${this.fromDate.day.toString().padStart(2, '0')}`,
-			"endDate": `${this.toDate.year}-${this.toDate.month.toString().padStart(2, '0')}-${this.toDate.day.toString().padStart(2, '0')}`,
+				
+		});
+
+
+	
+		const harbors = [];
+
+		// Iterando sobre as chaves do objeto original
+		for (const key in resultado) {
+		// Verificando se a chave é uma propriedade própria do objeto (não herdada)
+			if (resultado.hasOwnProperty(key)) {
+				// Adicionando cada valor correspondente ao array de resultados
+				resultado[key].surveys = Object.values(resultado[key].surveys)
+				harbors.push(resultado[key]);
+			}
 		}
 
+		
+
+		return harbors
 
 
+	}
+
+
+
+	grouppedSurveyIncome(data) {
+
+		const surveys = {};
+	
+		data.forEach(item => {
+			const surveyId = item.survey.id;
+			const surveyName = item.survey.name;
+			const price = item.price;
+	
+			// Se o survey_id ainda não existir no objeto surveys, inicialize-o
+			if (!surveys[surveyId]) {
+				surveys[surveyId] = {
+					survey_id: surveyId,
+					category_name: surveyName,
+					total_value: 0,
+					quantidade: 0
+				};
+			}
+	
+			// Atualizar o total e a quantidade para o survey_id atual
+			surveys[surveyId].total_value += price;
+			surveys[surveyId].quantidade++;
+		});
+	
+		// Converter o objeto de surveys de volta para um array
+		const result = Object.values(surveys);
+	
+		return result;
+	}
+
+	grouppedSurveyCategory(data) {
+
+		const categoriesSurveys = {};
+	
+		data.forEach(item => {
+			const categoryID = item.survey.categories.id;
+			const surveyCategoryName = item.survey.categories.name;
+			const price = item.price;
+	
+			// Se o survey_id ainda não existir no objeto surveys, inicialize-o
+			if (!categoriesSurveys[categoryID]) {
+				categoriesSurveys[categoryID] = {
+					survey_id: categoryID,
+					category_name: surveyCategoryName,
+					total_value: 0,
+					quantidade: 0
+				};
+			}
+	
+			// Atualizar o total e a quantidade para o survey_id atual
+			categoriesSurveys[categoryID].total_value += price;
+			categoriesSurveys[categoryID].quantidade++;
+		});
+	
+		// Converter o objeto de surveys de volta para um array
+		const result = Object.values(categoriesSurveys);
+	
+		return result;
 	}
 
 

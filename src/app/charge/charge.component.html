@@ -27,7 +27,7 @@
 
         <div class="card-body details__content">
           <div class="row">
-            <div class="col">
+            <div class="col" *ngIf="sumary">
               <h2>Cobrança: #{{ sumary.id }}</h2>
               <ul class="list-unstyled">
                 <li><span class="font-weight-bold m-1">Nome: </span> {{ sumary?.name }}</li>
@@ -49,7 +49,7 @@
               </ul>
             </div>
             <div class="col d-flex justify-content-end align-items-end">
-              <button type="button" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
+              <button type="button"  (click)="setDataPayment()" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
                 title="Deletar">
                 Pagar &nbsp;
                 <span>
@@ -71,7 +71,7 @@
               <h3 class="mb-0">Vistorias</h3>
             </div>
             <div class="col-4 text-right">
-              <a class="btn btn-sm btn-primary" (click)="open(addServiceSurvey);">
+              <a class="btn btn-sm btn-primary" *ngIf="services"  (click)="open(addServiceSurvey);">
                 <i class="fas fa-plus"></i>&nbsp; Vistorias
               </a>
             </div>
@@ -100,7 +100,7 @@
                  
                     <button type="button"
                       (click)="setServiceSurvey(serviceSurvey); open(modalConfirmation, removerServiceSurvey, serviceSurvey?.service_survey_id)"
-                      class="btn btn-dark btn-sm" title="Deletar">
+                      class="btn btn-danger btn-sm" title="Deletar">
                       Deletar &nbsp;
                       <span>
                         <i class="fas fa-trash-alt"></i>
@@ -186,17 +186,24 @@
       </button>
     </div>
 
-    <div class="modal-body">
+    <button type="button" class="close"  (click)="setValue(2)">
+      <span aria-hidden="true">&times;</span> t estee
+    </button>
+
+    <div class="modal-body"  *ngIf="services.length > 0">
       <div class="row d-flex justify-content-center align-items-end">
         <div class="col-5">
           <div class="form-group">
-            <label for="input-service">Atendimento(*)</label>
-            <select class="form-control" id="input-service" (change)="setService($event);">
-             <option></option>
-              <option *ngFor="let service of services" [value]="service?.id">
-                {{ service.ship_name }}
-              </option>
-            </select>
+            <form [formGroup]="addServiceSurveys">
+              <label for="input-service">Atendimento(*)</label>
+              <select formControlName="id"  class="form-control" id="input-service" (change)="setService($event);">
+              
+                <option *ngFor="let service of services" [value]="service?.id" [selected]="service?.id == serviceSelected?.id">
+                  {{ service.ship_name }} {{ service?.id  }} {{ serviceSelected?.id }}
+                </option>
+              </select>
+            </form>
+           
           </div>
         </div>
       </div>
@@ -241,7 +248,7 @@
               <td>{{ survey?.customer?.name }}</td>
               <td>
                 <span
-                  [class]="'badge badge-' + (survey?.billing_status == 'PENDING' ? 'warning' : survey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"
+                  [class]="'badge badge-' + getBadge(survey?.billing_status)"
                   style="padding: .5em;">
                   {{ survey?.billing_status | translate }}
                 </span>

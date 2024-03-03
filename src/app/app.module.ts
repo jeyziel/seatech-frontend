@@ -58,14 +58,14 @@ registerLocaleData(localePt);
     AccountComponent,
     ExpenseCategoryComponent,
     ServiceComponent,
-    TranslatePipe,
-    SearchPipe,
+   
     ServiceManagerComponent,
     BillsToReceiveComponent,
     BillsToPayComponent,
     DateRangePickerComponent,
     NgDateRangePickerComponent,
     ChargeComponent,
+   
   ],
   imports: [
     CommonModule,
@@ -73,6 +73,7 @@ registerLocaleData(localePt);
     AppRoutingModule,
     DefaultLayoutModule,
     SharedAppModule,
+    DashboardModule,
     BrowserAnimationsModule,
     NgbModule,
     ToastrModule.forRoot(),

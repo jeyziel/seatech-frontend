@@ -9,6 +9,8 @@ import { CommonComponent } from './components/country-company-branch/common.comp
 import { DataTablesModule } from "angular-datatables";
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { TranslatePipe } from 'src/app/pipes/translate.pipe';
+import { SearchPipe } from 'src/app/pipes/search.pipe';
 
 const modules = [
   PermissionModule,
@@ -24,13 +26,16 @@ const modules = [
   declarations: [
     ConfirmationComponent,
     LoaderComponent,
-    CommonComponent
+    CommonComponent,
+    TranslatePipe,
+    SearchPipe,
   ],
   imports: [
     CommonModule,
     ...modules
   ],
   providers: [AlertService],
-  exports: [...modules,ConfirmationComponent,LoaderComponent,CommonComponent]
+  exports: [...modules,ConfirmationComponent,LoaderComponent,CommonComponent,  TranslatePipe,
+    SearchPipe]
 })
 export class SharedAppModule { }
