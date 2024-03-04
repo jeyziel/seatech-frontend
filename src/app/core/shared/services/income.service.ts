@@ -42,9 +42,9 @@ export class IncomeService {
 
   }
 
-  list() {
+  list(params = null) {
 
-    return this.http.get(`${environment.api_url}/incomes`)
+    return this.http.get(`${environment.api_url}/incomes`, {params})
 
   }
 

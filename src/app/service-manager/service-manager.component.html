@@ -29,9 +29,9 @@
           <ul class="list-unstyled">
             <li><span class="font-weight-bold m-1">Navio: </span> {{ service?.ship_name }}</li>
             <li><span class="font-weight-bold m-1">Descrição: </span> {{ service?.description }}</li>
-            <li><span class="font-weight-bold m-1">Valor Vistorias: </span> {{ this.surveys_value | currency: 'BRL'
+            <li><span class="font-weight-bold m-1">Valor Vistorias: </span>  {{ surveys_value | currency: 'BRL'
               }}</li>
-            <li><span class="font-weight-bold m-1">Valor Despesas: </span> {{ service?.value_expense | currency: 'BRL'
+            <li><span class="font-weight-bold m-1">Valor Despesas: </span> {{  expense_value | currency: 'BRL'
               }}</li>
           </ul>
         </div>
@@ -40,15 +40,15 @@
   </div>
   <div class="row">
     <div class="col">
-      <div class="card shadow">
+      <div class="card card-page">
         <div class="card-header border-0">
           <div class="row align-items-center">
             <div class="col-7 text-left">
               <h3 class="mb-0">Vistorias</h3>
             </div>
-            <div class="col-4 text-right">
+            <div class="col-5 text-right">
               <a class="btn btn-sm btn-primary" (click)="open(addServiceSurvey)">
-                <i class="fas fa-plus"></i>&nbsp; Vistoria
+                <i class="fas fa-plus"></i>&nbsp; Vistorias
               </a>
             </div>
           </div>
@@ -61,7 +61,7 @@
                 <th scope="col">Vistoria</th>
                 <th scope="col">Porto</th>
                 <th scope="col">Cliente</th>
-                <th scope="col">Status de Faturamento</th>
+                <th scope="col">Status</th>
                 <th scope="col">Preço</th>
                 <th scope="col">Data Vistoria</th>
                 <th scope="col"></th>
@@ -75,7 +75,7 @@
                 <td>{{ serviceSurvey?.customer_name}}</td>
                 <td>
                   <span
-                    [class]="'badge badge-' + (serviceSurvey?.billing_status == 'PENDING' ? 'warning' : serviceSurvey?.biling_status == 'CONCLUDED' ? 'primary' : 'dark')"
+                    [class]="'badge badge-' + getBadge(serviceSurvey?.billing_status)"
                     style="padding: .5em;">
                     {{ serviceSurvey?.billing_status | translate }}
                   </span>
@@ -86,8 +86,8 @@
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
                       (click)="setSurveySelected(serviceSurvey); open(modalConfirmationSur, removerServiceSurvey, serviceSurvey?.id)"
-                      class="btn btn-dark btn-sm" title="Deletar">
-                      Deletar &nbsp;
+                      class="btn btn-danger btn-sm" title="Deletar">
+                    
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -103,14 +103,14 @@
   </div>
   <div class="row">
     <div class="col">
-      <div class="card shadow">
+      <div class="card card-page">
         <div class="card-header border-0">
           <div class="row align-items-center">
             <div class="col-7 text-left">
               <h3 class="mb-0">Despesas</h3>
             </div>
-            <div class="col-4 text-right">
-              <a class="btn btn-sm btn-danger" (click)="open(addExpense)">
+            <div class="col-5 text-right">
+              <a class="btn btn-sm btn-primary" (click)="open(addExpense)">
                 <i class="fas fa-plus"></i>&nbsp; Despesa
               </a>
             </div>
@@ -122,8 +122,6 @@
               <tr>
                 <th scope="col">Nome</th>
                 <th scope="col">Valor</th>
-                <th scope="col">Valor Pago</th>
-                <th scope="col">Tipo</th>
                 <th scope="col">Situação</th>
                 <th scope="col">Categoria</th>
                 <th scope="col">Data de Vencimento</th>
@@ -141,17 +139,34 @@
                   <span [class]="'badge badge-' + (expense?.status == 'NOT_PAID' ? 'warning' : 'success')"
                     style="padding: .5em;">
                     {{ expense?.status | translate }}</span>
+
+                  
+                   
+
+
+
                 </td>
                 <td>{{ expense?.expense_category?.name }}</td>
                 <td>{{ (expense?.due_at | date: 'dd/MM/yyyy') ?? '-' }}</td>
                 <td>{{ (expense?.paid_at | date: 'dd/MM/yyyy') ?? '-'}}</td>
 
                 <td class="text-right">
+
+                  <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
+                    <button  [disabled]="expense?.status == 'PAID'" type="button" (click)="onConfirmPaymentSelected(expense); open(confirmPayment)"
+                      class="btn btn-success btn-sm" title="Pagar">
+                    
+                      <span>
+                        <i class="fas fa-file-invoice-dollar"></i>
+                      </span>
+                    </button>
+                  </div>
+
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
                       (click)="setExpenseSelected(expense); open(modalConfirmationExp, removerExpense, expense?.id)"
-                      class="btn btn-dark btn-sm" title="Deletar">
-                      Deletar &nbsp;
+                      class="btn btn-danger btn-sm" title="Deletar">
+                    
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -404,6 +419,37 @@
       <button (click)="createExpense()" type="button" class="btn btn-outline-dark">Criar</button>
     </div>
   </ng-template>
+
+      <ng-template #confirmPayment let-modal class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-basic-title">Confirmar Pagamento '{{ expenseSelected?.name }}'</h3>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="confirmPaymentForm">
+          <div class="form-group">
+            <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+            <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+            <div *ngIf="submittedExpense && !successExpense && paymentForm.value_paid.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+            <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+            <div *ngIf="submittedExpense && !successExpense && paymentForm.paid_at.errors">
+              <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button (click)="paidExpense()" type="button" class="btn btn-outline-dark">Confirmar</button>
+      </div>
+    </ng-template>
 
   <ng-template #modalConfirmationSur let-modal class="modal-dialog">
     <div class="modal-header">

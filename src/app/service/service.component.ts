@@ -123,14 +123,14 @@ export class ServiceComponent {
     if (this.editServicesForm.invalid)
       return;
 
-    const data = this.addServicesForm.value
+    const data = this.editServicesForm.value
 
     this.atendimentoService.update(this.serviceSelected?.id, data)
       .subscribe({
         next: res => {
 
 
-          this.toastr.success("Atendimento criado com sucesso", "Atendimento")
+          this.toastr.success("Atendimento atualizado com sucesso", "Atendimento")
 
           this.getServices()
         },
@@ -158,7 +158,7 @@ export class ServiceComponent {
 
         },
         error: err => {
-          this.toastr.error("Falha ao buscar atendimento", "Atendimentos")
+          this.toastr.error("Falha ao remover atendimento", "Atendimentos")
         }
       })
 

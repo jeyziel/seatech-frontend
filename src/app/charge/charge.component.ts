@@ -298,7 +298,7 @@ export class ChargeComponent {
   getServiceSurveys() {
 
   
-    this.atendimentoService.list()
+    this.atendimentoService.listByStatus()
       .subscribe({
         next: (resAtendimento: any[]) => {
           this.services = resAtendimento

@@ -1,6 +1,7 @@
 .card-page {
 
     max-height: 75vh;
+    min-height: 75vh;
     
 
 }
@@ -9,4 +10,5 @@
     position: absolute;
     bottom: 0;
     text-align: center;
+    width: 100%;
 }

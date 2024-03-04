@@ -7,23 +7,7 @@
         <div class="col  text-left">
             <h3 class="mb-0">Atendimentos</h3>
         </div>
-
-
-        <div class="card-tools">
-
-         
-
-          <div class="input-group input-group-sm">
-            <input type="text" name="table_search" class="form-control float-right" [(ngModel)]="seachText" placeholder="Search">
-    
-            <div class="input-group-append">
-              <button type="submit" class="btn btn-default">
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
+   
         
     </div>
 
@@ -34,13 +18,24 @@
 <div class="container-fluid mt--7">
   <div class="row">
     <div class="col">
-      <div class="card">
+      <div class="card card-page">
         <div class="card-header border-0">
         
             
               <h3 class="card-title">Lista de Atendimento</h3>
            
-
+              <div class="card-tools mt-2">
+                <div class="input-group mb-3">
+                  <button (click)="open(addServices)" alt="Adicionar Atendimentos" title="Adicionar Atendimentos"
+                    class="btn btn-primary mr-3"><i class="fa fa-plus"></i></button>
+                  <input type="text" placeholder="Pesquisar" [(ngModel)]="seachText"
+                    class="form-control ng-untouched ng-pristine ng-valid">
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-light border"><i class="fas fa-search"></i></button>
+                  </div>
+                </div>
+              </div>
+  
 
             <!-- 
             <div class="col-2">
@@ -55,14 +50,7 @@
             </div> -->
        
 
-          <div class="card-tools">
-
          
-            <div class="col text-right">
-              <a class="btn btn-sm  btn-primary" (click)="open(addServices)">Adicionar</a>
-            </div>
-            
-          </div>
 
         </div>
         <div class="table-responsive">
@@ -71,8 +59,9 @@
               <tr>
                 <th scope="col">Navio</th>
                 <th scope="col">Descrição</th>
-                <th scope="col">status</th>
-                <th scope="col">Criado</th>
+                <th scope="col">Status</th>
+                <th scope="col">Criado em:</th>
+                <th scope="col">Atualizado em:</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -94,11 +83,14 @@
                 <td>
                   {{ service?.created_at | date: 'dd/MM/yyyy HH:mm' }}
                 </td>
+                <td>
+                  {{ service?.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                </td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
 
                     <button type="button" (click)="onManagerService(service);"
-                      class="btn btn-dark btn-sm" title="Gerenciar">
+                      class="btn btn-info btn-sm" title="Gerenciar">
                       Gerenciar &nbsp;
                       <span>
                         <i class="fas fa-tasks"></i>
@@ -109,7 +101,6 @@
 
                     <button type="button" (click)="onEditService(service); open(editServices);"
                       class="btn btn-dark btn-sm" title="Editar">
-                      Editar &nbsp;
                       <span>
                         <i class="fas fa-pencil-alt"></i>
                       </span>
@@ -118,8 +109,7 @@
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
                       (click)="setServiceSelected(service); open(modalConfirmation, removerService, service?.id)"
-                      class="btn btn-dark btn-sm" title="Deletar">
-                      Deletar &nbsp;
+                      class="btn btn-danger btn-sm" title="Deletar">
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -130,7 +120,7 @@
             </tbody>
           </table>
         </div>
-        <pagination-controls (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
+        <pagination-controls class="pagination-bottom" (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
           [previousLabel]="'Anterior'"></pagination-controls>
       </div>
     </div>

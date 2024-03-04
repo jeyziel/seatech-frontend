@@ -88,7 +88,7 @@ export class BillsToPayComponent {
 
     this.filtersForm = new FormGroup({
       type: new FormControl(null, [Validators.nullValidator]),
-      expense_category_id: new FormControl(null, [Validators.nullValidator]),
+      categories: new FormControl(null, [Validators.nullValidator]),
       status: new FormControl(null, [Validators.nullValidator]),
     })
 
@@ -336,12 +336,33 @@ export class BillsToPayComponent {
     
   }
 
+  getBadge(status) {
+
+
+
+    if (status == 'PAID') {
+      
+      return 'success';
+    }
+
+  
+    return 'warning';
+
+    
+  }
+
+
+  
+
   getExpenseWithFilter() {
 
-    const invalid = [undefined, null, ''];
+    const invalid = [undefined, null, '', 'null'];
     const filters = this.filtersForm.value;
     filters.startDate = `${this.fromDate.year}-${this.fromDate.month}-${this.fromDate.day}`;
     filters.endDate = `${this.toDate.year}-${this.toDate.month}-${this.toDate.day}`;
+
+   
+
 
     for (const key in filters) {
       if (invalid.includes(filters?.[key])) {
@@ -358,11 +379,18 @@ export class BillsToPayComponent {
     }
 
 
-    this.expenseService.list()
+    this.expenseService.list(filters)
       .subscribe({
         next: (resExpense : any[]) => {
 
           this.expenses = resExpense
+
+          if (this.expenses.length == 0) {
+            this.toastr.warning("Não existe dados para o filtro selecionado", "Despesas");
+            return
+          }
+
+          this.modalService.dismissAll();
 
 
         },

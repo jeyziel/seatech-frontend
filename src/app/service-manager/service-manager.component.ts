@@ -12,6 +12,7 @@ import { SurveyServiceService } from '../core/shared/services/surveys-service.se
 import { AccountService } from '../core/shared/services/account.service';
 import { ExpenseServiceService } from '../core/shared/services/surveys-service.service copy';
 import { ExpenseCategoriesService } from '../core/shared/services/expense-categories.service';
+import { ExpenseService } from '../core/shared/services/expense.service';
 
 @Component({
   selector: 'app-service-manager',
@@ -45,6 +46,10 @@ export class ServiceManagerComponent {
   public serviceSurveysSelected: any;
   public expenseSelected: any;
 
+  public confirmPaymentForm: FormGroup;
+  public submittedExpense = true
+  public successExpense = false;
+
   fn: any;
   paramsDelete: any;
 
@@ -53,7 +58,8 @@ export class ServiceManagerComponent {
     private location: Location,
     private atendimentoService: AtendimentoService,
     private managerSurveyService: SurveyServiceService,
-    private expenseService: ExpenseServiceService,
+    private expenseSurveys: ExpenseServiceService,
+    private expenseService:  ExpenseService,
     private surveyService: SurveyService,
     private customerService: CustomerService,
     private harborService: HarborService,
@@ -91,7 +97,10 @@ export class ServiceManagerComponent {
 
     this.service_id = this.router.snapshot.params['id']
 
-   
+    this.confirmPaymentForm = new FormGroup({
+      value_paid: new FormControl(null, [Validators.required]),
+      paid_at: new FormControl(null, [Validators.required]),
+    })
 
     // "name": "Pagamento de Agua",
     // "value": 50,
@@ -128,6 +137,12 @@ export class ServiceManagerComponent {
   get addExpenseForm() {
     return this.addExpenses.controls
   }
+
+  get paymentForm() {
+    return this.confirmPaymentForm.controls
+  }
+
+
 
   open(content: any, fn = null, ...params: any[]) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', 'centered': true }).result.then((result) => {
@@ -193,7 +208,7 @@ export class ServiceManagerComponent {
 
 
 
-    this.expenseService.create(this.service_id, data)
+    this.expenseSurveys.create(this.service_id, data)
     .subscribe({
       next: (res: any) => {
 
@@ -241,7 +256,7 @@ export class ServiceManagerComponent {
 
   removerExpense(id: Number) {
 
-    this.expenseService.delete(this.service_id, this.expenseSelected.id)
+    this.expenseSurveys.delete(this.service_id, this.expenseSelected.id)
       .subscribe({
         next: res => {
 
@@ -265,7 +280,7 @@ export class ServiceManagerComponent {
     this.atendimentoService.show(this.service_id)
       .subscribe({
         next: (res: any[]) => {
-          this.service = res[0]
+          this.service = res
         },
         error: err => {
           this.toastr.error("Falha ao buscar atendimento", "Atendimentos")
@@ -366,6 +381,8 @@ export class ServiceManagerComponent {
           this.surveys_value = this.serviceSurveys?.reduce((acc, curr) => {
             return acc + curr.price;
           }, 0) ?? 0;
+
+        
 
 
       
@@ -492,13 +509,13 @@ export class ServiceManagerComponent {
 
   getServiceExpenses() {
 
-    this.expenseService.show(this.service_id)
+    this.expenseSurveys.show(this.service_id)
       .subscribe({
         next: (res: any) => {
           this.expenses = res
 
           this.expense_value = this.expenses.reduce((acc, curr) => {
-            return acc + curr.price;
+            return acc + curr.value;
           }, 0) ?? 0;
 
         },
@@ -509,6 +526,65 @@ export class ServiceManagerComponent {
         }
       })
   }
+
+
+  getBadge(status) {
+
+
+    if (status == 'PENDING') {
+      
+      return 'warning';
+    }
+
+    if (status == 'CONCLUDED') {
+      
+      return 'success';
+    }
+
+
+    return 'dark';
+
+  }
+
+  onConfirmPaymentSelected(expense: any) {
+    this.confirmPaymentForm.controls['value_paid'].setValue(expense?.value)
+    this.confirmPaymentForm.controls['paid_at'].setValue((new Date)?.toJSON()?.slice(0, 10))
+
+    this.expenseSelected = expense
+  }
+
+  paidExpense() {
+    this.submittedExpense = true
+    this.successExpense = false;
+
+    if (this.confirmPaymentForm.invalid)
+      return;
+
+    
+    const data = this.confirmPaymentForm.value
+    
+    this.expenseService.confirmPayment(this.expenseSelected?.id, data )
+      .subscribe({
+        next: (resIncome : any[]) => {
+
+
+          this.toastr.success("Receita paga com sucesso!", "Receita")
+
+          this.getServiceExpenses()
+
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao pagar Receita!", "Receita")
+
+          console.log("error", err)
+        }
+      })
+
+    
+  }
+
 
   setSurveySelected(serviceSurvey: any) {
     this.serviceSurveysSelected = serviceSurvey

@@ -70,7 +70,7 @@
             <div class="col-7 text-left">
               <h3 class="mb-0">Vistorias</h3>
             </div>
-            <div class="col-4 text-right">
+            <div class="col-5 text-right">
               <a class="btn btn-sm btn-primary" *ngIf="services"  (click)="open(addServiceSurvey);">
                 <i class="fas fa-plus"></i>&nbsp; Vistorias
               </a>
@@ -81,7 +81,9 @@
           <table class="table align-items-center table-flush">
             <thead class="">
               <tr >
+                <th scope="col" >Vistoria</th>
                 <th scope="col" >Atendimento</th>
+
                 <th scope="col" >Porto</th>
                 <th scope="col" >Cliente</th>
                 <th scope="col">Valor</th>
@@ -91,6 +93,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let serviceSurvey of serviceSurveys">
+                <td>{{ serviceSurvey?.survey_name }}</td>
                 <td>{{ serviceSurvey?.ship_name }}</td>
                 <td>{{ serviceSurvey?.harbor_name }}</td>
                 <td>{{ serviceSurvey?.customer_name}}</td>

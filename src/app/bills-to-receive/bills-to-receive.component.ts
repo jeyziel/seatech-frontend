@@ -33,6 +33,8 @@ export class BillsToReceiveComponent {
 
   public incomeSelected: any;
 
+  public seachText: string = '';
+
   fromDate: NgbDate | null
   toDate: NgbDate | null
 
@@ -93,7 +95,7 @@ export class BillsToReceiveComponent {
 
     this.filtersForm = new FormGroup({
       type: new FormControl(null, [Validators.nullValidator]),
-      income_category_id: new FormControl(null, [Validators.nullValidator]),
+      categories: new FormControl(null, [Validators.nullValidator]),
       status: new FormControl(null, [Validators.nullValidator]),
     })
 
@@ -398,7 +400,7 @@ export class BillsToReceiveComponent {
   getIncomeWithFilter() {
 
 
-    const invalid = [undefined, null, ''];
+    const invalid = [undefined, null, '', 'null'];
     const filters = this.filtersForm.value;
     filters.startDate = `${this.fromDate.year}-${this.fromDate.month}-${this.fromDate.day}`;
     filters.endDate = `${this.toDate.year}-${this.toDate.month}-${this.toDate.day}`;
@@ -412,11 +414,24 @@ export class BillsToReceiveComponent {
     }
 
 
-    console.log(filters)
-
    // console.log(this.fromDate)
     //console.log(this.toDate)
     this.getIncomes(filters);
+  }
+
+  getBadge(status) {
+
+
+
+    if (status == 'PAID') {
+      
+      return 'success';
+    }
+
+  
+    return 'warning';
+
+    
   }
 
   getIncomes(filters?: any) {
@@ -426,15 +441,26 @@ export class BillsToReceiveComponent {
     }
 
 
-    this.incomeService.list()
+    this.incomeService.list(filters)
       .subscribe({
         next: (resIncome : any[]) => {
 
           this.incomes = resIncome
 
 
+          if (this.incomes.length == 0) {
+            this.toastr.info("Não foram retornado dados de contas para a filtragem selecionada", "Contas a Receber")
+            return;
+          }
+
+          this.modalService.dismissAll()
+
+
         },
         error: err => {
+
+          this.toastr.info("Falha a buscar dados de contas a receber", "Contas a Receber")
+
           console.log("error", err)
         }
       })

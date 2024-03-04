@@ -42,9 +42,9 @@ export class ExpenseService {
 
   }
 
-  list() {
+  list(params = null) {
 
-    return this.http.get(`${environment.api_url}/expenses`)
+    return this.http.get(`${environment.api_url}/expenses`, { params })
 
   }
 

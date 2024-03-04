@@ -26,7 +26,7 @@ export class AtendimentoService {
 
   show(id: Number) {
 
-    return this.http.get(`${environment.api_url}/services`)
+    return this.http.get(`${environment.api_url}/services/${id}`)
 
   }
 
@@ -37,6 +37,12 @@ export class AtendimentoService {
   }
 
   list() {
+
+    return this.http.get(`${environment.api_url}/services`)
+
+  }
+
+  listByStatus(status = 'CONCLUDED') {
 
     return this.http.get(`${environment.api_url}/services`)
 

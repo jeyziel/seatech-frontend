@@ -12,8 +12,8 @@
           <a class="btn btn-sm btn-success" (click)="open(addCharges)">Criar Cobrança</a>
         </div>
 
-        <div class="col-1 align-items-end">
-          <a class="btn btn-sm btn-primary" (click)="open(addIncomes)">Adicionar</a>
+        <div class="col-1 text-right">
+          <a class="btn btn-sm btn-secondary" (click)="open(filter)">Filtros</a>
         </div>
         
        
@@ -30,16 +30,28 @@
     <div class="col">
       <div class="card card-page ">
         <div class="card-header border-0">
-          <div class="row align-items-center">
-            <div class="col-4 col-sm-6 text-left">
-              <h3 class="mb-0">Lista de Contas a Receber</h3>
-            </div>
+        
+          
+              <h2 class="mb-0 card-title">Lista de Contas a Receber</h2>
+          
             
-            <div class="col-8 col-sm-6 text-right">
-              <a class="btn btn-sm btn-secondary" (click)="open(filter)">Filtros</a>
+        
+
+            <div class="card-tools mt-2">
+              <div class="input-group mb-3">
+                <button (click)="open(addIncomes)" alt="adicionar receitas" title="Adicionar Receitas"
+                  class="btn btn-primary mr-3"><i class="fa fa-plus"></i></button>
+                <input type="text" placeholder="Pesquisar" [(ngModel)]="seachText"
+                  class="form-control ng-untouched ng-pristine ng-valid">
+                <div class="input-group-append">
+                  <button type="submit" class="btn btn-light border"><i class="fas fa-search"></i></button>
+                </div>
+              </div>
             </div>
+
+
            
-          </div>
+        
 
         </div>
         <div class="table-responsive">
@@ -57,10 +69,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let income of incomes | paginate: { itemsPerPage, currentPage }">
+             
+              <tr *ngFor="let income of incomes  |  search: seachText | paginate: { itemsPerPage, currentPage }">
                 <td>
                   {{ income?.name }}
-                  <span>Investimento</span>
+                 
                 </td>
                 <td>
                   {{ income?.type | translate }}
@@ -72,7 +85,13 @@
                   {{ income?.value_paid ??  income?.value | currency: 'BRL' }}
                 </td>
                 <td>
-                  {{ income?.status | translate }}
+                 
+
+                    <span
+                    [class]="'badge badge-' + getBadge(income?.status)"
+                    style="padding: .5em;">
+                    {{ income?.status | translate }}
+                </span>
                 </td>
                 <td>
                   {{ (income?.due_at | date: 'dd/MM/yyyy') ?? '-' }}
@@ -94,7 +113,7 @@
                   </div>
                  
                   <div class="btn-group mr-1 mb-1" role="group" aria-label="First group">
-                    <button type="button" (click)="onConfirmPaymentSelected(income); open(confirmPayment)"
+                    <button [disabled]="income.status == 'PAID'" type="button" (click)="onConfirmPaymentSelected(income); open(confirmPayment)"
                       class="btn btn-success btn-sm" title="Pagar">
                     
                       <span>
@@ -127,7 +146,7 @@
             </tbody>
           </table>
         </div>
-        <pagination-controls class="text-center" (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
+        <pagination-controls class="text-center pagination-bottom" (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
           [previousLabel]="'Anterior'"></pagination-controls>
       </div>
     </div>
@@ -199,16 +218,11 @@
             </div>
           </div>
 
+
+          
+
           <div class="row">
-            <div class="col">
-              <div class="form-group">
-                <label for="input-number" class="form-control-label">Número da NF(*)</label>
-                <input formControlName="number" id="input-number" class="form-control" type="text">
-                <div *ngIf="submittedIncome && !successIncome && chargerForm.number.errors">
-                  <small class="invalid-feedback" style="display: inline;">O Número da NF é obrigatório.</small>
-                </div>
-              </div>
-            </div>
+
             <div class="col">
               <div class="form-group">
                 <label for="input-harbor-create">Forma de Faturamento(*)</label>
@@ -221,6 +235,17 @@
                 </div>
               </div>
             </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="input-number" class="form-control-label">Número</label>
+                <input formControlName="number" id="input-number" class="form-control" type="text">
+                <div *ngIf="submittedIncome && !successIncome && chargerForm.number.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Número da NF é obrigatório.</small>
+                </div>
+              </div>
+            </div>
+          
           </div>
         </form>
       </div>
@@ -612,7 +637,7 @@
 
     <ng-template #filter let-modal class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title" id="modal-basic-title">Filtros</h3>
+        <h3 class="modal-title" id="modal-basic-title">Pesquisar</h3>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
           <span aria-hidden="true">×</span>
         </button>
@@ -622,7 +647,8 @@
           <div class="form-group">
             <label for="input-harbor-create">Tipo</label>
             <select formControlName="type" class="form-control" id="input-harbor-create">
-              <option value="OPERATION">Operação</option>
+              <option selected value=null>Todos</option>
+              <option value="SERVICES">Atendimento</option>
               <option value="DEFAULT">Padrão</option>
             </select>
           </div>
@@ -631,6 +657,7 @@
               <div class="form-group">
                 <label for="input-harbor-create">Situação</label>
                 <select formControlName="status" class="form-control" id="input-harbor-create">
+                  <option selected value=null >Todos</option>
                   <option value="PAID">Pago</option>
                   <option value="NOT_PAID">Não Pago</option>
                 </select>
@@ -639,7 +666,8 @@
             <div class="col">
               <div class="form-group">
                 <label for="input-income-category-create">Categoria</label>
-                <select formControlName="income_category_id" class="form-control" id="input-income-category-create">
+                <select formControlName="categories" class="form-control" id="input-income-category-create">
+                  <option selected value=null>Todos</option>
                   <option *ngFor="let incomeCategory of incomeCategorys" [ngValue]="incomeCategory?.id">
                     {{ incomeCategory.name }}
                   </option>

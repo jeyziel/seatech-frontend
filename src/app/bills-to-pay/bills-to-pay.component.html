@@ -4,6 +4,10 @@
       <div class="col-sm-6">
         <h1>Contas a Pagar</h1>
       </div>
+
+      <div class="col-6 text-right">
+        <a class="btn btn-sm btn-secondary" (click)="open(filter)">Filtros</a>
+      </div>
     </div>
   </div>
 </section>
@@ -11,7 +15,7 @@
 <div class="container-fluid mt--7">
   <div class="row">
     <div class="col">
-      <div class="card shadow">
+      <div class="card card-page">
         <div class="card-header border-0">
 
           <h3 class="card-title mt-2">Lista de Despesas</h3>
@@ -27,22 +31,8 @@
               </div>
             </div>
           </div>
-          <!-- 
-          <div class="row align-items-center">
-            <div class="col-4 text-left">
-              <h3 class="mb-0">Listagem</h3>
-            </div>
-            <div class="col-7 text-right">
-
-              <button type="button" title="Novo" class="btn btn-sm btn-primary" 
-              (click)="open(addExpenses)" style="border: 1px solid #ced4da; border-radius: 0.25rem;"><i class="fa fa-plus"></i></button>
-
-             
-            </div>
-            <div class="col-1 text-right">
-              <a class="btn btn-sm btn-secondary" (click)="open(filter)">Filtros</a>
-            </div>
-          </div>-->
+        
+         
 
         </div>
 
@@ -55,7 +45,8 @@
                 <th scope="col">Categoria</th>
                 <th scope="col">Valor</th>
                 <th scope="col">Situação</th>
-                <th scope="col">Data Vencimento</th>
+                <th scope="col">Vencimento</th>
+                <th scope="col">Data de Pagamento</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -74,25 +65,34 @@
                   {{ expense?.value | currency: 'BRL' }}
                 </td>
                 <td>
-                  {{ expense?.status | translate }}
+              
+                  <span
+                    [class]="'badge badge-' + getBadge(expense?.status)"
+                    style="padding: .5em;">
+                    {{ expense?.status | translate }}
+                  </span>
+
                 </td>
                 <td>
                   {{ (expense?.due_at | date: 'dd/MM/yyyy') ?? '-' }}
+                </td>
+                <td>
+                  {{ (expense?.paid_at | date: 'dd/MM/yyyy') ?? '-' }}
                 </td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button" (click)="onEditExpense(expense); open(editExpenses);"
                       class="btn btn-dark btn-sm" title="Editar">
-                      Editar &nbsp;
+                     
                       <span>
                         <i class="fas fa-pencil-alt"></i>
                       </span>
                     </button>
                   </div>
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
-                    <button type="button" (click)="onConfirmPaymentSelected(expense); open(confirmPayment)"
-                      class="btn btn-dark btn-sm" title="Pagar">
-                      Pagar &nbsp;
+                    <button  [disabled]="expense?.status == 'PAID'" type="button" (click)="onConfirmPaymentSelected(expense); open(confirmPayment)"
+                      class="btn btn-success btn-sm" title="Pagar">
+                    
                       <span>
                         <i class="fas fa-file-invoice-dollar"></i>
                       </span>
@@ -101,8 +101,8 @@
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
                       (click)="setExpenseSelected(expense); open(modalConfirmation, removerExpense, expense?.id)"
-                      class="btn btn-dark btn-sm" title="Deletar">
-                      Deletar &nbsp;
+                      class="btn btn-danger btn-sm" title="Deletar">
+                     
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -113,7 +113,7 @@
             </tbody>
           </table>
         </div>
-        <pagination-controls (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
+        <pagination-controls class="pagination-bottom" (pageChange)="currentPage = $event" [nextLabel]="'Próximo'"
           [previousLabel]="'Anterior'"></pagination-controls>
       </div>
     </div>
@@ -421,7 +421,8 @@
           <div class="form-group">
             <label for="input-harbor-create">Tipo</label>
             <select formControlName="type" class="form-control" id="input-harbor-create">
-              <option value="OPERATION">Operação</option>
+              <option value=null>TODOS</option>
+              <option value="SERVICES">Atendimentos</option>
               <option value="DEFAULT">Padrão</option>
             </select>
           </div>
@@ -430,6 +431,7 @@
               <div class="form-group">
                 <label for="input-harbor-create">Situação</label>
                 <select formControlName="status" class="form-control" id="input-harbor-create">
+                  <option value=null>TODOS</option>
                   <option value="PAID">Pago</option>
                   <option value="NOT_PAID">Não Pago</option>
                 </select>
@@ -438,7 +440,8 @@
             <div class="col">
               <div class="form-group">
                 <label for="input-expense-category-create">Categoria</label>
-                <select formControlName="expense_category_id" class="form-control" id="input-expense-category-create">
+                <select formControlName="categories" class="form-control" id="input-expense-category-create">
+                  <option value=null>TODOS</option>
                   <option *ngFor="let expenseCategory of expenseCategorys" [ngValue]="expenseCategory?.id">
                     {{ expenseCategory.name }}
                   </option>

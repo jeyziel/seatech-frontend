@@ -44,34 +44,29 @@ export class ChartSurveysHarborComponent {
   getIncomeByHarbors() {
 
 
-    const labels = []
-    const datasets = []
 
 
-    this.surveyHabors.forEach(porto => {
-      // Adicionando o nome do porto aos rótulos
-      labels.push(porto.harbor_name);
-    
-      // Iterando sobre as pesquisas do porto
-      porto.surveys.forEach(survey => {
-        // Verificando se o conjunto de dados para esta pesquisa já existe
-        const existingDatasetIndex = datasets.findIndex(dataset => dataset.label === survey.name);
-        if (existingDatasetIndex !== -1) {
-          // Se o conjunto de dados já existe, adiciona o preço multiplicado pela quantidade
-          datasets[existingDatasetIndex].data.push(survey.price);
-        } else {
-          // Se o conjunto de dados não existe, cria um novo
-          datasets.push({
-            data: [survey.price],
-            label: survey.name,
+    console.log(this.surveyHabors)
+
+
+    const labels = this.surveyHabors.map(obj => obj.harbor_name.toLowerCase());
+    const surveys = this.surveyHabors.flatMap(obj => obj.surveys);
+    const uniqueSurveys = Array.from(new Set(surveys.map(survey => survey.name)));
+
+    const datasets = uniqueSurveys.map(surveyName => {
+        const data = this.surveyHabors.map(porto => {
+            const survey = porto.surveys.find(survey => survey.name === surveyName);
+            return survey ? survey.price : 0;
+        });
+        
+        return {
+            data,
+            label: surveyName,
             stack: 'a'
-          });
-        }
-      });
+        };
     });
-    
 
-
+  
     this.barChartData.labels = labels
     this.barChartData.datasets = datasets
 
