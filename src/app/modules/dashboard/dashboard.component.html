@@ -154,12 +154,12 @@
           <div class="col-7">
 
 
-              <app-ranking-atendimentos  [services]="servicesFinished" ></app-ranking-atendimentos>
+              <app-ranking-atendimentos *ngIf="loading"  [services]="servicesFinished" ></app-ranking-atendimentos>
 
           </div>
 
           <div class="col-5">
-            <app-ranking-customers  [customers]="customerSurvey" [faturamento]="faturamento" ></app-ranking-customers>
+            <app-ranking-customers *ngIf="loading" [customers]="customerSurvey" [faturamento]="faturamento" ></app-ranking-customers>
 
           </div>
           <!-- /.Left col -->
@@ -171,19 +171,19 @@
         <div class="row">
           <div class="col-12">
             
-            <app-chart-surveys-harbor  *ngIf="surveysHarbors.length > 0" [surveyHabors]="surveysHarbors"  ></app-chart-surveys-harbor>
+            <app-chart-surveys-harbor  *ngIf="loading"  [surveyHabors]="surveysHarbors"  ></app-chart-surveys-harbor>
           </div>
         </div>
 
         <div class="row">
 
           <div class="col-6">
-            <app-chart-categories *ngIf="incomesPaid?.length > 0" title="Categoria de Receita" [categories]="incomesPaid" ></app-chart-categories>
+            <app-chart-categories  *ngIf="loading" title="Categoria de Receita" [categories]="incomesPaid" ></app-chart-categories>
           </div>
     
           <div class="col-6">
 
-            <app-chart-categories *ngIf="expensesPaid.length > 0" title="Categoria de Despesas"  [categories]="expensesPaid"  ></app-chart-categories>
+            <app-chart-categories *ngIf="loading" title="Categoria de Despesas"  [categories]="expensesPaid"  ></app-chart-categories>
           </div>
 
 

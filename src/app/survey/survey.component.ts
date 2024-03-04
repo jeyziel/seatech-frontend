@@ -48,7 +48,6 @@ export class SurveyComponent {
       survey_category_id: new FormControl(null, [Validators.nullValidator])
     })
 
-    console.log('surveyss')
 
     this.getSurveys();
     this.getSurveyCategorys();
@@ -91,6 +90,8 @@ export class SurveyComponent {
           
 
           this.surveys = res
+
+          this.getSurveys();
 
           this.toastr.success("Vistoria cadastrada com sucesso!", "Cadastrar Vistoria")
 

@@ -41,6 +41,7 @@ import { DateRangePickerComponent } from './components/date-range-picker/date-ra
 import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
 import { NgDateRangePickerComponent } from './components/ng-date-range-picker/ng-date-range-picker.component';
 import { ChargeComponent } from './charge/charge.component';
+import { ProfileComponent } from './profile/profile.component';
 
 registerLocaleData(localePt);
 
@@ -65,6 +66,7 @@ registerLocaleData(localePt);
     DateRangePickerComponent,
     NgDateRangePickerComponent,
     ChargeComponent,
+    ProfileComponent,
    
   ],
   imports: [

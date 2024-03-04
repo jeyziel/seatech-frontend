@@ -25,6 +25,24 @@ export class AuthenticateService {
 
   }
 
+  profile() {
+
+
+    return this.http.get(`${environment.api_url}/auth/profile`)
+
+
+
+  }
+
+  saveProfile(params) {
+
+
+    return this.http.get(`${environment.api_url}/auth/profile`, params)
+
+
+
+  }
+
   logout(params) {
 
     return this.http.post(`${environment.api_url}/auth/logout`, params)

@@ -127,10 +127,7 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="addExpensesForm">
-          <div class="form-group">
-            <label for="input-nf" class="form-control-label">N.F</label>
-            <input formControlName="nf" id="input-nf" class="form-control" type="text">
-          </div>
+          
 
           <div class="form-group">
             <label for="input-name" class="form-control-label">Nome(*)</label>
@@ -140,29 +137,49 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="input-value" class="form-control-label">Valor(*)</label>
-            <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
-            <div *ngIf="submittedExpense && !successExpense && addForm.value.errors">
-              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+
+          <div class="row">
+
+            <div class="form-group col">
+              <label for="input-value" class="form-control-label">Valor(*)</label>
+              <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
+              <div *ngIf="submittedExpense && !successExpense && addForm.value.errors">
+                <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+              </div>
             </div>
+
+            <div class="form-group col">
+              <label for="input-nf" class="form-control-label">N.F</label>
+              <input formControlName="nf" id="input-nf" class="form-control" type="text">
+            </div>
+
           </div>
 
-          <div class="form-group">
-            <label for="input-launch_at" class="form-control-label">Data de Emissão(*)</label>
-            <input type="date" formControlName="launch_at" id="input-launch_at" class="form-control">
-            <div *ngIf="submittedExpense && !successExpense && addForm.launch_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data de emissão é obrigatória.</small>
-            </div>
-          </div>
+          <div  class="row">
 
-          <div class="form-group">
-            <label for="input-due-at" class="form-control-label">Data de Dívida(*)</label>
-            <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
-            <div *ngIf="submittedExpense && !successExpense && addForm.due_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+
+            <div class="form-group">
+              <label for="input-launch_at" class="form-control-label">Data de Emissão(*)</label>
+              <input type="date" formControlName="launch_at" id="input-launch_at" class="form-control">
+              <div *ngIf="submittedExpense && !successExpense && addForm.launch_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de emissão é obrigatória.</small>
+              </div>
             </div>
+  
+            <div class="form-group">
+              <label for="input-due-at" class="form-control-label">Data de Vencimento(*)</label>
+              <input type="date" formControlName="due_at" id="input-due-at" class="form-control">
+              <div *ngIf="submittedExpense && !successExpense && addForm.due_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de Dívida é obrigatória.</small>
+              </div>
+            </div>
+
+
+
           </div>
+         
+
+          
 
 
 

@@ -16,11 +16,7 @@ export const navItems: any[] = [
       },
     ]
   },
-  // {
-  //   name: 'Usuários',
-  //   url: '/usuarios',
-  //   iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
-  // },
+
 
   {
     name: 'Gerenciar Atendimento',
@@ -110,6 +106,10 @@ export const navItems: any[] = [
     iconComponent: { name: 'nav-icon fas fa-regular fa-user'},
     url: '/portos',  
   },
-  
+  {
+    name: 'Usuários',
+    url: '/usuarios',
+    iconComponent: { name: 'nav-icon fas fa-regular fa-user'}
+  },
   
 ];

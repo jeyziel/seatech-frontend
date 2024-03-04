@@ -2,7 +2,7 @@
 
 
 
-<div class="card">
+<div class="card  ">
 
         <div class="card-header">
           <h3 class="card-title">{{ title }}</h3>
@@ -22,7 +22,7 @@
       
         <div class="card-body">
       
-        <div style="display: block; float: center;">
+        <div style="display: block; float: center;" *ngIf="doughnutChartDatasets">
 
                 <canvas baseChart
                         [labels]="doughnutChartLabels"

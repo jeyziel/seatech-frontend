@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import { UserService } from 'src/app/core/shared/services/user.service';
+
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
@@ -24,7 +26,8 @@ export class UserComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private userService: UserService
   ) { }
 
 
@@ -33,7 +36,9 @@ export class UserComponent implements OnInit {
     this.addUsersForm = new FormGroup({
       name: new FormControl(null, [Validators.required]),
       email: new FormControl(null, [Validators.required, Validators.email]),
-    })
+      password: new FormControl(null, [Validators.required]),
+      password_confirmation: new FormControl(null, [Validators.required]),
+    },  this.matchPassword)
 
     this.editUsersForm = new FormGroup({
       name: new FormControl(null, [Validators.required]),
@@ -64,6 +69,18 @@ export class UserComponent implements OnInit {
     this.paramsDelete = params;
   }
 
+  private matchPassword(AC: AbstractControl) {
+    let password = AC.get('password').value;
+    if (AC.get('password_confirmation').touched || AC.get('password_confirmation').dirty) {
+      let verifyPassword = AC.get('password_confirmation').value;
+      if (password != verifyPassword) {
+        AC.get('password_confirmation').setErrors({ matchPassword: true });
+      } else {
+        return null;
+      }
+    }
+  }
+
 
   create() {
     this.submittedUser = true
@@ -71,6 +88,30 @@ export class UserComponent implements OnInit {
 
     if (this.addUsersForm.invalid)
       return;
+
+
+    const data = this.addUsersForm.value
+
+
+    this.userService.create(data)
+      .subscribe({
+        next: (resUser: any[]) => {
+
+          this.toastr.success("Usuário Cadastrado com sucesso", "Usuários");
+
+
+          this.modalService.dismissAll()
+
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao cadastrar Usuários", "Usuários")
+
+        } 
+      })
+    
+
+
   }
 
   onEditUser(user: any) {
@@ -86,6 +127,26 @@ export class UserComponent implements OnInit {
 
     if (this.editUsersForm.invalid)
       return;
+
+    const data = this.editUsersForm.value
+    const id = this.userSelected?.id
+
+    this.userService.update(id, data)
+      .subscribe({
+        next: resUser => {
+
+
+          this.toastr.success("Usuário Atualizado com sucesso", "Atualizar Usuário")
+
+          this.getUsers()
+
+        },
+        error: err => {
+          this.toastr.error("Falha ao atualizar usuário", "Atualizar Usuário")
+        }
+      })
+
+
   }
 
   setUserSelected(user: any) {
@@ -97,18 +158,24 @@ export class UserComponent implements OnInit {
   }
 
   getUsers() {
-    this.users = [
-      {
-        id: 1,
-        name: 'Usuário Carlos',
-        email: 'carlos@gmail.com',
-      },
-      {
-        id: 2,
-        name: 'Usuário Antonio',
-        email: 'antonio@gmail.com',
-      }
-    ];
+    
+    this.userService.list()
+      .subscribe({
+        next : (resUser: any[]) => {
+
+
+          this.users = resUser
+
+          
+        },
+        error: err => {
+
+          this.toastr.error("Falha ao buscar Usuários", "Usuários")
+
+        }
+      })
+
+
   }
 
   confirmationDelete() {

@@ -10,6 +10,7 @@ import { DashboardGeralService } from 'src/app/core/shared/services/dashboardGer
 })
 export class DashboardComponent implements OnInit {
 
+	public loading = false;
 
 	calendar = inject(NgbCalendar);
 	formatter = inject(NgbDateParserFormatter);
@@ -138,6 +139,8 @@ export class DashboardComponent implements OnInit {
 					this.services = resServiceFinished
 
 					this.transformServiceFinished()
+
+					this.loading =  true
 				}
 			})
 

@@ -189,9 +189,9 @@
       </button>
     </div>
 
-    <button type="button" class="close"  (click)="setValue(2)">
+    <!-- <button type="button" class="close"  (click)="setValue(2)">
       <span aria-hidden="true">&times;</span> t estee
-    </button>
+    </button> -->
 
     <div class="modal-body"  *ngIf="services.length > 0">
       <div class="row d-flex justify-content-center align-items-end">
@@ -214,7 +214,7 @@
         <div class="col-8">
           <div class="callout callout-info">
             <h5>Nome: {{serviceSelected?.ship_name}}</h5>
-            <p>Vistorias Faturas: {{ serviceSelected?.service_survey?.length }}</p>
+            <p>Quantidade de Vistorias: {{ serviceSelected?.service_survey?.length }}</p>
           </div>
         </div>
       </div>

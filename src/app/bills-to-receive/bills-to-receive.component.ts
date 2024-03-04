@@ -61,7 +61,7 @@ export class BillsToReceiveComponent {
       income_category_id: new FormControl(null, [Validators.required]),
       customer_id: new FormControl(null,  [Validators.required]),
       due_at: new FormControl(null, [Validators.required]),
-      nf: new FormControl(null, [Validators.nullValidator]),
+      number: new FormControl(null, [Validators.nullValidator]),
       launch_at: new FormControl(null, [Validators.nullValidator]),
       payment_type: new FormControl(null, [Validators.nullValidator]),
       isPayment: new FormControl(false, [Validators.nullValidator]),
@@ -78,7 +78,7 @@ export class BillsToReceiveComponent {
       income_category_id: new FormControl(null, [Validators.required]),
       customer_id: new FormControl(null,  [Validators.required]),
       due_at: new FormControl(null, [Validators.required]),
-      nf: new FormControl(false, [Validators.nullValidator]),
+      number: new FormControl(null, [Validators.nullValidator]),
       launch_at: new FormControl(null, [Validators.nullValidator]),
       payment_type: new FormControl(null, [Validators.nullValidator]),
       isPayment: new FormControl(false, [Validators.nullValidator]),
@@ -268,7 +268,7 @@ export class BillsToReceiveComponent {
   }
 
   onEditIncome(income: any) {
-    this.editIncomesForm.controls['nf'].setValue(income?.nf)
+    this.editIncomesForm.controls['number'].setValue(income?.number)
     this.editIncomesForm.controls['name'].setValue(income.name)
     this.editIncomesForm.controls['value'].setValue(income.value)
     this.editIncomesForm.controls['account_id'].setValue(income.account_id)
@@ -302,6 +302,8 @@ export class BillsToReceiveComponent {
       return;
 
     const data = this.editIncomesForm.value
+
+    console.log("updated data", data)
 
 
     data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
@@ -392,9 +394,37 @@ export class BillsToReceiveComponent {
     if (this.chargersForm.invalid)
       return;
 
-      // cobrancas/:id
-      this.modalService.dismissAll()
-      this.router.navigate(['/cobrancas', 2]);
+    const data = this.chargersForm.value
+  
+    data["type"] = "SERVICES";
+    data["value"] = 0;
+    data["income_category_id"] = 1;
+    data["status"] =  "NOT_PAID";
+
+    this.incomeService.create(data)
+        .subscribe({
+          next: (resIncome : any) => {
+  
+  
+            this.toastr.success("Receita editada com sucesso!", "Receita")
+  
+    
+
+            this.modalService.dismissAll()
+            this.router.navigate(['/cobrancas', resIncome.id]);
+  
+  
+          },
+          error: err => {
+  
+            this.toastr.error("Falha ao editar Receita!", "Receita")
+  
+            console.log("error", err)
+          }
+        })
+
+
+     
   }
 
   getIncomeWithFilter() {

@@ -38,7 +38,7 @@ export class LoginComponent {
   login(){
 
     this.submitted = true
-
+  
 
 
     if (!this.loginForm.valid) {
@@ -55,7 +55,7 @@ export class LoginComponent {
           localStorage.setItem('token', res?.access_token)
           localStorage.setItem('username', res?.user?.name)
 
-          this.submitted = false
+          this.submitted = true
           this.success = true
 
           this.toastrService.success(`Seja bem vindo(a) ${res?.user?.name} `, "Bem vindo!")
@@ -66,7 +66,7 @@ export class LoginComponent {
         error: err => {
           console.log("Falha ao realizar Login", err)
 
-          this.submitted = false
+          this.submitted = true
           this.success = false
 
           this.wrongLogin = true

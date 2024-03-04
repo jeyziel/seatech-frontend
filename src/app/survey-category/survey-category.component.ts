@@ -88,6 +88,8 @@ export class SurveyCategoryComponent {
           this.submittedSurveyCategory = false
           this.successSurveyCategory = true;
 
+          this.getSurveyCategorys();
+
 
         },
         error: err => {

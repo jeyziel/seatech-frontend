@@ -242,11 +242,11 @@ export class ServiceManagerComponent {
 
           this.getServiceExpenses()
 
-          this.toastr.success("Despesa removida com sucesso", "Excluir Despesa")
+          this.toastr.success("Vistoria removida com sucesso", "Excluir Despesa")
         },
         error: err => {
 
-          this.toastr.error("Falha ao excluir despesa", "Excluir Despesa")
+          this.toastr.error("Falha ao excluir Vistoria", "Excluir Despesa")
 
         }
       })

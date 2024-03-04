@@ -1,0 +1,84 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Meu Perfil</h1>
+      </div>
+
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3">
+
+
+      </div>
+      <!-- /.col -->
+      <div class="col-md-12">
+        <div  class="card rounded-0 shadow">
+          <div  class="card-header bg-transparent">
+            <ul  class="nav nav-pills">
+              <li  class="nav-item"><a  routerlinkactive="active"
+                  data-toggle="tab" class="nav-link font-weight-bold active" href="#/profile/info-perfil">Perfil</a>
+              </li>
+             
+            </ul>
+          </div>
+          <div  class="card-body rounded-0 shadow-0">
+            <div  class="tab-content">
+                <div  class="card-body rounded-0 style-sctroll1 border">
+                  <h4  class="py-1 pb-2">Informações Pessoais</h4>
+                  <hr >
+                  <form  [formGroup]="addUsersForm">
+                    <div  class="form-row pt-3">
+                      <div  class="form-group col-md-4"><label 
+                          for="nome">Nome</label><input  type="text" placeholder="Informe seu nome"
+                          formcontrolname="name" class="form-control"><!----><!---->
+                      </div>
+                     
+                      <div  class="form-group col-md-4">
+                        <label 
+                          for="nome">Email</label>
+                          <input  formcontrolname="email" type="email"placeholder="Informe um email" class="form-control">
+                      </div>
+                      
+                    </div>
+                    <h4  class="py-1 pb-2">Informações de Acesso</h4>
+                    <hr >
+                    <div  class="form-group form-check">
+                      <input 
+                        type="checkbox" formcontrolname="updatePassword" id="exampleCheck1"
+                        class="form-check-input "><label 
+                        for="exampleCheck1" class="form-check-label">Alterar Senha?</label></div>
+                    <div  class="form-row">
+                      <div  class="form-group col-md-4"><label 
+                          for="nome">Nova Senha:</label><input  type="password"
+                          placeholder="Informe uma senha" formcontrolname="password"
+                          class="form-control "><!----></div>
+                      <div  class="form-group col-md-4"><label 
+                          for="nome">Confirme sua senha:</label><input  type="password"
+                          placeholder="Repita a senha" formcontrolname="password_confirmation"
+                          class="form-control "><!----></div>
+                    </div><br >
+                    <button  type="submit"
+                      (click)="update()"
+                      class="btn btn-primary">Salvar
+                    </button>
+                  </form>
+                </div>
+             </div>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
