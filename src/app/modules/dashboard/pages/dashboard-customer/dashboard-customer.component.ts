@@ -38,9 +38,10 @@ export class DashboardCustomerComponent {
 
 	public surveyGrouppedByName : any[] = []
 	public surveyGrouppedCategories : any[] = []
-	
 
 	public surveys: any[] = []
+
+	public loading = false;
 
 	constructor(
 		private toastr: ToastrService,
@@ -67,6 +68,8 @@ export class DashboardCustomerComponent {
 	}
 
 	getData() {
+
+		this.loading = false;
 
 		this.getIncomes()
 		this.getIncomesNotPaid()
@@ -174,10 +177,9 @@ export class DashboardCustomerComponent {
 					this.surveyGrouppedByName = this.grouppedSurveyIncome(this.surveysPaid )
 					this.surveyGrouppedCategories = this.grouppedSurveyCategory(this.surveysPaid)
 
-					console.log("survey by name", this.surveyGrouppedByName)
-					console.log("surveys by cateogires", this.surveyGrouppedCategories)
-
 					
+
+					this.loading = true
 					
 
 				}
@@ -200,7 +202,7 @@ export class DashboardCustomerComponent {
 					this.surveysRecorrentes = this.groupSurveysAndCalculate(this.surveys)
 
 					
-					console.log("surveys recorrentes", this.surveysRecorrentes)
+					
 
 				},
 				error: err => {

@@ -127,7 +127,7 @@
           <div class="inner">
             <h3>R$ {{ incomesNotPaid }}<sup style="font-size: 20px"></sup></h3>
 
-            <p>Pagamentos Pendentes</p>
+            <p>Pagamentos não recebidos</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
@@ -144,12 +144,12 @@
       <div class="col-6">
 
 
-        <app-ranking-surveys-customers *ngIf="surveysRecorrentes.length > 0" [surveys]="surveysRecorrentes" ></app-ranking-surveys-customers>
+        <app-ranking-surveys-customers *ngIf="loading" [surveys]="surveysRecorrentes" ></app-ranking-surveys-customers>
 
       </div>
 
       <div class="col-6">
-        <app-surveys-customers *ngIf="surveys.length > 0" [surveys]="surveys"></app-surveys-customers>
+        <app-surveys-customers *ngIf="loading" [surveys]="surveys"></app-surveys-customers>
 
       </div>
       <!-- /.Left col -->
@@ -160,18 +160,18 @@
     <!-- /.row (main row) -->
     <div class="row">
       <div class="col-12">
-        <app-chart-surveys-customer-harbor *ngIf="surveysHarbors.length > 0" [surveyHabors]="surveysHarbors" ></app-chart-surveys-customer-harbor>
+        <app-chart-surveys-customer-harbor *ngIf="loading" [surveyHabors]="surveysHarbors" ></app-chart-surveys-customer-harbor>
       </div>
     </div>
 
     <div class="row">
 
       <div class="col-6">
-        <app-chart-categories-customers *ngIf="surveysPaid.length > 0" title="Receitas por vistorias" [categories]="surveyGrouppedByName" ></app-chart-categories-customers>
+        <app-chart-categories-customers *ngIf="loading" title="Receitas por vistorias" [categories]="surveyGrouppedByName" ></app-chart-categories-customers>
       </div>
 
       <div class="col-6">
-        <app-chart-categories-customers *ngIf="surveysPaid.length > 0" title="Receitas por categorias de vistorias"  [categories]="surveyGrouppedCategories" ></app-chart-categories-customers>
+        <app-chart-categories-customers *ngIf="loading || surveyGrouppedCategories.length > 0 " title="Receitas por categorias de vistorias"  [categories]="surveyGrouppedCategories" ></app-chart-categories-customers>
       </div>
 
 

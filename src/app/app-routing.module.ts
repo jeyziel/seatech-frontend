@@ -19,6 +19,7 @@ import { NonAuthGuard } from './modules/auth/guards/non-auth.guard';
 import { BillsToReceiveComponent } from './bills-to-receive/bills-to-receive.component';
 import { BillsToPayComponent } from './bills-to-pay/bills-to-pay.component';
 import { ChargeComponent } from './charge/charge.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   {
@@ -40,6 +41,7 @@ const routes: Routes = [
       title: 'Home'
     },
     children: [
+      { path: 'profile', component: ProfileComponent },
       { path: 'usuarios', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) },
       {
         path: 'clientes',

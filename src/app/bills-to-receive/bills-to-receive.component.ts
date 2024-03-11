@@ -276,8 +276,8 @@ export class BillsToReceiveComponent {
     this.editIncomesForm.controls['income_category_id'].setValue(income.income_category_id)
     this.editIncomesForm.controls['due_at'].setValue(income.due_at)
     this.editIncomesForm.controls['isPayment'].setValue(income?.value_paid ? true : false)
-    this.editIncomesForm.controls['value_paid'].setValue(income.value_paid)
-    this.editIncomesForm.controls['paid_at'].setValue(income.paid_at)
+    this.editIncomesForm.controls['value_paid'].setValue(income.value_paid ?? income.value)
+    this.editIncomesForm.controls['paid_at'].setValue(income.paid_at ?? this.getDataAtual())
     this.editIncomesForm.controls['discount'].setValue(income.discount)
     this.editIncomesForm.controls['fines'].setValue(income.fines)
 
@@ -306,7 +306,7 @@ export class BillsToReceiveComponent {
     console.log("updated data", data)
 
 
-    data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
+    data["status"] = data["isPayment"] ? "PAID": "NOT_PAID";
 
     this.incomeService.update(this.incomeSelected?.id, data )
       .subscribe({
@@ -332,6 +332,10 @@ export class BillsToReceiveComponent {
 
   setIncomeSelected(income: any) {
     this.incomeSelected = income
+  }
+
+  removePayment(id: Number) {
+    
   }
 
   removerIncome(id: Number) {

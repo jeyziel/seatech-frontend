@@ -32,7 +32,7 @@
               <ul class="list-unstyled">
                 <li><span class="font-weight-bold m-1">Nome: </span> {{ sumary?.name }}</li>
                 <li><span class="font-weight-bold m-1">Forma de Cobrança: </span>
-                  {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + 
+                  {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + " # " +
                   ( sumary?.number ?? ' : N/A ')}}</li>
                 <li><span class="font-weight-bold m-1">Cliente: </span> {{ sumary?.customer?.name }}</li>
                 <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value_paid ?? sumary?.value | currency: 'BRL'}}</li>
@@ -49,7 +49,7 @@
               </ul>
             </div>
             <div class="col d-flex justify-content-end align-items-end">
-              <button type="button"  (click)="setDataPayment()" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
+              <button type="button" [disabled]="sumary.status == 'PAID'"  (click)="setDataPayment()" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
                 title="Deletar">
                 Pagar &nbsp;
                 <span>
@@ -177,7 +177,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
+      <button   (click)="confirmPayment()" type="button" class="btn btn-outline-dark">Confirmar</button>
     </div>
   </ng-template>
 
@@ -202,7 +202,7 @@
               <select formControlName="id"  class="form-control" id="input-service" (change)="setService($event);">
               
                 <option *ngFor="let service of services" [value]="service?.id" [selected]="service?.id == serviceSelected?.id">
-                  {{ service.ship_name }} {{ service?.id  }} {{ serviceSelected?.id }}
+                  {{ service.ship_name }} #{{ service.id }}
                 </option>
               </select>
             </form>
@@ -213,8 +213,10 @@
       <div class="row d-flex justify-content-center align-items-end" *ngIf="serviceSelected?.ship_name">
         <div class="col-8">
           <div class="callout callout-info">
+            <h5>Número: # {{serviceSelected?.id}}</h5>
             <h5>Nome: {{serviceSelected?.ship_name}}</h5>
-            <p>Quantidade de Vistorias: {{ serviceSelected?.service_survey?.length }}</p>
+            <h5>Descrição: {{serviceSelected?.description}}</h5>
+            <h5>Quantidade de Vistorias: {{ serviceSelected?.service_survey?.length }}</h5>
           </div>
         </div>
       </div>
@@ -223,7 +225,7 @@
           <thead class="">
             <tr>
               <th scope="col"></th>
-              <th scope="col">Atendimento</th>
+              <th scope="col">Vistoria</th>
               <th scope="col">Porto</th>
               <th scope="col">Cliente</th>
               <th scope="col">Status</th>
@@ -246,7 +248,7 @@
                   </div>
                 </div>
               </td>
-              <td>{{ survey?.service?.ship_name }}</td>
+              <td>{{ survey?.name }}</td>
               <td>{{ survey?.harbor?.name }}</td>
               <td>{{ survey?.customer?.name }}</td>
               <td>
@@ -266,7 +268,7 @@
     </div>
 
     <div class="modal-footer">
-      <button (click)="addServices()" type="button" class="btn btn-outline-dark"
+      <button  (click)="addServices()" type="button" class="btn btn-outline-dark"
         [disabled]="surveysSelected?.length == 0">Adicionar</button>
     </div>
   </ng-template>

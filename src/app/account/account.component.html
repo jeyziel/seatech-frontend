@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1>Conta Bancaria</h1>
+        <h1>Contas Bancárias</h1>
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@
         <div class="card-header border-0">
           <div class="row align-items-center">
             <div class="col-7 text-left">
-              <h3 class="mb-0">Listagem</h3>
+              <h3 class="mb-0 card-title">Lista de contas bancárias</h3>
             </div>
             <div class="col-4 text-right">
               <a class="btn btn-sm btn-primary" (click)="open(addAccounts)">Adicionar</a>
@@ -29,6 +29,8 @@
               <tr>
                 <th scope="col">Nome</th>
                 <th scope="col">Número</th>
+                <th scope="col">Criado em:</th>
+                <th scope="col">Atualizado em:</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -40,12 +42,18 @@
                 <td>
                   {{ account?.number }}
                 </td>
+                <td>
+                  {{ account?.created_at | date: 'dd/MM/yyyy H:m:ss' }}
+                </td>
+                <td>
+                  {{ account?.updated_at | date: 'dd/MM/yyyy H:m:ss'  }}
+                </td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
 
                     <button type="button" (click)="onEditAccount(account); open(editAccounts);"
                       class="btn btn-dark btn-sm" title="Editar">
-                      Editar &nbsp;
+                     
                       <span>
                         <i class="fas fa-pencil-alt"></i>
                       </span>
@@ -54,8 +62,8 @@
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
                       (click)="setAccountSelected(account); open(modalConfirmation, removerAccount, account?.id)"
-                      class="btn btn-dark btn-sm" title="Deletar">
-                      Deletar &nbsp;
+                      class="btn btn-danger btn-sm" title="Deletar">
+                     
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>

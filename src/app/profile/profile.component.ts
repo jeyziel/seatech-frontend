@@ -24,16 +24,17 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getProfile()
+   
 
     this.addUsersForm = new FormGroup({
       name: new FormControl(null, [Validators.required]),
       email: new FormControl(null, [Validators.required, Validators.email]),
       updatePassword: new FormControl(false, [Validators.nullValidator]),
-      password: new FormControl(null, [Validators.required]),
-      password_confirmation: new FormControl(null, [Validators.required]),
+      password: new FormControl(null, [Validators.nullValidator]),
+      password_confirmation: new FormControl(null, [Validators.nullValidator]),
     },  this.matchPassword)
 
+    this.getProfile()
 
   }
 
@@ -48,6 +49,7 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (resProfile: any) => {
           this.profile = resProfile
+          this.populateForm()
 
           console.log("meu perfil", this.profile)
         },
@@ -55,6 +57,15 @@ export class ProfileComponent implements OnInit {
           this.toastr.error("Falha ao obter as informações do usuário", "Meu perfil")
         }
       })
+
+  }
+
+  populateForm(){
+
+
+    this.addUsersForm.controls["name"].setValue(this.profile?.name)
+    this.addUsersForm.controls["email"].setValue(this.profile?.email)
+
 
   }
 
@@ -75,12 +86,25 @@ export class ProfileComponent implements OnInit {
     this.submittedUser = true
     this.successUser = false;
 
-    console.log("values", this.addUsersForm.value)
+    const invalid = [undefined, null, '', 'null'];
+    
+
+   
+
 
     if (this.addUsersForm.invalid)
       return;
 
     const data = this.addUsersForm.value
+
+
+    for (const key in data) {
+      if (invalid.includes(data?.[key])) {
+        delete data[key];
+      }
+
+
+    }
 
     this.authService.saveProfile(data)
       .subscribe({

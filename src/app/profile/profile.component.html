@@ -20,65 +20,92 @@
       </div>
       <!-- /.col -->
       <div class="col-md-12">
-        <div  class="card rounded-0 shadow">
-          <div  class="card-header bg-transparent">
-            <ul  class="nav nav-pills">
-              <li  class="nav-item"><a  routerlinkactive="active"
-                  data-toggle="tab" class="nav-link font-weight-bold active" href="#/profile/info-perfil">Perfil</a>
+        <div class="card rounded-0 shadow">
+          <div class="card-header bg-transparent">
+            <ul class="nav nav-pills">
+              <li class="nav-item"><a routerlinkactive="active" data-toggle="tab"
+                  class="nav-link font-weight-bold active" href="#/profile/info-perfil">Perfil</a>
               </li>
-             
+
             </ul>
           </div>
-          <div  class="card-body rounded-0 shadow-0">
-            <div  class="tab-content">
-                <div  class="card-body rounded-0 style-sctroll1 border">
-                  <h4  class="py-1 pb-2">Informações Pessoais</h4>
-                  <hr >
-                  <form  [formGroup]="addUsersForm">
-                    <div  class="form-row pt-3">
-                      <div  class="form-group col-md-4"><label 
-                          for="nome">Nome</label><input  type="text" placeholder="Informe seu nome"
-                          formcontrolname="name" class="form-control"><!----><!---->
+          <div class="card-body rounded-0 shadow-0">
+            <div class="tab-content">
+              <div class="card-body rounded-0 style-sctroll1 border">
+                <h4 class="py-1 pb-2">Informações Pessoais</h4>
+                <hr>
+                <form [formGroup]="addUsersForm">
+                  <div class="form-row pt-3">
+                    <div class="form-group col-md-4"><label for="nome">Nome</label><input type="text"
+                        placeholder="Informe seu nome" formControlName="name" class="form-control"><!----><!---->
+                      <div *ngIf="submittedUser && !successUser && addForm.name.errors">
+                        <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
                       </div>
-                     
-                      <div  class="form-group col-md-4">
-                        <label 
-                          for="nome">Email</label>
-                          <input  formcontrolname="email" type="email"placeholder="Informe um email" class="form-control">
-                      </div>
-                      
                     </div>
-                    <h4  class="py-1 pb-2">Informações de Acesso</h4>
-                    <hr >
-                    <div  class="form-group form-check">
-                      <input 
-                        type="checkbox" formcontrolname="updatePassword" id="exampleCheck1"
-                        class="form-check-input "><label 
-                        for="exampleCheck1" class="form-check-label">Alterar Senha?</label></div>
-                    <div  class="form-row">
-                      <div  class="form-group col-md-4"><label 
-                          for="nome">Nova Senha:</label><input  type="password"
-                          placeholder="Informe uma senha" formcontrolname="password"
-                          class="form-control "><!----></div>
-                      <div  class="form-group col-md-4"><label 
-                          for="nome">Confirme sua senha:</label><input  type="password"
-                          placeholder="Repita a senha" formcontrolname="password_confirmation"
-                          class="form-control "><!----></div>
-                    </div><br >
-                    <button  type="submit"
-                      (click)="update()"
-                      class="btn btn-primary">Salvar
-                    </button>
-                  </form>
+
+                    <div class="form-group col-md-4">
+                      <label for="nome">Email</label>
+                      <input formControlName="email" type="email" placeholder="Informe um email" class="form-control">
+                      <div *ngIf="submittedUser && !successUser && addForm.email.errors">
+                        <small class="invalid-feedback" style="display: inline;">O nome é obrigatório.</small>
+                      </div>
+                    </div>
+
+                  </div>
+                  <h4 class="py-1 pb-2">Informações de Acesso</h4>
+                  <hr>
+
+                 
+            <div class="form-group form-check">
+              <input type="checkbox" formControlName="updatePassword" id="exampleCheck1"
+                class="form-check-input "><label for="exampleCheck1" class="form-check-label">Alterar Senha?</label>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6"><label for="nome">Nova Senha:</label><input type="password"
+                  placeholder="Informe uma senha" formControlName="password" class="form-control ">
+                
+                  <div *ngIf="submittedUser && !successUser && addForm.password.errors">
+                    <small class="invalid-feedback" style="display: inline;">A senha é obrigatória.</small>
+                  </div>
+                
                 </div>
-             </div>
-          </div>
+            
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="nome">Confirme sua senha:</label>
+                <input type="password" placeholder="Repita a senha" formControlName="password_confirmation" class="form-control ">
+              
+                <div *ngIf="submittedUser && !successUser && addForm.password.errors">
+                  <small class="invalid-feedback" style="display: inline;">A confirmação de senha é obrigatória.</small>
+                </div>
+  
+                <div class="invalid-feedback" style="display: inline;"
+                  *ngIf="addForm?.password_confirmation?.errors?.matchPassword">A senha e a confirmação da senha não
+                  correspondem!
+                </div>
+              
+              
+              </div>
+         
+              
+          
+            </div>
+            <br>
+            
+          <button type="submit" (click)="update()" class="btn btn-primary">Salvar
+          </button>
+          </form>
         </div>
-        <!-- /.card -->
       </div>
-      <!-- /.col -->
     </div>
-    <!-- /.row -->
+  </div>
+  <!-- /.card -->
+  </div>
+  <!-- /.col -->
+  </div>
+  <!-- /.row -->
   </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->

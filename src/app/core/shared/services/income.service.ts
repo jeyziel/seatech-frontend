@@ -30,6 +30,12 @@ export class IncomeService {
 
   }
 
+  removePayment(id: Number) {
+
+    return this.http.delete(`${environment.api_url}/incomes/${id}/remove-payment`)
+
+  }
+
   show(id: Number) {
 
     return this.http.get(`${environment.api_url}/incomes`)

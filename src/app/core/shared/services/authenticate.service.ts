@@ -37,7 +37,7 @@ export class AuthenticateService {
   saveProfile(params) {
 
 
-    return this.http.get(`${environment.api_url}/auth/profile`, params)
+    return this.http.put(`${environment.api_url}/auth/profile`, params)
 
 
 

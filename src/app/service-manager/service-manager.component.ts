@@ -240,7 +240,7 @@ export class ServiceManagerComponent {
       .subscribe({
         next: res => {
 
-          this.getServiceExpenses()
+          this.getServiceSurveys()
 
           this.toastr.success("Vistoria removida com sucesso", "Excluir Despesa")
         },

@@ -115,7 +115,7 @@ export class ChargeComponent {
           
 
           this.getServiceSurveys()
-
+          this.getIncomesService()
          
 
 
@@ -301,8 +301,7 @@ export class ChargeComponent {
     this.atendimentoService.listByStatus()
       .subscribe({
         next: (resAtendimento: any[]) => {
-          this.services = resAtendimento
-
+          this.services = resAtendimento.filter(item => item.status == 'FINISHED')
           
           const idService = this.serviceSelected?.id
           this.setValue(idService)

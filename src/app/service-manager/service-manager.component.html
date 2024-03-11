@@ -8,7 +8,7 @@
             <i class="fas fa-arrow-circle-left"></i>
           </span>
         </button>
-        <h1>Gerenciar</h1>
+        <h1>Gerenciar Atendimento</h1>
       </div>
     </div>
   </div>
@@ -27,6 +27,7 @@
 
         <div class="card-body details__content">
           <ul class="list-unstyled">
+            <li><span class="font-weight-bold m-1">Nº: </span> # {{ service?.id }}</li>
             <li><span class="font-weight-bold m-1">Navio: </span> {{ service?.ship_name }}</li>
             <li><span class="font-weight-bold m-1">Descrição: </span> {{ service?.description }}</li>
             <li><span class="font-weight-bold m-1">Valor Vistorias: </span>  {{ surveys_value | currency: 'BRL'
