@@ -8,7 +8,6 @@ import { MainFooterModule } from 'src/app/core/default-layout/main-footer/main-f
 import { ControlSidebarModule } from 'src/app/core/default-layout/control-sidebar/control-sidebar.module';
 import { RankingAtendimentosComponent } from './components/ranking-atendimentos/ranking-atendimentos.component';
 import { RankingCustomersComponent } from './components/ranking-customers/ranking-customers.component';
-import { RankingSurveysComponent } from './components/ranking-surveys/ranking-surveys.component';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartCategoriesComponent } from './components/chart-categories/chart-categories.component';
 import { NgbDatepickerModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -52,26 +51,16 @@ registerLocaleData(localePt);
   ],
   declarations: [
     DashboardComponent, 
-
     DashboardCustomerComponent, 
     ChartCategoriesComponent, 
-    
-
     RankingAtendimentosComponent,
-     RankingCustomersComponent, 
-     RankingSurveysComponent, 
-     ChartSurveysHarborComponent, 
-
-     //CUSTOMER
-
-     ChartSurveysCustomerHarborComponent,
-     SurveysCustomerComponent,
-     RankingSurveysCustomerComponent,
-     ChartSurveysCustomerHarborComponent,
-     ChartCategoriesCustomerComponent,
-
-
-
+    RankingCustomersComponent, 
+    ChartSurveysHarborComponent, 
+    ChartSurveysCustomerHarborComponent,
+    SurveysCustomerComponent,
+    RankingSurveysCustomerComponent,
+    ChartSurveysCustomerHarborComponent,
+    ChartCategoriesCustomerComponent,
   ]
 })
 export class DashboardModule {

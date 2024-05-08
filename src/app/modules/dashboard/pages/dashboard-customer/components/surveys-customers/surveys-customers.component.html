@@ -28,9 +28,10 @@
           </tr>
         </thead>
         <tbody>
+    
           <tr *ngFor="let survey of surveys">
             <td>{{ survey?.name }}</td>
-            <td>R$ {{ survey?.price }}</td>
+            <td>{{ survey?.price * survey?.currency_rate |  currency: 'BRL': true : '1.2-2'}}</td>
             <td>{{ survey?.survey_at | date: 'dd/MM/YYYY' }}</td>
             <td>{{ survey?.billing_status | translate  }}</td>
             <td>{{ survey?.billing_at | date: 'dd/MM/YYYY' ?? '-'  }}</td>

@@ -28,7 +28,7 @@
         <tbody>
           <tr *ngFor="let customer of customers">
             <td>{{ customer.name }}</td>
-            <td>R$ {{ customer.price  }}</td>
+            <td> {{ customer.price | currency: 'BRL': true: '1.2-2' }}</td>
             <td> {{ getContribuicao(customer.price) }} %</td>
           </tr>
           

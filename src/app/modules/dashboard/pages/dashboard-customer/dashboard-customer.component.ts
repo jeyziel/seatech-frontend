@@ -129,7 +129,7 @@ export class DashboardCustomerComponent {
 
 					const incomes = resIncomesPaid
 
-					this.faturamentoCustomer = incomes?.reduce((acc, curr) => curr.total_value + acc, 0)
+					this.faturamentoCustomer = incomes?.reduce((acc, curr) => ( curr.total_value) + acc, 0)
 					this.incomesSurveyContribuiton = resIncomesPaid?.reduce((acc, curr) => curr.contribution_percentage + acc, 0)
 
 
@@ -230,10 +230,10 @@ export class DashboardCustomerComponent {
 				};
 			}
 			grouped[item.survey_id].quantidade++;
-			grouped[item.survey_id].total_faturado += item.price;
+			grouped[item.survey_id].total_faturado += item.price * item.currency_rate;
 
 			if (item.billing_status === "CONCLUDED") {
-				grouped[item.survey_id].total_recebido += item.price;
+				grouped[item.survey_id].total_recebido += item.price * item.currency_rate;
 			}
 		});
 		return Object.values(grouped);
@@ -258,7 +258,7 @@ export class DashboardCustomerComponent {
 
 			// Obtendo o nome da pesquisa e o preço
 			const surveyName = item.survey.name;
-			const price = item.price;
+			const price = item.price * item.currency_rate;
 			const id = item.survey.id;
 
 
@@ -307,7 +307,7 @@ export class DashboardCustomerComponent {
 		data.forEach(item => {
 			const surveyId = item.survey.id;
 			const surveyName = item.survey.name;
-			const price = item.price;
+			const price = item.price * item.currency_rate;
 	
 			// Se o survey_id ainda não existir no objeto surveys, inicialize-o
 			if (!surveys[surveyId]) {
@@ -337,7 +337,7 @@ export class DashboardCustomerComponent {
 		data.forEach(item => {
 			const categoryID = item.survey.categories.id;
 			const surveyCategoryName = item.survey.categories.name;
-			const price = item.price;
+			const price = item.price * item.currency_rate;
 	
 			// Se o survey_id ainda não existir no objeto surveys, inicialize-o
 			if (!categoriesSurveys[categoryID]) {

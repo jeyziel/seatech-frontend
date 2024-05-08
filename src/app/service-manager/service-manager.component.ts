@@ -40,7 +40,9 @@ export class ServiceManagerComponent {
   public submitted: Boolean;
   public success: Boolean;
 
-  public surveys_value: Number = 0;
+  public surveys_value_real: Number = 0;
+  public surveys_value_dolar: Number = 0;
+
   public expense_value: Number = 0;
 
   public serviceSurveysSelected: any;
@@ -77,6 +79,7 @@ export class ServiceManagerComponent {
       survey_at: new FormControl((new Date)?.toJSON()?.slice(0, 10), [Validators.required]),
       customer_id: new FormControl(null, [Validators.required]),
       harbor_id: new FormControl(null, [Validators.required]),
+      currency: new FormControl('USD', [Validators.required] )
     })
 
     this.addExpenses = new FormGroup({
@@ -140,6 +143,16 @@ export class ServiceManagerComponent {
 
   get paymentForm() {
     return this.confirmPaymentForm.controls
+  }
+
+  setServicePrice(survey: any) {
+
+    console.log("surveys", survey)
+
+
+    this.addServiceSurveys.controls["price"].setValue(survey?.default_value)
+    this.addServiceSurveys.controls["currency"].setValue("USD")
+
   }
 
 
@@ -377,8 +390,16 @@ export class ServiceManagerComponent {
         next: (res: any) => {
           this.serviceSurveys = res.service_surveys
 
+          const surveys_in_dolar =  this.serviceSurveys.filter( surveys => surveys.currency == 'USD')
+          const surveys_in_real =  this.serviceSurveys.filter( surveys => surveys.currency == 'BRL')
+
+
           
-          this.surveys_value = this.serviceSurveys?.reduce((acc, curr) => {
+          this.surveys_value_dolar = surveys_in_dolar?.reduce((acc, curr) => {
+            return acc + curr.price;
+          }, 0) ?? 0;
+
+          this.surveys_value_real = surveys_in_real?.reduce((acc, curr) => {
             return acc + curr.price;
           }, 0) ?? 0;
 

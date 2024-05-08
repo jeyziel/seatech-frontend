@@ -156,6 +156,9 @@ export class ServiceComponent {
 
           this.toastr.success("Atendimento excluído com sucesso", "Excluir Atendimento");
 
+
+          this.getServices()
+
         },
         error: err => {
           this.toastr.error("Falha ao remover atendimento", "Atendimentos")

@@ -82,11 +82,9 @@
                   {{ income?.income_category?.name ?? '-' }}
                 </td>
                 <td>
-                  {{ income?.value_paid ??  income?.value | currency: 'BRL' }}
+                  {{ income?.value_paid ??  income?.value | currency: getCurrency(income?.payment_type) }}
                 </td>
                 <td>
-                 
-
                     <span
                     [class]="'badge badge-' + getBadge(income?.status)"
                     style="padding: .5em;">
@@ -498,16 +496,16 @@
             <div class="col">
               <div class="form-group">
                 <label for="input-harbor-create">Forma de Pagamento</label>
-                <select formControlName="payment_type" class="form-control" id="input-harbor-create">
-                  <option value="NF">Nota Fiscal</option>
-                  <option value="INVOICE">Invoice</option>
+                <select  formControlName="payment_type" class="form-control" id="input-harbor-create"  >
+                  <option disabled value="NF">Nota Fiscal</option>
+                  <option disabled value="INVOICE">Invoice</option>
                 </select>
               </div>
             </div>
             <div class="col">
               <div class="form-group">
                 <label for="input-nf" class="form-control-label">Nº</label>
-                <input formControlName="number" id="input-nf" class="form-control" type="text">
+                <input  formControlName="number" id="input-nf" class="form-control" type="text">
               </div>
 
           </div>
@@ -582,26 +580,49 @@
               <label class="custom-control-label" for="customSwitch4">Pagamento?</label>
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              <div class="form-group" *ngIf="editIncomesForm.controls['isPayment'].value">
+          <div class="row" *ngIf="editIncomesForm.controls['isPayment'].value">
+       
+              <div class="form-group col" >
                 <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
                 <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
                 <div *ngIf="submittedIncome && !successIncome && editForm.value_paid.errors">
                   <small class="invalid-feedback" style="display: inline;">O Valor Pago é obrigatório.</small>
                 </div>
               </div>
-            </div>
-            <div class="col">
-              <div class="form-group" *ngIf="editIncomesForm.controls['isPayment'].value">
-                <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
-                <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
-                <div *ngIf="submittedIncome && !successIncome && editForm.paid_at.errors">
-                  <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+
+              <div *ngIf="paymentTypeIsINVOICE(incomeSelected.payment_type )" class="form-group col" >
+                <label for="input-value-paid" class="form-control-label">Câmbio(*)</label>
+                <input formControlName="currency_rate"  id="input-value-paid" class="form-control" type="number" step=".01">
+                <div *ngIf="submittedIncome && !successIncome && editForm.currency_rate.errors">
+                  <small class="invalid-feedback" style="display: inline;">O cambio é obrigatório.</small>
                 </div>
               </div>
+    
+              <div *ngIf="paymentTypeIsINVOICE(incomeSelected.payment_type )" class="form-group col" >
+                <label for="input-value-paid" class="form-control-label">Valor recebido</label>
+                <input formControlName="value_received" class="form-control" type="number" step=".01" [disabled]="true">
+                <div *ngIf="submitted && !success && editForm.value_received.errors">
+                  <small class="invalid-feedback" style="display: inline;">O Valor recebido é obrigatório.</small>
+                </div>
+              </div>
+
             </div>
-          </div>
+
+      
+            <div class="row">
+                <div class="form-group col" *ngIf="editIncomesForm.controls['isPayment'].value">
+                  <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+                  <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+                  <div *ngIf="submittedIncome && !successIncome && editForm.paid_at.errors">
+                    <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+                  </div>
+                </div>
+            </div>
+           
+         
+
+        
+         
           <!--
           <div class="row">
             <div class="col">
@@ -640,13 +661,37 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="confirmPaymentForm">
-          <div class="form-group">
-            <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
-            <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
-            <div *ngIf="submittedIncome && !successIncome && paymentForm.value_paid.errors">
-              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+
+          <div class="row">
+
+            <div class="form-group col">
+              <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+              <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+              <div *ngIf="submittedIncome && !successIncome && paymentForm.value_paid.errors">
+                <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+              </div>
             </div>
+  
+            <div *ngIf="paymentTypeIsINVOICE(incomeSelected.payment_type )" class="form-group col" >
+              <label for="input-value-paid" class="form-control-label">Câmbio(*)</label>
+              <input formControlName="currency_rate"  id="input-value-paid" class="form-control" type="number" step=".01">
+              <div *ngIf="submittedIncome && !successIncome && paymentForm.currency_rate.errors">
+                <small class="invalid-feedback" style="display: inline;">O cambio é obrigatório.</small>
+              </div>
+            </div>
+  
+            <div *ngIf="paymentTypeIsINVOICE(incomeSelected.payment_type )" class="form-group col" >
+              <label for="input-value-paid" class="form-control-label">Valor recebido</label>
+              <input  formControlName="value_received"  class="form-control" type="number" step=".01" [disabled]="true">
+              <div *ngIf="submitted && !success && paymentForm.value_received.errors">
+                <small class="invalid-feedback" style="display: inline;">O Valor recebido é obrigatório.</small>
+              </div>
+            </div>
+  
+
           </div>
+
+         
 
           <div class="form-group">
             <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>

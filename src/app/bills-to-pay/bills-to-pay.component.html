@@ -62,7 +62,7 @@
                   {{ expense?.expense_category?.name ?? '-' }}
                 </td>
                 <td>
-                  {{ expense?.value | currency: 'BRL' }}
+                  {{ expense?.value | currency: 'BRL': true: '1.2-2' }}
                 </td>
                 <td>
               

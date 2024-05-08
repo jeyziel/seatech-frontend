@@ -30,8 +30,14 @@
             <li><span class="font-weight-bold m-1">Nº: </span> # {{ service?.id }}</li>
             <li><span class="font-weight-bold m-1">Navio: </span> {{ service?.ship_name }}</li>
             <li><span class="font-weight-bold m-1">Descrição: </span> {{ service?.description }}</li>
-            <li><span class="font-weight-bold m-1">Valor Vistorias: </span>  {{ surveys_value | currency: 'BRL'
-              }}</li>
+            <li>
+              <span class="font-weight-bold m-1">Valor das Vistorias: </span> 
+                 <ul>
+                  <li><b>Dolar:</b> {{ surveys_value_dolar | currency: 'USD' }} </li>
+                  <li><b>Real:</b>: {{ surveys_value_real | currency: 'BRL' }}</li>
+                 </ul>
+                 
+              </li>
             <li><span class="font-weight-bold m-1">Valor Despesas: </span> {{  expense_value | currency: 'BRL'
               }}</li>
              
@@ -65,6 +71,7 @@
                 <th scope="col">Cliente</th>
                 <th scope="col">Status</th>
                 <th scope="col">Preço</th>
+                <th scope="col">Preço</th>
                 <th scope="col">Data Vistoria</th>
                 <th scope="col"></th>
               </tr>
@@ -82,7 +89,7 @@
                     {{ serviceSurvey?.billing_status | translate }}
                   </span>
                 </td>
-                <td>{{ serviceSurvey?.price | currency: 'BRL' }}</td>
+                <td>{{ serviceSurvey?.price | currency: serviceSurvey.currency }}</td>
                 <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
@@ -142,10 +149,6 @@
                     style="padding: .5em;">
                     {{ expense?.status | translate }}</span>
 
-                  
-                   
-
-
 
                 </td>
                 <td>{{ expense?.expense_category?.name }}</td>
@@ -194,9 +197,9 @@
 
       <form [formGroup]="addServiceSurveys">
       <div class="form-group">
-        <label for="input-survey-create">Vistoria(*)</label>
-        <select formControlName="survey_id" class="form-control" id="input-survey-create">
-          <option *ngFor="let survey of surveys" [ngValue]="survey?.id">
+        <label for="input-survey-create">Vistorias(*)</label>
+        <select   formControlName="survey_id" class="form-control" id="input-survey-create">
+          <option (click)="setServicePrice(survey)"  *ngFor="let survey of surveys" [ngValue]="survey?.id" >
             {{ survey.name }}
           </option>
         </select>
@@ -206,17 +209,25 @@
       </div>
 
 
-      <div class="form-group">
-        <label for="input-price" class="form-control-label">Preço(*)</label>
-        <input formControlName="price" id="input-price" class="form-control" type="number" step=".01">
-        <div *ngIf="submitted && !success && addServiceSurveyForm.price.errors">
-          <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+      <div class="row">
+
+        <div class="form-group col">
+          <label for="input-price" class="form-control-label">Preço(*)</label>
+          <input formControlName="price" id="input-price" class="form-control" type="number" step=".01">
+          <div *ngIf="submitted && !success && addServiceSurveyForm.price.errors">
+            <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+          </div>
         </div>
+
+        <div class="form-group col">
+          <label for="input-price" class="form-control-label">Moeda(*)</label>
+          <select formControlName="currency" class="form-control" id="input-survey-create">
+            <option  value="USD">Dolar</option>
+            <option value="BRL">Real</option>
+          </select>
+        </div>
+
       </div>
-
-
-
-
 
 
         <div class="form-group">
@@ -294,7 +305,7 @@
             <div class="form-group">
               <label for="input-harbor-create">Tipo(*)</label>
               <select formControlName="type" class="form-control" id="input-harbor-create">
-                <option value="OPERATION">Operação</option>
+                <option selected value="OPERATION">Serviços</option>
               </select>
               <div *ngIf="submitted && !success && addExpenseForm.type.errors">
                 <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>

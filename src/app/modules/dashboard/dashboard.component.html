@@ -105,7 +105,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>R$  {{ faturamento  }} <sup style="font-size: 20px"></sup></h3>
+                <h3> {{ faturamento | currency: 'BRL': true: '1.2-2'  }} <sup style="font-size: 20px"></sup></h3>
 
                 <p>Receitas</p>
               </div>
@@ -120,7 +120,7 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>R$ {{ despesas }}</h3>
+                <h3> {{ despesas | currency: 'BRL': true: '1.2-2'   }}</h3>
 
                 <p>Despesas</p>
               </div>
@@ -135,7 +135,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>R$ {{ faturamento -  despesas }}<sup style="font-size: 20px"></sup></h3>
+                <h3> {{ faturamento -  despesas  | currency: 'BRL': true: '1.2-2'  }}<sup style="font-size: 20px"></sup></h3>
 
                 <p>Lucratividade</p>
               </div>

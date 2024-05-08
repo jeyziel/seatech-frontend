@@ -200,7 +200,9 @@ export class BillsToPayComponent {
 
 
           this.toastr.success("Despesa criada com sucesso!" ,"Despesas")
-
+         
+          this.getExpenses()
+          this.modalService.dismissAll()
 
         },
         error: err => {
@@ -291,6 +293,7 @@ export class BillsToPayComponent {
 
        this.toastr.success("Contas a pagar deletada com sucesso", "Despesas")
 
+       this.getExpenses()
 
       },
       error: err => {

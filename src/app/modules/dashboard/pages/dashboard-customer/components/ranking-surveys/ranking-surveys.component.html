@@ -30,8 +30,8 @@
           <tr *ngFor="let survey of surveys">
             <td>{{ survey?.name }}</td>
             <td>{{ survey?.quantidade }}</td>
-            <td>R$ {{ survey?.total_faturado }}</td>
-            <td>R$ {{ survey?.total_recebido }}</td>
+            <td>{{ survey?.total_faturado | currency: 'BRL': true: '1.2-2'}}</td>
+            <td>{{ survey?.total_recebido | currency: 'BRL': true: '1.2-2' }}</td>
           </tr>
        
         </tbody>

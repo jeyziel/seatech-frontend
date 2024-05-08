@@ -35,7 +35,8 @@
                   {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + " # " +
                   ( sumary?.number ?? ' : N/A ')}}</li>
                 <li><span class="font-weight-bold m-1">Cliente: </span> {{ sumary?.customer?.name }}</li>
-                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value_paid ?? sumary?.value | currency: 'BRL'}}</li>
+                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value_paid ?? sumary?.value | currency: getCurrency(sumary?.payment_type)}}</li>
+
                 <li><span class="font-weight-bold m-1">Data de Emissão </span> {{ sumary?.launch_at | date:
                   'dd/MM/yyyy' }}</li>
                 <li><span class="font-weight-bold m-1">Data de Vencimento: </span> {{ sumary?.due_at | date: 'dd/MM/yyyy'
@@ -44,12 +45,13 @@
                   <i
                     [class]="sumary?.status == 'PAID' ? 'far fa-check-circle text-success' : 'fas fa-times-circle text-danger'"></i>
                 </li>
-                <li><span class="font-weight-bold m-1">Data de Pagamento: </span> {{ sumary?.paid_at ?? '-' | date: 'dd/MM/yyyy'
+                <li><span class="font-weight-bold m-1">Valor Recebido: </span> {{ sumary?.value_received | currency: 'BRL'}}</li>
+                <li><span class="font-weight-bold m-1">Data de Pagamento: </span> {{ (sumary?.paid_at | date: 'dd/MM/yyyy') ?? '-'
                   }}</li>
               </ul>
             </div>
             <div class="col d-flex justify-content-end align-items-end">
-              <button type="button" [disabled]="sumary.status == 'PAID'"  (click)="setDataPayment()" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
+              <button type="button" [disabled]="sumary?.status == 'PAID'"  (click)="setDataPayment()" (click)="open(confirmPayment)" class="btn btn-primary btn-sm"
                 title="Deletar">
                 Pagar &nbsp;
                 <span>
@@ -97,7 +99,7 @@
                 <td>{{ serviceSurvey?.ship_name }}</td>
                 <td>{{ serviceSurvey?.harbor_name }}</td>
                 <td>{{ serviceSurvey?.customer_name}}</td>
-                <td>{{ serviceSurvey?.price | currency: 'BRL' }}</td>
+                <td>{{ serviceSurvey?.price | currency: serviceSurvey?.currency }}</td>
                 <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
                 <td class="text-center" >
                  
@@ -128,13 +130,36 @@
     </div>
     <div class="modal-body">
       <form [formGroup]="confirmPaymentForm">
-        <div class="form-group">
-          <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
-          <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
-          <div *ngIf="submitted && !success && paymentForm.value_paid.errors">
-            <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+
+        <div class="row">
+
+          <div class="form-group col">
+            <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
+            <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
+            <div *ngIf="submitted && !success && paymentForm.value_paid.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
           </div>
+          <div *ngIf="paymentTypeIsINVOICE(sumary.payment_type )" class="form-group col" >
+            <label for="input-value-paid" class="form-control-label">Câmbio(*)</label>
+            <input formControlName="currency_rate"  id="input-value-paid" class="form-control" type="number" step=".01">
+            <div *ngIf="submitted && !success && paymentForm.currency_rate.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+          <div *ngIf="paymentTypeIsINVOICE(sumary.payment_type )" class="form-group col" >
+            <label for="input-value-paid" class="form-control-label">Valor recebido</label>
+            <input  formControlName="value_received"  class="form-control" type="number" step=".01">
+            <div *ngIf="submitted && !success && paymentForm.value_received.errors">
+              <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
+            </div>
+          </div>
+
+
         </div>
+
+      
 
         <div class="form-group">
           <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
@@ -193,7 +218,7 @@
       <span aria-hidden="true">&times;</span> t estee
     </button> -->
 
-    <div class="modal-body"  *ngIf="services.length > 0">
+    <div class="modal-body"  *ngIf="loading">
       <div class="row d-flex justify-content-center align-items-end">
         <div class="col-5">
           <div class="form-group">
@@ -238,10 +263,10 @@
             <tr *ngFor="let survey of serviceSelected?.service_survey">
               <td class="text-center">
                 <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
-                  <div class="form-check icheck-primary">
+                  <div class="form-check icheck-primary"> 
                     <input class="form-check-input" type="checkbox" [checked]="survey?.is_checked"
                       (change)="setCheckBox($event, survey); setServiceSurveys();"
-                      [disabled]="survey?.billing_status != 'DRAFT'" [id]="'check-' + survey?.id">
+                      [disabled]="survey?.billing_status != 'DRAFT' || disabledCheckBox(survey)" [id]="'check-' + survey?.id">
                     <label class="form-check-label" [for]="'check-' + survey?.id">
                       {{ survey?.billing_status != 'DRAFT' ? 'Faturado' :'Adicionar' }}
                     </label>
@@ -258,7 +283,7 @@
                   {{ survey?.billing_status | translate }}
                 </span>
               </td>
-              <td>{{ survey?.price | currency: 'BRL' }}</td>
+              <td>{{ survey?.price | currency: survey.currency }}</td>
               <td>{{ survey?.survey_at | date: 'dd/MM/yyyy' }}</td>
               
             </tr>

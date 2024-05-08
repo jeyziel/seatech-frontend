@@ -69,6 +69,8 @@ export class BillsToReceiveComponent {
       paid_at: new FormControl(null, [Validators.nullValidator]),
       discount: new FormControl(null, [Validators.nullValidator]),
       fines: new FormControl(null, [Validators.nullValidator]),
+    
+      currency_rate: new FormControl(1, [Validators.required]),
     })
 
     this.editIncomesForm = new FormGroup({
@@ -86,12 +88,48 @@ export class BillsToReceiveComponent {
       paid_at: new FormControl(null, [Validators.nullValidator]),
       discount: new FormControl(null, [Validators.nullValidator]),
       fines: new FormControl(null, [Validators.nullValidator]),
+      value_received:  new FormControl({value: null, disabled: true}, [Validators.nullValidator]),
+      currency_rate: new FormControl(1, [Validators.required]),
     })
 
     this.confirmPaymentForm = new FormGroup({
       value_paid: new FormControl(null, [Validators.required]),
       paid_at: new FormControl(null, [Validators.required]),
+      value_received:  new FormControl(null, [Validators.required]),
+      currency_rate: new FormControl(1, [Validators.required]),
     })
+
+    // Adicionando um observador para o campo value_paid
+    this.confirmPaymentForm.get('value_paid').valueChanges.subscribe((newValue) => {
+        const currencyRate = this.confirmPaymentForm.get('currency_rate').value;
+        const valueReceived = newValue * currencyRate;
+  
+        this.confirmPaymentForm.get('value_received').setValue(valueReceived.toFixed(2));
+    });
+  
+    // Adicionando um observador para o campo value_paid
+    this.editIncomesForm.get('currency_rate').valueChanges.subscribe((newValue) => {
+      const value_paid = this.editIncomesForm.get('value_paid').value;
+      const valueReceived = newValue * value_paid;
+  
+      this.editIncomesForm.get('value_received').setValue(valueReceived.toFixed(2));
+    });
+
+    this.editIncomesForm.get('value_paid').valueChanges.subscribe((newValue) => {
+      const currencyRate = this.editIncomesForm.get('currency_rate').value;
+      const valueReceived = newValue * currencyRate;
+
+      this.editIncomesForm.get('value_received').setValue(valueReceived.toFixed(2));
+  });
+
+  // Adicionando um observador para o campo value_paid
+  this.confirmPaymentForm.get('currency_rate').valueChanges.subscribe((newValue) => {
+    const value_paid = this.confirmPaymentForm.get('value_paid').value;
+    const valueReceived = newValue * value_paid;
+
+    this.confirmPaymentForm.get('value_received').setValue(valueReceived.toFixed(2));
+  });
+  
 
     this.filtersForm = new FormGroup({
       type: new FormControl(null, [Validators.nullValidator]),
@@ -147,6 +185,21 @@ export class BillsToReceiveComponent {
           console.log("Falha ao buscar os clientes", err)
         }
       })
+  }
+
+  paymentTypeIsINVOICE(paymentType) {
+
+    return paymentType == 'INVOICE'
+
+  }
+
+  getCurrency(paymentType) {
+
+    if (paymentType == 'INVOICE') return 'USD'
+
+    return 'BRL'
+
+
   }
 
   getAccounts() {
@@ -244,6 +297,9 @@ export class BillsToReceiveComponent {
     data["type"] = "DEFAULT";
     data["status"] = data["is_payment"] ? "PAID": "NOT_PAID";
     data["launch_at"] = this.getDataAtual()
+ 
+    if (data["status"] == "PAID")
+      data["value_received"] = data["value_paid"]
 
     this.incomeService.create(data)
       .subscribe({
@@ -278,6 +334,11 @@ export class BillsToReceiveComponent {
     this.editIncomesForm.controls['isPayment'].setValue(income?.value_paid ? true : false)
     this.editIncomesForm.controls['value_paid'].setValue(income.value_paid ?? income.value)
     this.editIncomesForm.controls['paid_at'].setValue(income.paid_at ?? this.getDataAtual())
+
+
+    this.editIncomesForm.controls['currency_rate'].setValue(income.currency_rate)
+    this.editIncomesForm.controls['value_received'].setValue(income?.value_received )
+
     this.editIncomesForm.controls['discount'].setValue(income.discount)
     this.editIncomesForm.controls['fines'].setValue(income.fines)
 
@@ -288,7 +349,13 @@ export class BillsToReceiveComponent {
   }
 
   onConfirmPaymentSelected(income: any) {
+
+    const currency_rate = income?.currency_rate ?? 1
+    const value_received = income?.value * currency_rate
+
     this.confirmPaymentForm.controls['value_paid'].setValue(income?.value)
+    this.confirmPaymentForm.controls['currency_rate'].setValue(currency_rate)
+    this.confirmPaymentForm.controls['value_received'].setValue(value_received)
     this.confirmPaymentForm.controls['paid_at'].setValue((new Date)?.toJSON()?.slice(0, 10))
 
     this.incomeSelected = income
@@ -303,10 +370,11 @@ export class BillsToReceiveComponent {
 
     const data = this.editIncomesForm.value
 
-    console.log("updated data", data)
-
-
     data["status"] = data["isPayment"] ? "PAID": "NOT_PAID";
+
+    if ( data["status"] == "PAID") {
+      data["value_received"] =  data["currency_rate"] *  data["value_paid"]
+    }
 
     this.incomeService.update(this.incomeSelected?.id, data )
       .subscribe({
@@ -345,7 +413,7 @@ export class BillsToReceiveComponent {
         next: (resIncome : any) => {
 
          this.toastr.success("Contas a receber deletada com sucesso", "Receitas")
-
+         this.getIncomes()
 
         },
         error: err => {
@@ -370,6 +438,8 @@ export class BillsToReceiveComponent {
       return;
 
     const data = this.confirmPaymentForm.value
+    
+    
 
     this.incomeService.confirmPayment(this.incomeSelected?.id, data )
       .subscribe({
@@ -483,7 +553,7 @@ export class BillsToReceiveComponent {
 
 
           if (this.incomes.length == 0) {
-            this.toastr.info("Não foram retornado dados de contas para a filtragem selecionada", "Contas a Receber")
+            this.toastr.info("Não foram retornado dados de receitas para a filtragem selecionada", "Contas a Receber")
             return;
           }
 

@@ -31,6 +31,8 @@ export class ChargeComponent {
   public surveysSelected: any = [];
   public serviceSelected: any;
 
+  public loading = false;
+
 
 
   fn: any;
@@ -50,8 +52,27 @@ export class ChargeComponent {
 
     this.confirmPaymentForm = new FormGroup({
       value_paid: new FormControl(null, [Validators.required]),
+      value_received:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+      currency_rate: new FormControl(1, [Validators.required]),
       paid_at: new FormControl(null, [Validators.required]),
     })
+
+    // Adicionando um observador para o campo value_paid
+    this.confirmPaymentForm.get('value_paid').valueChanges.subscribe((newValue) => {
+      const currencyRate = this.confirmPaymentForm.get('currency_rate').value;
+      const valueReceived = newValue * currencyRate;
+
+      this.confirmPaymentForm.get('value_received').setValue(valueReceived.toFixed(2));
+    });
+
+     // Adicionando um observador para o campo value_paid
+     this.confirmPaymentForm.get('currency_rate').valueChanges.subscribe((newValue) => {
+      const value_paid = this.confirmPaymentForm.get('value_paid').value;
+      const valueReceived = newValue * value_paid;
+
+
+      this.confirmPaymentForm.get('value_received').setValue(valueReceived.toFixed(2));
+    });
 
     this.addServiceSurveys = new FormGroup({
       id: new FormControl(null, [Validators.required]),
@@ -111,22 +132,9 @@ export class ChargeComponent {
       .subscribe({
         next: resCharge => {
 
-
-          
-
           this.getServiceSurveys()
           this.getIncomesService()
          
-
-
-        
-
-          // this.serviceSelected = this.services.find(({ id }) => id == idService)
-
-
-          console.log(this.serviceSelected)
-
-    
           this.toastr.success("Vistória Faturada com sucesso", "Cobrança de Vistorias")
 
         },
@@ -141,13 +149,28 @@ export class ChargeComponent {
     //this.modalService.dismissAll()
   }
 
+  getCurrency(paymentType) {
+
+    if (paymentType == 'INVOICE') return 'USD'
+
+    return 'BRL'
+
+  }
 
   setDataPayment() {
 
-    console.log("seta data")
 
     this.confirmPaymentForm.controls["value_paid"].setValue(this.sumary?.value)
+    this.confirmPaymentForm.controls["currency_rate"].setValue(this.sumary?.currency_rate)
+    this.confirmPaymentForm.controls["value_received"].setValue(this.sumary?.value_received ?? this.sumary?.value)
     this.confirmPaymentForm.controls["paid_at"].setValue(this.getDate())
+
+  }
+
+
+  paymentTypeIsINVOICE(paymentType) {
+
+    return paymentType == 'INVOICE'
 
   }
 
@@ -177,10 +200,6 @@ export class ChargeComponent {
 
   setService(event: any) {
     this.serviceSelected = this.services.find(({ id }) => id == event.target.value)
-
-
-    console.log("Service selectted", this.serviceSelected)
-
   }
 
   getBadge(status) {
@@ -210,13 +229,9 @@ export class ChargeComponent {
 
   removerServiceSurvey(idServiceSurvey: Number) {
 
-    console.log("id Service survye",  idServiceSurvey)
-    
-
     this.chargeService.delete(this.charge_id, idServiceSurvey)
       .subscribe({
         next: resCharge => {
-
 
           this.getServiceSurveys()
           this.getIncomesService()
@@ -246,9 +261,9 @@ export class ChargeComponent {
     this.chargeService.list(this.charge_id)
       .subscribe({
         next: (resCharge: any[]) => {
-          this.services = resCharge
+          //this.services = resCharge
 
-          this.sumary = this.services 
+          this.sumary = resCharge
           this.serviceSurveys = this.sumary?.service_surveys
         },
         error: err => {
@@ -273,6 +288,7 @@ export class ChargeComponent {
       return;
 
     const data = this.confirmPaymentForm.value
+    data.value_received = data.value_paid * data.currency_rate
 
     this.incomeService.confirmPayment(this.charge_id, data )
       .subscribe({
@@ -294,6 +310,25 @@ export class ChargeComponent {
       })
   }
 
+  disabledCheckBox(survey) {
+
+    const paymentType = this.sumary.payment_type
+    const surveyCurrency = survey.currency 
+
+    console.log(paymentType, surveyCurrency, survey)
+
+    if (surveyCurrency == 'USD' && paymentType == "NF") {
+      return true
+    }
+
+    if (surveyCurrency == 'BRL' && paymentType == "INVOICE") {
+      return true
+    }
+
+    return false
+
+
+  }
 
   getServiceSurveys() {
 
@@ -303,10 +338,14 @@ export class ChargeComponent {
         next: (resAtendimento: any[]) => {
           this.services = resAtendimento.filter(item => item.status == 'FINISHED')
           
+
+          console.log("meus serviços", this.services)
+
           const idService = this.serviceSelected?.id
           this.setValue(idService)
 
 
+          this.loading = true
            //manter apos chamada de API
           for (const service of this.services) {
             for (const survey of service?.service_survey) {

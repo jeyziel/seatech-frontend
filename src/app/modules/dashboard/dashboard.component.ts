@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
 
 	getData() {
 
-		console.log("Datas", this.fromDate, this.toDate)
+		this.loading = false;
 
 		this.getIncomesPaid()
 		this.getExpensePaid()
@@ -222,6 +222,8 @@ export class DashboardComponent implements OnInit {
 
 	transformServiceFinished() {
 
+		this.servicesFinished = []
+
 		this.services.forEach(servico => {
 			const shipName = servico.ship_name;
 			const clientesUnicos = new Set();
@@ -234,7 +236,7 @@ export class DashboardComponent implements OnInit {
 			servico.service_survey.forEach(item  => {
 			  clientesUnicos.add(item.customer_id);
 			  qtdVistorias++;
-			  precoVistorias += item.price;
+			  precoVistorias += item.price * item.currency_rate;
 
 			  if (item.billing_status == "CONCLUDED") vistoriasFaturas++
 
@@ -276,12 +278,12 @@ export class DashboardComponent implements OnInit {
 			if (!resultado[customerName]) {
 				resultado[customerName] = {
 					name: customerName,
-					price : item.price
+					price : item.price * item.currency_rate
 				};
 
 				
 			}else{
-				resultado[customerName].price += item.price
+				resultado[customerName].price += item.price * item.currency_rate
 
 			}
 
@@ -331,7 +333,7 @@ export class DashboardComponent implements OnInit {
 
 			// Obtendo o nome da pesquisa e o preço
 			const surveyName = item.survey.name;
-			const price = item.price;
+			const price = item.price * item.currency_rate;
 			const id = item.survey.id;
 
 

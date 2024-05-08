@@ -34,9 +34,9 @@
             <td> {{  service.shipName }}</td>
             <td> {{  service.vistoriasFaturas}} / {{ service.qtdVistorias }}</td>
             <!-- <td> {{ service.qtdClientes }}</td> -->
-            <td>R$ {{ service.precoVistorias  }} </td>
-            <td>R$ {{ service.precoDespesas  }}</td>
-            <td> R$ {{ service.precoVistorias - service.precoDespesas }}</td>
+            <td>{{ service.precoVistorias | currency: 'BRL': true: '1.2-2'  }} </td>
+            <td>{{ service.precoDespesas | currency: 'BRL': true: '1.2-2' }}</td>
+            <td> {{ service.precoVistorias - service.precoDespesas | currency: 'BRL': true: '1.2-2'}}</td>
             
            
           </tr>
