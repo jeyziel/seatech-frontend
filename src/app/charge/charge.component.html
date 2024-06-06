@@ -35,7 +35,7 @@
                   {{ sumary?.payment_type == 'INVOICE' ? sumary?.payment_type : sumary?.payment_type + " # " +
                   ( sumary?.number ?? ' : N/A ')}}</li>
                 <li><span class="font-weight-bold m-1">Cliente: </span> {{ sumary?.customer?.name }}</li>
-                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value_paid ?? sumary?.value | currency: getCurrency(sumary?.payment_type)}}</li>
+                <li><span class="font-weight-bold m-1">Valor: </span> {{ sumary?.value_paid ?? sumary?.value | currency: getCurrency(sumary?.payment_type)}} </li>
 
                 <li><span class="font-weight-bold m-1">Data de Emissão </span> {{ sumary?.launch_at | date:
                   'dd/MM/yyyy' }}</li>

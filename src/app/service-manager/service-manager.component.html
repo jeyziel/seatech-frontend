@@ -31,16 +31,28 @@
             <li><span class="font-weight-bold m-1">Navio: </span> {{ service?.ship_name }}</li>
             <li><span class="font-weight-bold m-1">Descrição: </span> {{ service?.description }}</li>
             <li>
-              <span class="font-weight-bold m-1">Valor das Vistorias: </span> 
-                 <ul>
-                  <li><b>Dolar:</b> {{ surveys_value_dolar | currency: 'USD' }} </li>
-                  <li><b>Real:</b>: {{ surveys_value_real | currency: 'BRL' }}</li>
-                 </ul>
-                 
-              </li>
-            <li><span class="font-weight-bold m-1">Valor Despesas: </span> {{  expense_value | currency: 'BRL'
-              }}</li>
-             
+              <span class="font-weight-bold m-1">Valor das Vistorias: </span>
+              <ul>
+                <li><b>Real:</b> {{ surveys_value_real | currency: 'BRL' : 'symbol'}}</li>
+                <li><b>Dolar:</b> {{ surveys_value_dolar | currency: 'USD' : 'symbol' }} </li>
+
+                <li><b>Outros:</b> {{ surveys_value_other | currency: '$' : 'symbol'}}</li>
+              </ul>
+
+            </li>
+
+            <li>
+              <span class="font-weight-bold m-1">Valor das Despesas: </span>
+              <ul>
+                <li><b>Real:</b> {{ expense_value | currency: 'BRL' : 'symbol'}}</li>
+                <li><b>Dolar:</b> {{ expense_value_dolar | currency: 'USD' : 'symbol'}}</li>
+
+                <li><b>Outros:</b>{{ expense_value_other | currency: '$' : 'symbol'}}</li>
+              </ul>
+
+            </li>
+
+
           </ul>
         </div>
       </div>
@@ -83,20 +95,18 @@
                 <td>{{ serviceSurvey?.harbor_name }}</td>
                 <td>{{ serviceSurvey?.customer_name}}</td>
                 <td>
-                  <span
-                    [class]="'badge badge-' + getBadge(serviceSurvey?.billing_status)"
-                    style="padding: .5em;">
+                  <span [class]="'badge badge-' + getBadge(serviceSurvey?.billing_status)" style="padding: .5em;">
                     {{ serviceSurvey?.billing_status | translate }}
                   </span>
                 </td>
-                <td>{{ serviceSurvey?.price | currency: serviceSurvey.currency }}</td>
+                <td>{{ serviceSurvey?.price | currency: getCurrencySymbol(serviceSurvey.currency) }}</td>
                 <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
                 <td class="text-right">
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
                     <button type="button"
                       (click)="setSurveySelected(serviceSurvey); open(modalConfirmationSur, removerServiceSurvey, serviceSurvey?.id)"
                       class="btn btn-danger btn-sm" title="Deletar">
-                    
+
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -141,7 +151,7 @@
             <tbody>
               <tr *ngFor="let expense of expenses">
                 <td>{{ expense?.name }}</td>
-                <td>{{ expense?.value_paid ?? expense?.value | currency: 'BRL' }}</td>
+                <td>{{ expense?.value_paid ?? expense?.value | currency: getCurrencySymbol(expense.currency) }}</td>
 
 
                 <td>
@@ -158,9 +168,10 @@
                 <td class="text-right">
 
                   <div class="btn-group mr-2 mb-1" role="group" aria-label="First group">
-                    <button  [disabled]="expense?.status == 'PAID'" type="button" (click)="onConfirmPaymentSelected(expense); open(confirmPayment)"
-                      class="btn btn-success btn-sm" title="Pagar">
-                    
+                    <button [disabled]="expense?.status == 'PAID'" type="button"
+                      (click)="onConfirmPaymentSelected(expense); open(confirmPayment)" class="btn btn-success btn-sm"
+                      title="Pagar">
+
                       <span>
                         <i class="fas fa-file-invoice-dollar"></i>
                       </span>
@@ -171,7 +182,7 @@
                     <button type="button"
                       (click)="setExpenseSelected(expense); open(modalConfirmationExp, removerExpense, expense?.id)"
                       class="btn btn-danger btn-sm" title="Deletar">
-                    
+
                       <span>
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -196,38 +207,39 @@
     <div class="modal-body">
 
       <form [formGroup]="addServiceSurveys">
-      <div class="form-group">
-        <label for="input-survey-create">Vistorias(*)</label>
-        <select   formControlName="survey_id" class="form-control" id="input-survey-create">
-          <option (click)="setServicePrice(survey)"  *ngFor="let survey of surveys" [ngValue]="survey?.id" >
-            {{ survey.name }}
-          </option>
-        </select>
-        <div *ngIf="submitted && !success && addServiceSurveyForm.survey_id.errors">
-          <small class="invalid-feedback" style="display: inline;">A Vistoria é obrigatória.</small>
-        </div>
-      </div>
-
-
-      <div class="row">
-
-        <div class="form-group col">
-          <label for="input-price" class="form-control-label">Preço(*)</label>
-          <input formControlName="price" id="input-price" class="form-control" type="number" step=".01">
-          <div *ngIf="submitted && !success && addServiceSurveyForm.price.errors">
-            <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+        <div class="form-group">
+          <label for="input-survey-create">Vistorias(*)</label>
+          <select formControlName="survey_id" class="form-control" id="input-survey-create">
+            <option (click)="setServicePrice(survey)" *ngFor="let survey of surveys" [ngValue]="survey?.id">
+              {{ survey.name }}
+            </option>
+          </select>
+          <div *ngIf="submitted && !success && addServiceSurveyForm.survey_id.errors">
+            <small class="invalid-feedback" style="display: inline;">A Vistoria é obrigatória.</small>
           </div>
         </div>
 
-        <div class="form-group col">
-          <label for="input-price" class="form-control-label">Moeda(*)</label>
-          <select formControlName="currency" class="form-control" id="input-survey-create">
-            <option  value="USD">Dolar</option>
-            <option value="BRL">Real</option>
-          </select>
-        </div>
 
-      </div>
+        <div class="row">
+
+          <div class="form-group col">
+            <label for="input-price" class="form-control-label">Preço(*)</label>
+            <input formControlName="price" id="input-price" class="form-control" type="number" step=".01">
+            <div *ngIf="submitted && !success && addServiceSurveyForm.price.errors">
+              <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
+            </div>
+          </div>
+
+          <div class="form-group col">
+            <label for="input-price" class="form-control-label">Moeda(*)</label>
+            <select formControlName="currency" class="form-control" id="input-survey-create">
+              <option value="USD">Dolar</option>
+              <option value="BRL">Real</option>
+              <option value="OTHER">Outros</option>
+            </select>
+          </div>
+
+        </div>
 
 
         <div class="form-group">
@@ -256,13 +268,13 @@
         </div>
 
 
-          <div class="form-group">
-            <label for="input-survey-at" class="form-control-label">Data de Vistoria(*)</label>
-            <input type="date" formControlName="survey_at" id="input-survey-at" class="form-control">
-            <div *ngIf="submitted && !success && addServiceSurveyForm.survey_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data é obrigatória.</small>
-            </div>
+        <div class="form-group">
+          <label for="input-survey-at" class="form-control-label">Data de Vistoria(*)</label>
+          <input type="date" formControlName="survey_at" id="input-survey-at" class="form-control">
+          <div *ngIf="submitted && !success && addServiceSurveyForm.survey_at.errors">
+            <small class="invalid-feedback" style="display: inline;">A Data é obrigatória.</small>
           </div>
+        </div>
       </form>
     </div>
     <div class="modal-footer">
@@ -279,6 +291,7 @@
     </div>
     <div class="modal-body">
       <form [formGroup]="addExpenses">
+
         <div class="row">
           <div class="col">
             <div class="form-group">
@@ -289,19 +302,11 @@
               </div>
             </div>
           </div>
-          <div class="col">
-            <div class="form-group">
-              <label for="input-value" class="form-control-label">Valor(*)</label>
-              <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
-              <div *ngIf="submitted && !success && addExpenseForm.value.errors">
-                <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         <div class="row">
-          <div class="col">
+          <!-- <div class="col">
             <div class="form-group">
               <label for="input-harbor-create">Tipo(*)</label>
               <select formControlName="type" class="form-control" id="input-harbor-create">
@@ -311,33 +316,38 @@
                 <small class="invalid-feedback" style="display: inline;">O Porto é obrigatório.</small>
               </div>
             </div>
-          </div>
-          <!-- <div class="col">
+          </div> -->
+
+          <div class="col">
             <div class="form-group">
-              <label for="input-harbor-create">Situação(*)</label>
-              <select formControlName="status" class="form-control" id="input-harbor-create">
-                <option value="PAID">Pago</option>
-                <option value="NOT_PAID">Não Pago</option>
-              </select>
-              <div *ngIf="submitted && !success && addExpenseForm.status.errors">
-                <small class="invalid-feedback" style="display: inline;">A Situação é obrigatória.</small>
+              <label for="input-value" class="form-control-label">Valor(*)</label>
+              <input formControlName="value" id="input-value" class="form-control" type="number" step=".01">
+              <div *ngIf="submitted && !success && addExpenseForm.value.errors">
+                <small class="invalid-feedback" style="display: inline;">O Valor é obrigatório.</small>
               </div>
             </div>
-          </div> -->
-        </div>
+          </div>
 
-
-        <div class="col">
-          <div class="form-group">
-            <label for="input-launch-at" class="form-control-label">Data de Lançamento(*)</label>
-            <input type="date" formControlName="launch_at" id="input-launch-at" class="form-control">
-            <div *ngIf="submitted && !success && addExpenseForm.launch_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data de Lançamento é obrigatória.</small>
-            </div>
+          <div class="form-group col">
+            <label for="input-price" class="form-control-label">Moeda(*)</label>
+            <select formControlName="currency" class="form-control" id="input-survey-create">
+              <option value="USD">Dolar</option>
+              <option value="BRL">Real</option>
+              <option value="OTHER">Outros</option>
+            </select>
           </div>
         </div>
 
         <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="input-launch-at" class="form-control-label">Data de Lançamento(*)</label>
+              <input type="date" formControlName="launch_at" id="input-launch-at" class="form-control">
+              <div *ngIf="submitted && !success && addExpenseForm.launch_at.errors">
+                <small class="invalid-feedback" style="display: inline;">A Data de Lançamento é obrigatória.</small>
+              </div>
+            </div>
+          </div>
           <div class="col">
             <div class="form-group">
               <label for="input-due-at" class="form-control-label">Data de Vencimento(*)</label>
@@ -347,7 +357,6 @@
               </div>
             </div>
           </div>
-
         </div>
 
         <div class="row">
@@ -386,7 +395,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
+          <div class="col-md-4">
             <div class="form-group" *ngIf="addExpenses.controls['status'].value">
               <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
               <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
@@ -395,6 +404,28 @@
               </div>
             </div>
           </div>
+
+          <div class="col-md-4">
+            <div class="form-group" *ngIf="addExpenses.controls['status'].value">
+              <label for="input-value-paid" class="form-control-label">Cambio(*)</label>
+              <input formControlName="currency_rate" id="input-value-paid" class="form-control" type="number"  step=".01">
+              <div *ngIf="submitted && !success && addExpenseForm.currency_rate.errors">
+                <small class="invalid-feedback" style="display: inline;">O Cambio é obrigatório.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group" *ngIf="addExpenses.controls['status'].value">
+              <label for="input-value-paid" class="form-control-label">Valor em Real (R$)</label>
+              <input formControlName="total_value"  id="input-value-paid" class="form-control" type="number" step=".01">
+             
+            </div>
+          </div>
+          
+        </div>
+        <div class="row">
+
           <div class="col">
             <div class="form-group" *ngIf="addExpenses.controls['status'].value">
               <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
@@ -404,9 +435,7 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col">
+          <!-- <div class="col">
             <div class="form-group" *ngIf="addExpenses.controls['status'].value">
               <label for="input-discount" class="form-control-label">Desconto(*)</label>
               <input formControlName="discount" id="input-discount" class="form-control" type="number" step=".01">
@@ -423,7 +452,7 @@
                 <small class="invalid-feedback" style="display: inline;">O Preço é obrigatório.</small>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
 
       </form>
@@ -433,16 +462,18 @@
     </div>
   </ng-template>
 
-      <ng-template #confirmPayment let-modal class="modal-dialog">
-      <div class="modal-header">
-        <h3 class="modal-title" id="modal-basic-title">Confirmar Pagamento '{{ expenseSelected?.name }}'</h3>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form [formGroup]="confirmPaymentForm">
-          <div class="form-group">
+  <ng-template #confirmPayment let-modal class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-basic-title">Confirmar Pagamento '{{ expenseSelected?.name }}'</h3>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="confirmPaymentForm">
+
+        <div class="row">
+          <div class="form-group col">
             <label for="input-value-paid" class="form-control-label">Valor Pago(*)</label>
             <input formControlName="value_paid" id="input-value-paid" class="form-control" type="number" step=".01">
             <div *ngIf="submittedExpense && !successExpense && paymentForm.value_paid.errors">
@@ -450,19 +481,36 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
-            <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
-            <div *ngIf="submittedExpense && !successExpense && paymentForm.paid_at.errors">
-              <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+          
+          <div class="form-group col">
+            <label for="input-value-paid" class="form-control-label">Cambio(*)</label>
+            <input formControlName="currency_rate" id="input-value-paid" class="form-control" type="number"  step=".01">
+            <div *ngIf="submitted && !success && addExpenseForm.currency_rate.errors">
+              <small class="invalid-feedback" style="display: inline;">O Cambio é obrigatório.</small>
             </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button (click)="paidExpense()" type="button" class="btn btn-outline-dark">Confirmar</button>
-      </div>
-    </ng-template>
+
+          <div class="form-group col">
+            <label for="input-value-paid" class="form-control-label">Valor em Real (R$)</label>
+            <input formControlName="total_value"  id="input-value-paid" class="form-control" type="number" step=".01">
+          </div>
+
+        </div>
+        
+
+        <div class="form-group">
+          <label for="input-paid-at" class="form-control-label">Data de Pagamento(*)</label>
+          <input type="date" formControlName="paid_at" id="input-paid-at" class="form-control">
+          <div *ngIf="submittedExpense && !successExpense && paymentForm.paid_at.errors">
+            <small class="invalid-feedback" style="display: inline;">A Data de Pagamento é obrigatória.</small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button (click)="paidExpense()" type="button" class="btn btn-outline-dark">Confirmar</button>
+    </div>
+  </ng-template>
 
   <ng-template #modalConfirmationSur let-modal class="modal-dialog">
     <div class="modal-header">

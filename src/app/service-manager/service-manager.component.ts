@@ -42,8 +42,11 @@ export class ServiceManagerComponent {
 
   public surveys_value_real: Number = 0;
   public surveys_value_dolar: Number = 0;
+  public surveys_value_other: Number = 0;
 
   public expense_value: Number = 0;
+  public expense_value_dolar: Number = 0;
+  public expense_value_other: Number = 0;
 
   public serviceSurveysSelected: any;
   public expenseSelected: any;
@@ -95,28 +98,21 @@ export class ServiceManagerComponent {
       paid_at: new FormControl(null, [Validators.nullValidator]),
       discount: new FormControl(0, [Validators.nullValidator]),
       fines: new FormControl(0, [Validators.nullValidator]),
+      currency_rate: new FormControl(1, [Validators.required]),
+      currency: new FormControl('BRL', [Validators.required]),
       status: new FormControl(false, [Validators.nullValidator]),
-    })
+      total_value: new FormControl({value: '', disabled: true})   
+   })
 
     this.service_id = this.router.snapshot.params['id']
 
     this.confirmPaymentForm = new FormGroup({
       value_paid: new FormControl(null, [Validators.required]),
+      currency_rate: new FormControl(null, [Validators.required]),
       paid_at: new FormControl(null, [Validators.required]),
+      total_value: new FormControl({value: '', disabled: true})  
     })
 
-    // "name": "Pagamento de Agua",
-    // "value": 50,
-    // "type": "OPERATION",
-    // "account_id": 1,
-    // "expense_category_id": 1,
-    // "status": "PAID",
-    // "due_at": "2023-12-25",
-    // "launch_at": "2023-12-20",
-    // "value_paid": 50,
-    // "paid_at": "2023-12-23",
-    // "discount": 2,
-    // "fines": 1
 
 
     this.getServiceSurveys();
@@ -130,7 +126,29 @@ export class ServiceManagerComponent {
     this.getExpenseCategories()
     this.getAccounts()
 
+    this.onChanges()
 
+
+  }
+
+  onChanges(): void {
+    this.addExpenses.valueChanges.subscribe(val => {
+      if (this.addExpenses.get('value_paid').valid && this.addExpenses.get('currency_rate').valid) {
+        const valuePaid = this.addExpenses.get('value_paid').value;
+        const currencyRate = this.addExpenses.get('currency_rate').value;
+        const totalValue = (valuePaid * currencyRate).toFixed(2);       
+        this.addExpenses.get('total_value').setValue(totalValue, { emitEvent: false });
+      }
+    });
+
+    this.confirmPaymentForm.valueChanges.subscribe(val => {
+      if (this.confirmPaymentForm.get('value_paid').valid && this.confirmPaymentForm.get('currency_rate').valid) {
+        const valuePaid = this.confirmPaymentForm.get('value_paid').value;
+        const currencyRate = this.confirmPaymentForm.get('currency_rate').value;
+        const totalValue = (valuePaid * currencyRate).toFixed(2);       
+        this.confirmPaymentForm.get('total_value').setValue(totalValue, { emitEvent: false });
+      }
+    });
   }
 
   get addServiceSurveyForm() {
@@ -145,9 +163,15 @@ export class ServiceManagerComponent {
     return this.confirmPaymentForm.controls
   }
 
-  setServicePrice(survey: any) {
+  getCurrencySymbol(currency) {
 
-    console.log("surveys", survey)
+    if (currency == 'OTHER') return '$'
+
+    return currency
+
+  }
+
+  setServicePrice(survey: any) {
 
 
     this.addServiceSurveys.controls["price"].setValue(survey?.default_value)
@@ -169,6 +193,7 @@ export class ServiceManagerComponent {
     this.fn = fn;
     this.paramsDelete = params;
   }
+
 
 
   create() {
@@ -392,7 +417,7 @@ export class ServiceManagerComponent {
 
           const surveys_in_dolar =  this.serviceSurveys.filter( surveys => surveys.currency == 'USD')
           const surveys_in_real =  this.serviceSurveys.filter( surveys => surveys.currency == 'BRL')
-
+          const surveys_in_other = this.serviceSurveys.filter( surveys => surveys.currency == 'OTHER')
 
           
           this.surveys_value_dolar = surveys_in_dolar?.reduce((acc, curr) => {
@@ -403,10 +428,9 @@ export class ServiceManagerComponent {
             return acc + curr.price;
           }, 0) ?? 0;
 
-        
-
-
-      
+          this.surveys_value_other = surveys_in_other?.reduce((acc, curr) => {
+            return acc + curr.price;
+          }, 0) ?? 0;
 
         },
         error: err => {
@@ -415,117 +439,6 @@ export class ServiceManagerComponent {
 
         }
       })
-
-
-    /**
-    this.service = {
-      id: 1,
-      ship_name: 'Navio Pequeno',
-      description: 'Desc Operacional',
-      status: 'IN_PROGRESS',
-      value_survey: 190.59,
-      value_expense: 20.59,
-    };
-
-
-
-
-    this.serviceSurveys = [
-      {
-        id: 1,
-        survey_id: 1,
-        price: 25.72,
-        survey_at: '2024-03-01',
-        customer_id: 1,
-        harbor_id: 2,
-        biling_status: 'PENDING',
-        harbor: { id: 1, name: 'Porto 1', },
-        customer: { id: 2, name: 'Antonio', },
-        survey: { id: 2, name: 'Vistoria 2', }
-      },
-      {
-        id: 1,
-        survey_id: 1,
-        price: 25.72,
-        survey_at: '2024-03-01',
-        customer_id: 1,
-        harbor_id: 2,
-        biling_status: 'DRAFT',
-        harbor: { id: 1, name: 'Porto 1', },
-        customer: { id: 2, name: 'Antonio', },
-        survey: { id: 2, name: 'Vistoria 2', }
-      },
-      {
-        id: 1,
-        survey_id: 1,
-        price: 25.72,
-        survey_at: '2024-03-01',
-        customer_id: 1,
-        harbor_id: 2,
-        biling_status: 'CONCLUDED',
-        harbor: { id: 1, name: 'Porto 1', },
-        customer: { id: 1, name: 'Carlos', },
-        survey: { id: 1, name: 'Vistoria 1', }
-      }
-    ];
-
-    this.expenses = [
-      {
-        name: 'Pagamento de Agua',
-        value: 50,
-        type: 'DEFAULT',
-        account_id: 1,
-        expense_category_id: 1,
-        status: 'PAID',
-        due_at: '',
-        launch_at: '',
-        value_paid: 50,
-        paid_at: '2023-12-23',
-        discount: 2,
-        fines: 1,
-        expense_category: { id: 1, name: 'Categoria de Despesa 1', },
-      },
-      {
-        name: 'Pagamento de Luz',
-        value: 50,
-        type: 'OPERATION',
-        account_id: 1,
-        expense_category_id: 1,
-        status: 'NOT_PAID',
-        due_at: '',
-        launch_at: '',
-        value_paid: 50,
-        paid_at: '2023-12-23',
-        discount: 2,
-        fines: 1,
-        expense_category: { id: 1, name: 'Categoria de Despesa 1', },
-      }
-    ];
-
-    this.expenseCategorys = [
-      { id: 1, name: 'Categoria de Despesa 1', },
-      { id: 2, name: 'Categoria de Despesa 2', }
-    ];
-
-    this.surveys = [
-      { id: 1, name: 'Vistoria 1', },
-      { id: 2, name: 'Vistoria 2', }
-    ];
-
-    this.harbors = [
-      { id: 1, name: 'Porto 1', },
-      { id: 2, name: 'Porto 2', },
-    ];
-
-    this.customers = [
-      { id: 1, name: 'Carlos', },
-      { id: 2, name: 'Antonio', }
-    ];
-
-    this.accounts = [
-      { id: 1, name: 'PIX', },
-      { id: 2, name: 'Caixa', }
-    ];*/
   }
 
   getServiceExpenses() {
@@ -535,8 +448,20 @@ export class ServiceManagerComponent {
         next: (res: any) => {
           this.expenses = res
 
-          this.expense_value = this.expenses.reduce((acc, curr) => {
-            return acc + curr.value;
+          const expenses_in_dolar =  this.expenses.filter( expenses => expenses.currency == 'USD')
+          const expenses_in_real =  this.expenses.filter( expenses => expenses.currency == 'BRL')
+          const expenses_in_other = this.expenses.filter( expenses => expenses.currency == 'OTHER')
+
+          this.expense_value = expenses_in_real.reduce((acc, curr) => {
+            return acc + (curr.value_paid ?? curr.value);
+          }, 0) ?? 0;
+
+          this.expense_value_dolar = expenses_in_dolar.reduce((acc, curr) => {
+            return acc + (curr.value_paid ?? curr.value);
+          }, 0) ?? 0;
+
+          this.expense_value_other = expenses_in_other.reduce((acc, curr) => {
+            return acc + (curr.value_paid ?? curr.value);
           }, 0) ?? 0;
 
         },

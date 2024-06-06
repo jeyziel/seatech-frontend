@@ -145,8 +145,6 @@ export class ChargeComponent {
         }
       })
 
-
-    //this.modalService.dismissAll()
   }
 
   getCurrency(paymentType) {
@@ -315,9 +313,12 @@ export class ChargeComponent {
     const paymentType = this.sumary.payment_type
     const surveyCurrency = survey.currency 
 
-    console.log(paymentType, surveyCurrency, survey)
 
     if (surveyCurrency == 'USD' && paymentType == "NF") {
+      return true
+    }
+
+    if (surveyCurrency == 'OTHER' && paymentType == "NF") {
       return true
     }
 

@@ -201,8 +201,6 @@ export class DashboardCustomerComponent {
 
 					this.surveysRecorrentes = this.groupSurveysAndCalculate(this.surveys)
 
-					
-					
 
 				},
 				error: err => {
