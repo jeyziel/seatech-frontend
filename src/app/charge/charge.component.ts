@@ -149,9 +149,17 @@ export class ChargeComponent {
 
   getCurrency(paymentType) {
 
-    if (paymentType == 'INVOICE') return 'USD'
+    if (paymentType == 'INVOICE') return '$'
 
     return 'BRL'
+
+  }
+
+  getCurrencySymbol(currency) {
+
+    if (currency == 'OTHER') return '$'
+
+    return currency
 
   }
 

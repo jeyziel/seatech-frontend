@@ -99,7 +99,7 @@
                 <td>{{ serviceSurvey?.ship_name }}</td>
                 <td>{{ serviceSurvey?.harbor_name }}</td>
                 <td>{{ serviceSurvey?.customer_name}}</td>
-                <td>{{ serviceSurvey?.price | currency: serviceSurvey?.currency }}</td>
+                <td>{{ serviceSurvey?.price | currency:  getCurrencySymbol(serviceSurvey?.currency)  }}</td>
                 <td>{{ serviceSurvey?.survey_at | date: 'dd/MM/yyyy' }}</td>
                 <td class="text-center" >
                  

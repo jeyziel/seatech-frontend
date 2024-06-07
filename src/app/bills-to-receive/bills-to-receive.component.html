@@ -62,6 +62,7 @@
                 <th>Tipo</th>
                 <th>Categoria</th>
                 <th>Valor</th>
+                <th>Valor Recebido</th>
                 <th>Situação</th>
                 <th>Data Vencimento</th>
                 <th>Data de Pagamento</th>
@@ -83,6 +84,10 @@
                 </td>
                 <td>
                   {{ income?.value_paid ??  income?.value | currency: getCurrency(income?.payment_type) }}
+                </td>
+
+                <td>
+                  {{ income?.value_received ?? 0  | currency: 'BRL' }}
                 </td>
                 <td>
                     <span

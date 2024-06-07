@@ -195,7 +195,7 @@ export class BillsToReceiveComponent {
 
   getCurrency(paymentType) {
 
-    if (paymentType == 'INVOICE') return 'USD'
+    if (paymentType == 'INVOICE') return '$'
 
     return 'BRL'
 
